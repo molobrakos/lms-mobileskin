@@ -1,5 +1,7 @@
 # Responsive / Mobile skin for Logitech media server / Squeezeserver
 
+![ScreenShot](screenshot.png) 
+
 ## Installation
 
 Copy ```m/``` directory to skin directory, e.g. ```/usr/share/squeezeboxserver/HTML/m```
