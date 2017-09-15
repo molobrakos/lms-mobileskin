@@ -1,0 +1,21 @@
+{
+    "name": "LMS",
+    "short_name": "LMS",
+    "icons": [
+	{
+	    "src": "/favicon.ico",
+	    "sizes": "128x128",
+	    "type": "image/png"
+	},
+	{
+	    "src": "/html/images/albums.png",
+	    "sizes": "512x512",
+	    "type": "image/png"
+	}
+    ],
+    "theme_color": "blue",
+    "background_color": "#ccc",
+    "start_url": "index.html",
+    "display": "standalone",
+    "orientation": "portrait"
+}ä

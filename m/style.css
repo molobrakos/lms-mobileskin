@@ -1,0 +1,103 @@
+/* override bootstrap defaults */
+
+body { padding-top: 3rem; }
+
+/* responsive sizes */
+
+html {
+    font-size: 10px;
+}
+
+@media (max-width: 575px) {
+    html { font-size: 12px; }
+    .player img.cover { width: 100px; height: 100px; }
+    .player .progress.duration { width: 100px; }
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+    html { font-size: 12px; }
+    .player img.cover { width: 100px; height: 100px; }
+    .player .progress.duration { width: 100px; }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    html { font-size: 12px; }
+    .player img.cover { width: 200px; height: 200px; }
+    .player .progress.duration { width: 200px; }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    html { font-size: 14px; }
+    .player img.cover { width: 200px; height: 200px; }
+    .player .progress.duration { width: 200px; }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    html { font-size: 16px; }
+    .player img.cover { width: 200px; height: 200px; }
+    .player .progress.duration { width: 200px; }
+} 
+
+h1, h2, h3, h4, h5 ,h6 { max-width: 100%;
+			 white-space: nowrap;
+			 overflow: hidden;
+			 text-overflow: ellipsis; }
+
+h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; }
+
+/* playlist */
+
+.playlist { display: none; }
+.playlist.visible { display: block; }
+.media img.cover { height: 64px; width: 64px; }
+.media .artist { min-height: 1rem; }
+
+/* player */
+
+.player { padding-top: 2rem; }
+
+#players { display: none; } /* hide initially */
+
+#players .player { padding-bottom: 10rem;
+		   color: white;
+		 }
+
+body .player-id { display: none; }
+body.debug .player-id { display: inline; }
+body.debug .debug-on { display: none; }
+body .debug-off { display: none; }
+body.debug .debug-off { display: inline; }
+
+.progress.duration { border-radius: 0; }
+.progress-title { position: absolute; right: 0; left: 0; color: white; mix-blend-mode: difference; } /* FIXME: get this to work somehow, white text on blue bg, black text on grey bg */
+.player .track { min-height: 1rem; }
+
+.player .btn {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1rem;
+    margin: 0.2rem;
+}
+
+.player .btn-xl {
+    width: 6rem;
+    height: 6rem;
+    font-size: 1.4rem;
+}
+
+.player button.pause { display: none; }
+
+.player.stopped button.play,
+.player.paused button.play,
+.player.playing button.pause { display: inline; }
+
+.player.playing button.play,
+.player.paused button.pause,
+.player.stopped button.pause { display: none; }
+
+#volumes { display: none; }
+
