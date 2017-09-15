@@ -1,25 +1,24 @@
-Responsive / Mobile skin for Logitech media server / Squeezeserver
+# Responsive / Mobile skin for Logitech media server / Squeezeserver
 
-Installation
+## Installation
 
-Copy m/ directory to skin directory, e.g. /usr/share/squeezeboxserver/HTML/m
+Copy ```m/``` directory to skin directory, e.g. ```/usr/share/squeezeboxserver/HTML/m```
+```
 cp -a m /usr/share/squeezeboxserver/HTML/m
+```
 
-Usage
+## Usage
 
-Access through http://yourserver:9000/m/
+Access through ```http://yourserver:9000/m/```
 
-lighttpd
+## Development
 
-To automatically redirect access to http://muzak (host on local network) to http://muzak:9000/m/ when accessed by a mobile client.
-
-Development
-
-It helps turning off the server HTML cache, by appending --nobrowsecache when starting squeezeboxserver.
+It helps turning off the server HTML cache, by appending ```--nobrowsecache``` when starting squeezeboxserver.
 
 The development directory can be mounted in a docker container for easy development.
 Example:
 
+```
 docker pull molobrakos:lms
 docker run -d --name lms \
        -p 9000:9000 \
@@ -33,5 +32,6 @@ docker run -d --name lms \
        -v $HOME/src/lms-mobileskin/m:/usr/share/squeezeboxserver/HTML/m:ro \
        molobrakos:lms \
        --nobrowsecache
+```
  
 
