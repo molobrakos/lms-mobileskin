@@ -4,14 +4,16 @@
 
 ## Installation
 
-Copy ```m/``` directory to skin directory, e.g. ```/usr/share/squeezeboxserver/HTML/m```
+Copy (or symlik) ```m/``` directory to server skin directory (e.g. ```/usr/share/squeezeboxserver/HTML/m```)
+Example
 ```
 cp -a m /usr/share/squeezeboxserver/HTML/m
 ```
 
 ## Usage
 
-Access through ```http://yourserver:9000/m/```
+Access the skin through ```http://yourserver:9000/m/```.
+Select "add to start screen" in your device, if supported.
 
 ## Development
 
@@ -35,5 +37,3 @@ docker run -d --name lms \
        molobrakos:lms \
        --nobrowsecache
 ```
- 
-
