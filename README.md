@@ -2,14 +2,14 @@
 
 ## Installation
 
-Copy m/ directory to skin directory, e.g. /usr/share/squeezeboxserver/HTML/m
+Copy ```m/``` directory to skin directory, e.g. ```/usr/share/squeezeboxserver/HTML/m```
 ```
 cp -a m /usr/share/squeezeboxserver/HTML/m
 ```
 
 ## Usage
 
-Access through http://yourserver:9000/m/
+Access through ```http://yourserver:9000/m/```
 
 ## Development
 
