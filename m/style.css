@@ -40,12 +40,12 @@ html {
     html { font-size: 16px; }
     .player img.cover { width: 200px; height: 200px; }
     .player .progress.duration { width: 200px; }
-} 
+}
 
 h1, h2, h3, h4, h5 ,h6 { max-width: 100%;
-			 white-space: nowrap;
-			 overflow: hidden;
-			 text-overflow: ellipsis; }
+                         white-space: nowrap;
+                         overflow: hidden;
+                         text-overflow: ellipsis; }
 
 h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; }
 
@@ -63,8 +63,8 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 #players { display: none; } /* hide initially */
 
 #players .player { padding-bottom: 10rem;
-		   color: white;
-		 }
+                   color: white;
+                 }
 
 body .player-id { display: none; }
 body.debug .player-id { display: inline; }
@@ -100,4 +100,5 @@ body.debug .debug-off { display: inline; }
 .player.stopped button.pause { display: none; }
 
 #volumes { display: none; }
-
+#browser { display: none; }
+#settings { display: none; }
