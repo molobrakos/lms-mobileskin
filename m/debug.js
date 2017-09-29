@@ -45,7 +45,7 @@ $(document).ajaxError(function(ev, xhr, settings, error) {
     $('#debug')
 	.removeClass()
 	.addClass('alert alert-warning')
-	.text('Last failed request at ' + t);
+	.text(t);
     log('Ajax error', ev, xhr, settings, error, t);
 });
 
@@ -54,7 +54,7 @@ $(document).ajaxSuccess(function(ev, xhr, settings, data) {
     $('#debug')
 	.removeClass()
 	.addClass('alert alert-success')
-	.text('Last successful update at ' + t);
+	.text(t);
     log('Ajax success', t);
 });
 
