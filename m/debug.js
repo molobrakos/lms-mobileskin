@@ -27,6 +27,7 @@ function _timestamp() {
 }
 
 function _debug_str(obj) {
+    /* create object string representation */
     if (typeof(obj) == 'string')
         return obj;
     else if (obj instanceof Array)
