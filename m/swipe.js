@@ -1,27 +1,28 @@
 "use strict";
 
-var THRESHOLD = 50;
+var THRESHOLD = 25;
 
 $(() => {
+
     log('ontouchstart' in window ?
         'Touch supported' : 'Touch not supported');
-    $('.carousel').each((_, carousel) => {
-        var $carousel = $(carousel)
-        $carousel.on('touchstart', e => {
+
+    $('.carousel')
+        .on('touchstart', e => {
             if (!e.touches.length)
                 return;
             var start = e.touches[0].pageX;
-            $carousel.on('touchmove', e => {
+            var $this = $(e.currentTarget);
+            $this.on('touchmove', e => {
                 var x = e.touches[0].pageX;
                 var diff = start - x;
                 if (Math.abs(diff) >= THRESHOLD) {
-                    $carousel.off('touchmove');
-                    $carousel.carousel(diff > 0 ? 'next' : 'prev');
+                    $this.off('touchmove');
+                    $this.carousel(diff > 0 ? 'next' : 'prev');
                 }
             });
+        })
+        .on('touchcancel', e => {
+            $(e.currentTarget).off('touchmove');
         });
-        $carousel.on('touchcancel', e => {
-            $carousel.off('touchmove');
-        });
-    });
 });
