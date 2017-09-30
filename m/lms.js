@@ -105,6 +105,7 @@ class Player {
 
         $.extend(true, /* deep */
                  this._state,
+                 state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
                  state.remoteMeta || {},
                  state);
 
