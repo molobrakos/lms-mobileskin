@@ -62,7 +62,7 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 
 /* player */
 
-.player { padding-top: 2rem; }
+.player { padding-top: 10rem; }
 
 #players { display: none; } /* hide initially */
 
