@@ -81,9 +81,8 @@ function formatTime(s) {
 var active_player = null;
 
 $('.carousel').carousel({interval:false}); /* Do not auto-rotate */
-$('.carousel').bcSwipe({threshold: 50});   /* Init swipe */
 
-/* FIXME: extract common logic */
+/* FIXME: extract common logic below */
 
 $('#show-volumes').click(() => {
     $('.navbar-collapse').collapse('hide');
