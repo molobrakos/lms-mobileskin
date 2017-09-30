@@ -99,6 +99,9 @@ body.debug .debug-off { display: inline; }
 .player.paused button.pause,
 .player.stopped button.pause { display: none; }
 
+.player.stream .duration.progress { background-color: transparent; }
+.player.stream .duration.progress .progress-title { color: white; mix-blend-mode: initial; }
+
 #volumes { display: none; }
 #browser { display: none; }
 #settings { display: none; }
