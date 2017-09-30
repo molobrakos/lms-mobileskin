@@ -198,9 +198,18 @@ function player_created(server, player) {
            })});
 
     $elm.find('.progress.volume').click(e => {
+        /* FIXME: Also allow sliding the volume control */
         var $this = $(e.currentTarget);
         var x = e.pageX - $this.offset().left;
-        player.volume = 100 * x / $this.width();
+        var level = 100 * x / $this.width();
+        /* Prevent accidental volume explosions */
+        var THRESHOLD = 30;
+        if (level < THRESHOLD)
+            player.volume = level;
+        else if (level > player.volume)
+            player.volume_up();
+        else
+            player.volume_down();
     });
 
     $elm.find('.progress.duration').click(e => {
@@ -311,10 +320,10 @@ function player_updated(player) {
                 100 * player.track_position / player.track_duration : 0) + '%');
     $elm.find('.duration .progress-title')
         .text(formatTime(player.track_position) +
-              (player.track_duration > 0 ?
+              (player.is_stream ? '' :
                ' | ' + formatTime(player.track_duration) +
                ' | -' + formatTime(player.track_duration -
-                                   player.track_position) : ''));
+                                   player.track_position)));
     $elm.find('.volume .progress-bar')
         .width(player.volume + '%');
 
