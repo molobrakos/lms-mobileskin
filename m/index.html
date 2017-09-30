@@ -92,9 +92,9 @@
       <div class="carousel-inner">
         <template id="player-template">
           <div class="player carousel-item">
-            <img class="cover d-block mx-auto">
-            <div class="duration progress d-block mx-auto"><div class="progress-bar"><div class="progress-title"></div></div></div>
-            <div class="controls justify-content-center">
+            <div class="controls">
+              <img class="cover d-block mx-auto">
+              <div class="duration progress d-block mx-auto"><div class="progress-bar"><div class="progress-title"></div></div></div>
               <h2 class="track text-center"></h2>
               <h4 class="artist text-center"></h4>
               <h4 class="album text-center hidden-md-down"></h4>
@@ -173,7 +173,7 @@
     </div>
 
     <!-- footer -->
-
+    <!--
     <footer class="footer bg-faded mx-auto mt-2">
       <div class="container">
         <span class="text-muted"><a href="/Default">Desktop skin</a></span>
@@ -182,7 +182,7 @@
         <span class="text-muted debug-off"><a href="/m">Debug off</a></span>
         <span id="debug"></span>
       </div>
-    </footer>
+    </footer>-->
   </body>
 
   [% IF url_query == "debug" %]
@@ -224,3 +224,13 @@
   <script src="[% webroot %]m.js"></script>
 
 </html>
+
+
+<!-- settings screen -->
+<!--
+link to default skin
+link turn on/off debug
+debug log overlay?
+update clock overlay top right
+debug: display screen size etc + lg/md/etc
+-->
