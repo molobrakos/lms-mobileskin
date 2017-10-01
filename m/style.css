@@ -89,7 +89,7 @@ body.debug .debug-on { display: none; }
 body .debug-off { display: none; }
 body.debug .debug-off { display: inline; }
 
-.progress.duration { border-radius: 0; }
+.progress.duration { border-radius: 0; margin-bottom: 1rem; }
 .progress-title { position: absolute; right: 0; left: 0; color: white; mix-blend-mode: difference; } /* FIXME: get this to work somehow, white text on blue bg, black text on grey bg */
 .player .track { min-height: 1rem; }
 
