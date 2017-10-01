@@ -81,11 +81,11 @@ class Server {
 
 class Player {
 
-    constructor(server, state) {
+    constructor(server, player_data) {
         this._server = server;
+        this._player_data = player_data;
         this._state = {};
         this._playlist_timestamp = 0;
-        this._state = state;
         log('Created player', this.id);
     }
 
@@ -103,11 +103,12 @@ class Player {
             this._playlist_timestamp != state.playlist_timestamp
             ? 0 : state.playlist_timestamp;
 
-        $.extend(true, /* deep */
-                 this._state,
-                 state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
-                 state.remoteMeta || {},
-                 state);
+        this._state = $.extend(
+            true, /* deep */
+            this._player_data,
+            state,
+            state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
+            state.remoteMeta || {});
 
         log('State', this._state);
         this._server.on_player_updated(this);
@@ -132,8 +133,12 @@ class Player {
             }});
     }
 
+    get ip() {
+        return this._player_data.ip;
+    }
+
     get id() {
-        return this._state.playerid;
+        return this._player_data.playerid;
     }
 
     get html_id() {
@@ -141,7 +146,7 @@ class Player {
     }
 
     get name() {
-        return this._state.name;
+        return this._player_data.name;
     }
 
     get track_artist() {
