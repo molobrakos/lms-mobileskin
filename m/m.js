@@ -83,7 +83,7 @@ var active_player = null;
 $('.carousel').carousel({interval:false}); /* Do not auto-rotate */
 
 /* FIXME: extract common logic below */
-
+/*
 $('#show-volumes').click(() => {
     $('.navbar-collapse').collapse('hide');
     if ($('#volumes').is(':visible')) {
@@ -98,7 +98,6 @@ $('#show-volumes').click(() => {
         $('#volumes').slideDown();
     }
 });
-
 $('#show-browser').click(() => {
     $('.navbar-collapse').collapse('hide');
     if ($('#browser').is(':visible')) {
@@ -113,22 +112,20 @@ $('#show-browser').click(() => {
         $('#players').slideUp();
     }
 });
-
 $('#show-settings').click(() => {
     $('.navbar-collapse').collapse('hide');
-    if ($('#browser').is(':visible')) {
+    if ($('#settings').is(':visible')) {
         player_activated(active_player);
-        $('#players').slideDown();
-        $('#browser').slideUp();
+        $('#players').show();
+        $('#settings').hide();
     } else {
         $('#playerslist.navbar-nav')
             .find('.active')
             .removeClass('active');
-        $('#browser').slideDown();
-        $('#players').slideUp();
+        $('#settings').show();
+        $('#players').hide();
     }
 });
-
 $('#show-playtlist').click(() => {
     $('.navbar-collapse').collapse('hide');
     if ($('#browser').is(':visible')) {
@@ -143,6 +140,7 @@ $('#show-playtlist').click(() => {
         $('#players').slideUp();
     }
 });
+*/
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -176,17 +174,18 @@ function player_created(server, player) {
 
     from_template('#carousel-indicator-template')
         .attr('data-slide-to', idx)
+        .addClass(player.html_id)
         .addClass(idx ? '' : 'active')
         .appendTo('.carousel-indicators');
 
     from_template('#playlist-template')
         .addClass(player.html_id)
-        .addClass(idx ? '' : 'visible')
-        .prependTo('#playlist')
+        .addClass(idx ? '' : 'active')
+        .appendTo('#playlist .modal-body')
 
     from_template('#volumes template')
         .addClass(player.html_id)
-        .appendTo('#volumes')
+        .appendTo('#volumes .modal-body')
 
     var $elm = $('.player.' + player.html_id);
 
@@ -233,16 +232,14 @@ function player_activated(player) {
         .find('.' + html_id)
         .addClass('active');
     $('#playlist')
-        .find('.visible')
-        .removeClass('visible')
+        .find('.active')
+        .removeClass('active')
         .end()
         .find('.' + html_id)
-        .addClass('visible');
+        .addClass('active');
     localStorage.setItem(STORAGE_KEY_ACTIVE_PLAYER,
                          html_id);
 }
-
-var browser_items;
 
 function server_ready(server) {
     log('Server ready');
@@ -270,21 +267,6 @@ function server_ready(server) {
     $('.carousel').on('slid.bs.carousel', ev => {
         /* after slide */
     });
-
-    /*
-      del bcswpe?
-      https://codepen.io/andrearufo/pen/rVWpyE
-    */
-
-    browser_items = [
-        "Local library",
-        "Favorites",
-        "Radio",
-        "Podcasts",
-        "Spotify"
-    ]
-
-    /*$('browser').*/
 }
 
 function player_updated(player) {
@@ -294,19 +276,31 @@ function player_updated(player) {
         player.track_artist,
         player.track_artwork_url);
 
+    var group = player.group;
+    var name = group.map(p => p.name).join('+')
+
     $('#playerslist .nav-item.' + player.html_id)
         .find('a')
-        .text(player.name);
+        .text(name);
 
     var $elm = $('.player.' + player.html_id);
 
     /* FIXME: Check if a value really changed first
        (premature optimization?) */
 
+    if (player.is_master) {
+
+    } else if (player.is_slave) {
+        /*$('#playerslist .nav-item.' + player.html_id).remove();
+        $('ol.carousel-indicators li.' + player.html_id).remove();
+        $elm.remove();*/
+    }
+
+
     $elm.find('.player-name')
-        .text(player.name);
+        .text(name);
     $elm.find('.player-id')
-        .text(player.id);
+        .text(group.map(p => p.id).join('+'));
     $elm.find('.artist')
         .text(player.track_artist);
     $elm.find('.album')
@@ -329,18 +323,18 @@ function player_updated(player) {
 
     $elm.removeClass('on off playing paused stopped ' +
                      'stream file')
-        .addClass((player.is_on ? 'on ' : 'off ') +
-                  (player.is_playing ? 'playing ' :
-                   player.is_paused ? 'paused ' :
-                   player.is_stopped ? 'stopped ' : '') +
-                  (player.is_stream ? 'stream ' : 'file '));
+        .addClass([player.is_on ? 'on' : 'off',
+                   player.is_playing ? 'playing' :
+                   player.is_paused ? 'paused' :
+                   player.is_stopped ? 'stopped' : '',
+                   player.is_synced ? 'synced' : 'unsynced',
+                   player.is_stream ? 'stream' : 'file'].join(' '));
 
-    $elm = $('.playlist.dropdown.' + player.html_id);
+    $elm = $('.playlist.' + player.html_id);
     if (player.playlist_timestamp != $elm.data(DATA_KEY_PLAYLIST_TIMESTAMP)) {
         log('Updating playlist', player.html_id);
         $elm.data(DATA_KEY_PLAYLIST_TIMESTAMP,
                   player.playlist_timestamp)
-            .find('.dropdown-menu')
             .empty()
             .append(player.playlist_tracks.map(
                 track =>
