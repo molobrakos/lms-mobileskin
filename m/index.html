@@ -43,41 +43,32 @@
       <div class="collapse navbar-collapse" id="content">
 
         <ul id="playerslist" class="navbar-nav mr-auto">
-          <li class="nav-item"><a class="nav-link" id="show-volumes" href="#"><span class="fa fa-volume-up"></span></a></li>
+
+          <li class="nav-item">
+            <a class="nav-link" id="show-volumes" href="#"
+               data-toggle="modal" data-target="#volumes">
+              <span class="fa fa-volume-up"></span></a></li>
+
           <template id="playerslist-template">
             <li class="nav-item"><a class="nav-link" href="#"></a></li>
           </template>
         </ul>
 
-        <ul id="playlist" class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" id="show-playlist" href="#"
+               data-toggle="modal" data-target="#playlist">
+              <span class="fa fa-list-ol"></span></a></li>
 
-          <!-- Playlist menu -->
+          <li class="nav-item">
+            <a class="nav-link" id="show-browser" href="#"
+               data-toggle="modal" data-target="#browser">
+              <span class="fa fa-music"></span></a></li>
 
-          <template id="playlist-template">
-            <li class="nav-item dropdown playlist">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                <span class="fa fa-list-ol"></span></a>
-              <div class="dropdown-menu">
-              </div>
-            </li>
-          </template>
-
-          <template id="playlist-item-template">
-            <a class="dropdown-item" href="#">
-              <div class="media">
-                <img class="cover align-self-start mr-3" src="">
-                <div class="media-body">
-                  <h6 class="mt-0 track"></h6>
-                  <span class="artist"></span>
-                  <span class="album"></span>
-                </div>
-              </div>
-            </a>
-          </template>
-
-          <li class="nav-item"><a class="nav-link" id="show-browser" href="#"><span class="fa fa-music"></span></a></li>
-          <li class="nav-item"><a class="nav-link" id="show-settings" href="#"><span class="fa fa-cog"></span></a></li>
-
+          <li class="nav-item">
+            <a class="nav-link" id="show-settings" href="#"
+               data-toggle="modal" data-target="#settings">
+              <span class="fa fa-cog"></span></a></li>
         </ul>
       </div>
     </nav>
@@ -111,7 +102,19 @@
               </div>
             </div> <!-- controls -->
             <div class="carousel-caption d-none d-block">
-              <h4 class="player-name"></h4>
+              <h4>
+                <span class="player-name"></span>
+                <button type="button" class="btn sync"><span class="sync fa fa-plus-square"></span></button>
+                <button type="button" class="btn unsync"><span class="sync fa fa-minus-square"></span></button>
+<!--
+                <li class="nav-item dropdown playlist">
+                  <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                    <span class="fa fa-list-ol"></span></a>
+                  <div class="dropdown-menu">
+                  </div>
+                  -->
+
+              </h4>
               <p class="player-id"></p>
             </div>
           </div> <!-- player carousel-item -->
@@ -128,61 +131,214 @@
 
     <!-- simple access too volume controls for all players -->
 
-    <div class="container bg-faded" id="volumes">
-      <template>
-        <div class="player media">
-          <img class="cover align-self-start mr-3" src="">
-          <div class="media-body">
-            <h5 class="mt-0 player-name"></h5>
-            <h4 class="track"></h4>
-            <h4 class="artist"></h4>
-            <div class="row justify-content-center align-items-center w-50">
-              <button type="button" class="volume_down btn rounded-circle"><span class="fa fa-volume-down"></span></button>
-              <div class="volume progress w-25"><div class="progress-bar"></div></div>
-              <button type="button" class="volume_up btn rounded-circle"><span class="fa fa-volume-up"></span></button>
-            </div>
+    <div class="modal fade" id="volumes">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Volumes</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <template>
+              <div class="player media">
+                <img class="cover align-self-start mr-3" src="">
+                <div class="media-body">
+                  <h5 class="mt-0 player-name"></h5>
+                  <h4 class="track"></h4>
+                  <h4 class="artist"></h4>
+                  <div class="row justify-content-center align-items-center w-50">
+                    <button type="button" class="volume_down btn rounded-circle"><span class="fa fa-volume-down"></span></button>
+                    <div class="volume progress w-25"><div class="progress-bar"></div></div>
+                    <button type="button" class="volume_up btn rounded-circle"><span class="fa fa-volume-up"></span></button>
+                  </div>
+                </div>
+              </div>
+            </template>
           </div>
         </div>
-      </template>
+      </div>
+    </div>
+
+    <!-- playlist -->
+
+    <div class="modal fade" id="playlist">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Playlist</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+
+            <template id="playlist-template">
+              <ol class="playlist list-group"></ol>
+            </template>
+
+            <template id="playlist-item-template">
+              <li class="media list-group-item">
+                <img class="cover d-flex align-self-start mr-3" src="">
+                <div class="media-body">
+                  <h5 class="mt-0 track"></h5>
+                  <span class="artist"></span>
+                  <span class="album"></span>
+                </div>
+              </li>
+            </template>
+
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- browser for local libray, favorites, podcasts, radio, spotify, etc -->
+    <!-- use bootstrap scrollspy for index -->
 
-    <div class="container bg-faded" id="browser">
-      <template>
-        <div class="player media">
-          <img class="cover align-self-start mr-3" src="">
-          <div class="media-body">
-            <h5 class="mt-0 player-name"></h5>
-            <h4 class="track"></h4>
-            <h4 class="artist"></h4>
-            <div class="row justify-content-center align-items-center w-50">
-              <button type="button" class="volume_down btn rounded-circle"><span class="fa fa-volume-down"></span></button>
-              <div class="volume progress w-25"><div class="progress-bar"></div></div>
-              <button type="button" class="volume_up btn rounded-circle"><span class="fa fa-volume-up"></span></button>
-            </div>
+    <div class="modal fade" id="browser">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+
+            <ol class="modal-title breadcrumb">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Library</a></li>
+              <li class="breadcrumb-item active">Data</li>
+            </ol>
+
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
           </div>
+          <div class="modal-body">
+
+            <ol class="navigator list-group"></ol>
+
+            <span class="fa fa-music">Library</span>
+            <span class="fa fa-star">Favorites</span>
+            <span class="fa fa-podcast">Radio</span>
+            <span class="fa fa-spotify">Spotify</span>
+            <span class="fa fa-feed">Podcasts</span>
+            <span class="fa fa-feed">Pocketcasts</span>
+          </div>
+          <template>
+            <li class="media">
+              <img class="cover align-self-start mr-3" src="">
+              <div class="media-body">
+                <h5 class="mt-0 player-name"></h5>
+                <h4 class="track"></h4>
+                <h4 class="artist"></h4>
+                <div class="row justify-content-center align-items-center w-50">
+                  <button type="button" class="volume_down btn rounded-circle"><span class="fa fa-volume-down"></span></button>
+                  <div class="volume progress w-25"><div class="progress-bar"></div></div>
+                  <button type="button" class="volume_up btn rounded-circle"><span class="fa fa-volume-up"></span></button>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
-      </template>
+      </div>
     </div>
 
     <!-- preferences -->
+    <!--
+    debug log overlay?
+    update clock overlay top right
+    -->
 
-    <div class="container bg-faded" id="settings">
-      <h1>Settings</h1>
+    <div class="modal fade" id="settings">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Settings</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <form class="modal-body">
+            <div class="form-group">
+            </div>
+            <div class="form-group">
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input type="checkbox" class="form-check-input">
+                Auto-sync players
+              </label>
+            </div>
+
+            [% IF url_query == "debug" %]
+
+            <dl>
+              <dt>Screen size (w&times;h)</dt>
+              <dd id="screen_size"></dd>
+
+              <dt>Screen size, device pixels (w&times;h)</dt>
+              <dd id="screen_size_dp"></dd>
+
+              <dt>Bootstrap screen size</dt>
+              <dd id="screen_size_bs">
+                <span class="d-sm-none">xs (&lt;576px)</span>
+                <span class="d-none d-sm-block d-md-none d-lg-none d-xl-none">sm (&ge;576px)</span>
+                <span class="d-none d-md-block d-lg-none d-xl-none">md (&ge;768px)</span>
+                <span class="d-none d-lg-block d-xl-none">lg (&ge;992px)</span>
+                <span class="d-none d-xl-block">xl (&ge;1200px)</span>
+              </dd>
+
+              <dt>Touch</dt>
+              <dd id="is_touch"></dd>
+
+              <dt>url query</dt>
+              <dd>[% url_query %]</dd>
+
+              <dt>content-type</dt>
+              <dd>[% content-type %]</dd>
+
+              <dt>path</dt>
+              <dd>[% path %]</dd>
+
+              <dt>host</dt>
+              <dd>[% host %]</dd>
+
+              <dt>webroot</dt>
+              <dd>[% webroot %]</dd>
+
+              <dt>skinOverride</dt>
+              <dd>[% skinOverride %]</dd>
+
+              <dt>userAgent</dt>
+              <dd>[% userAgent %]</dd>
+
+              <dt>browserType</dt>
+              <dd>[% browserType %]</dd>
+            </dl>
+
+            [% END %]
+
+            <a href="/Default">Standard skin</a><br/>
+
+            [% IF url_query == "debug" %]
+            <a class="debug-off" href="[% webroot %]">Turn debug off</a>
+            [% ELSE %]
+            <a class="debug-on" href="[% webroot %]?debug">Turn debug on</a>
+            [% END %]
+
+          </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- footer -->
-    <!--
-    <footer class="footer bg-faded mx-auto mt-2">
-      <div class="container">
-        <span class="text-muted"><a href="/Default">Desktop skin</a></span>
-        &nbsp; | &nbsp;
-        <span class="text-muted debug-on"><a href="/m/?debug">Debug on</a></span>
-        <span class="text-muted debug-off"><a href="/m">Debug off</a></span>
-        <span id="debug"></span>
-      </div>
-    </footer>-->
+    [% IF url_query == "debug" %]
+    <span id="debug"></span>
+    [% END %]
+
   </body>
 
   [% IF url_query == "debug" %]
@@ -224,13 +380,3 @@
   <script src="[% webroot %]m.js"></script>
 
 </html>
-
-
-<!-- settings screen -->
-<!--
-link to default skin
-link turn on/off debug
-debug log overlay?
-update clock overlay top right
-debug: display screen size etc + lg/md/etc
--->
