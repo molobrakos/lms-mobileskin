@@ -133,6 +133,33 @@ class Player {
             }});
     }
 
+    get is_synced() {
+        return this.master;
+    }
+
+    get is_master() {
+        return this.master == this;
+    }
+
+    get is_slave() {
+        return this.master && !this.is_master;
+    }
+
+    get master() {
+        return this._state.sync_master && this._server._players[this._state.sync_master];
+    }
+
+    get slaves() {
+        return this._state.sync_slaves ?
+            this._state.sync_slaves.split(',').map(
+                id => this._server._players[id]) : [];
+    }
+
+    get group() {
+        /* return list of all players in sync group */
+        return this.is_slave ? this.master.group : [this].concat(this.slaves)
+    }
+
     get ip() {
         return this._player_data.ip;
     }
