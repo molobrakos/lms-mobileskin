@@ -56,7 +56,7 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 /* playlist */
 
 .playlist { display: none; }
-.playlist.visible { display: block; }
+.playlist.active { display: block; }
 .media img.cover { height: 64px; width: 64px; }
 .media .artist { min-height: 1rem; }
 
@@ -85,9 +85,6 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 
 body .player-id { display: none; }
 body.debug .player-id { display: inline; }
-body.debug .debug-on { display: none; }
-body .debug-off { display: none; }
-body.debug .debug-off { display: inline; }
 
 .progress.duration { border-radius: 0; margin-bottom: 1rem; }
 .progress-title { position: absolute; right: 0; left: 0; color: white; mix-blend-mode: difference; } /* FIXME: get this to work somehow, white text on blue bg, black text on grey bg */
@@ -106,6 +103,9 @@ body.debug .debug-off { display: inline; }
 .player.stream .duration.progress { background-color: transparent; }
 .player.stream .gduration.progress .progress-title { color: white; mix-blend-mode: initial; }
 
+.player.synced button.sync { display: inline; }
+.player.unsynced button.unsync { display: none; }
+
 #volumes { display: none; }
 #browser { display: none; }
 #settings { display: none; }
@@ -116,3 +116,8 @@ body.debug .debug-off { display: inline; }
     transition: transform 0.3s ease;
     transition: transform 0.3s ease, -webkit-transform 0.3s ease;
 }
+
+#debug { position: absolute;
+         top: 100;
+         left: 100;
+         z-index: 10; }
