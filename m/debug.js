@@ -3,9 +3,15 @@
 $('head').append(`
 <style>
 #console-log { background-color: black;
+               opacity: .5;
+               z-index: 2;
                color: white;
+               position: absolute;
+               top: 0;
+               left: 0;
                width: 100%;
-               max-height: 300px;
+               height: 100%;
+               pointer-events: none;
                overflow: auto;
                list-style-type: none;
                margin: 0;
@@ -71,4 +77,8 @@ $(function() {
     window.log = (...args) => {
         _log(_timestamp(), args);
     }
+    var ratio = window.devicePixelRatio || 1;
+    $('#screen_size').text(screen.width + '\u00D7' + screen.height)
+    $('#screen_size_dp').text(screen.width * ratio + '\u00D7' + screen.height * ratio + ' (ratio: ' + ratio + ')');
+    $('#is_touch').text('ontouchstart' in document.documentElement);
 });
