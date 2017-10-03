@@ -55,6 +55,21 @@
         </ul>
 
         <ul class="navbar-nav ml-auto">
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#"
+               data-toggle="dropdown">
+              <span class="fa fa-link"></span></a>
+
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#">p1</a>
+              <a class="dropdown-item" href="#">p2</a>
+              <a class="dropdown-item" href="#">p3</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">unsync</a>
+            </div>
+          </li>
+
           <li class="nav-item">
             <a class="nav-link" id="show-playlist" href="#"
                data-toggle="modal" data-target="#playlist">
@@ -69,6 +84,7 @@
             <a class="nav-link" id="show-settings" href="#"
                data-toggle="modal" data-target="#settings">
               <span class="fa fa-cog"></span></a></li>
+
         </ul>
       </div>
     </nav>
@@ -104,16 +120,6 @@
             <div class="carousel-caption d-none d-block">
               <h4>
                 <span class="player-name"></span>
-                <button type="button" class="btn sync"><span class="sync fa fa-plus-square"></span></button>
-                <button type="button" class="btn unsync"><span class="sync fa fa-minus-square"></span></button>
-<!--
-                <li class="nav-item dropdown playlist">
-                  <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                    <span class="fa fa-list-ol"></span></a>
-                  <div class="dropdown-menu">
-                  </div>
-                  -->
-
               </h4>
               <p class="player-id"></p>
             </div>
@@ -246,10 +252,6 @@
     </div>
 
     <!-- preferences -->
-    <!--
-    debug log overlay?
-    update clock overlay top right
-    -->
 
     <div class="modal fade" id="settings">
       <div class="modal-dialog modal-lg" role="document">

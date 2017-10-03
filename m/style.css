@@ -77,14 +77,14 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
                    color: white;
                  }
 
-.player .btn {
+.player .controls .btn {
     width: 4rem;
     height: 4rem;
     font-size: 1.2rem;
     margin: 0.2rem;
 }
 
-.player .btn-xl {
+.player .controls .btn-xl {
     width: 8rem;
     height: 8rem;
     font-size: 2rem;
