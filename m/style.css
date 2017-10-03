@@ -17,65 +17,72 @@ html {
     font-size: 10px;
 }
 
+/* FIXME: handla landscape as well */
+
 @media (max-width: 575px) {
-    html { font-size: 10px; }
-    .player img.cover { width: 150px; height: 150px; }
-    .player .progress.duration { width: 150px; }
+    html { font-size: 12px; }
+    .player img.cover { width: 250px; height: 250px; }
+    .player .progress.duration { width: 250px; }
 }
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
     html { font-size: 12px; }
-    .player img.cover { width: 150px; height: 150px; }
-    .player .progress.duration { width: 150px; }
+    .player img.cover { width: 250px; height: 250px; }
+    .player .progress.duration { width: 250px; }
 }
 
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
-    html { font-size: 12px; }
-    .player img.cover { width: 200px; height: 200px; }
-    .player .progress.duration { width: 200px; }
+    html { font-size: 14px; }
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-    html { font-size: 14px; }
-    .player img.cover { width: 200px; height: 200px; }
-    .player .progress.duration { width: 200px; }
+    html { font-size: 16px; }
 }
 
 /* Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
-    html { font-size: 14px; }
+    html { font-size: 18px; }
+}
+
+@media (min-width: 1200px) and (min-height: 1200px) {
     .player img.cover { width: 300px; height: 300px; }
     .player .progress.duration { width: 300px; }
 }
 
-/*
+#players .player { padding-top: 5rem; }
+
+@media (max-height: 500px) {
+    .player img.cover { width: 100px; height: 100px; }
+    .player .progress.duration { width: 100px; }
+}
+
+@media (min-height: 992px) and (min-width: 1200px) {
+    .player { padding-top: 20rem; }
+}
+
 h1, h2, h3, h4, h5 ,h6 { max-width: 100%;
                          white-space: nowrap;
                          overflow: hidden;
                          text-overflow: ellipsis; }
 
-h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; }
-*/
+/*h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; } */
 
 /* playlist */
 
 .playlist { display: none; }
 .playlist.active { display: block; }
-.media img.cover { height: 64px; width: 64px; }
+.media img.cover { height: 8rem; width: 8rem; }
 .media .artist { min-height: 1rem; }
 
 /* player */
 
-.player { padding-top: 10rem; }
-
 #players { display: none; } /* hide initially */
 
 #players .player { padding-bottom: 10rem;
-                   color: white;
-                 }
+                   color: white; }
 
 .player .controls .btn {
     width: 4rem;
@@ -113,9 +120,7 @@ body.debug .player-id { display: inline; }
 .player.synced button.sync { display: inline; }
 .player.unsynced button.unsync { display: none; }
 
-#volumes { display: none; }
-#browser { display: none; }
-#settings { display: none; }
+#volumes .progress { }
 
 /* faster sliding speed */
 .carousel-item {

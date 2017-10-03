@@ -277,7 +277,7 @@ function player_updated(player) {
         player.track_artwork_url);
 
     var group = player.group;
-    var name = group.map(p => p.name).join('+')
+    var name = player.name; /*group.map(p => p.name).join('+') */
 
     $('#playerslist .nav-item.' + player.html_id)
         .find('a')

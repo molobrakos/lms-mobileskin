@@ -43,18 +43,17 @@
       <div class="collapse navbar-collapse" id="content">
 
         <ul id="playerslist" class="navbar-nav mr-auto">
-
-          <li class="nav-item">
-            <a class="nav-link" id="show-volumes" href="#"
-               data-toggle="modal" data-target="#volumes">
-              <span class="fa fa-volume-up"></span></a></li>
-
           <template id="playerslist-template">
             <li class="nav-item"><a class="nav-link" href="#"></a></li>
           </template>
         </ul>
 
         <ul class="navbar-nav ml-auto">
+
+          <li class="nav-item">
+            <a class="nav-link" id="show-volumes" href="#"
+               data-toggle="modal" data-target="#volumes">
+              <span class="fa fa-volume-up"></span></a></li>
 
           <li class="nav-item dropdown dropdown-menu-right">
             <a class="nav-link dropdown-toggle" href="#"
@@ -125,10 +124,10 @@
               </div>
             </div> <!-- controls -->
             <div class="carousel-caption d-none d-block">
-              <h4>
-                <span class="player-name"></span>
-              </h4>
+              <h5 class="player-name"></h5>
+              [% IF url_query == "debug" %]
               <p class="player-id"></p>
+              [% END %]
             </div>
           </div> <!-- player carousel-item -->
         </template>
@@ -154,21 +153,25 @@
             </button>
           </div>
           <div class="modal-body">
-            <template>
-              <div class="player media">
-                <img class="cover align-self-start mr-3" src="">
-                <div class="media-body">
-                  <h5 class="mt-0 player-name"></h5>
-                  <h4 class="track"></h4>
-                  <h4 class="artist"></h4>
-                  <div class="row justify-content-center align-items-center w-50">
-                    <button type="button" class="volume_down btn rounded-circle"><span class="fa fa-volume-down"></span></button>
-                    <div class="volume progress w-25"><div class="progress-bar"></div></div>
-                    <button type="button" class="volume_up btn rounded-circle"><span class="fa fa-volume-up"></span></button>
+            <ol class="playlist list-group">
+              <template>
+                <li class="list-group-item player">
+                  <div class="media">
+                    <img class="cover align-self-start mr-3" src="">
+                    <div class="media-body">
+                      <h4 class="mt-0 player-name"></h4>
+                      <h6 class="track"></h6>
+                      <h6 class="artist"></h6>
+                      <div class="row justify-content-center align-items-center">
+                        <button type="button" class="volume_down btn rounded-circle"><span class="fa fa-volume-down"></span></button>
+                        <div class="volume progress w-50 mx-2"><div class="progress-bar"></div></div>
+                        <button type="button" class="volume_up btn rounded-circle"><span class="fa fa-volume-up"></span></button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </template>
+                </li>
+              </template>
+            </ol>
           </div>
         </div>
       </div>
@@ -211,7 +214,7 @@
     </div>
 
     <!-- browser for local libray, favorites, podcasts, radio, spotify, etc -->
-    <!-- use bootstrap scrollspy for index -->
+    <!-- FIXME: use bootstrap scrollspy for index -->
 
     <div class="modal fade" id="browser">
       <div class="modal-dialog modal-lg" role="document">
@@ -247,11 +250,6 @@
                 <h5 class="mt-0 player-name"></h5>
                 <h4 class="track"></h4>
                 <h4 class="artist"></h4>
-                <div class="row justify-content-center align-items-center w-50">
-                  <button type="button" class="volume_down btn rounded-circle"><span class="fa fa-volume-down"></span></button>
-                  <div class="volume progress w-25"><div class="progress-bar"></div></div>
-                  <button type="button" class="volume_up btn rounded-circle"><span class="fa fa-volume-up"></span></button>
-                </div>
               </div>
         </div>
           </template>
