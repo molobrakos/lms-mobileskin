@@ -15,7 +15,10 @@ class Server {
         this.on_player_created = params.on_player_created;
         this.on_player_updated = params.on_player_updated;
         this.on_server_ready = params.on_server_ready;
-        this.update();
+        this.update().then(() => {
+            this.update_players();
+            this.on_server_ready(this);
+        });
     }
 
     get players() {
@@ -23,28 +26,22 @@ class Server {
     }
 
     update() {
-        this.rpc({
-            params: [ '', [ 'serverstatus', '-' ] ],
-            success: res => {
+        return this.rpc('', [ 'serverstatus', '-' ])
+            .then(res => {
                 res &&
                     res.result &&
                     res.result.players_loop &&
                     $(res.result.players_loop).each(
                         (_, player_data) => {
                             var player = this._players[player_data.playerid] || new Player(this, player_data)
-                            if (player.id in this._players)
-                                player._update(player_data)
-                            else {
+                            if (!(player.id in this._players)) {
                                 this.on_player_created(
                                     this,
                                     this._players[player.id] = player);
-                                player.update();
                             }
                         }
-                    ) &&
-                    this.on_server_ready(this);
-            }
-        });
+                    );
+            });
     }
 
     update_players() {
@@ -53,22 +50,20 @@ class Server {
         );
     }
 
-    rpc(config) {
+    rpc(...params) {
         var data = {
             id: 1,
             method: 'slim.request',
-            params: config.params,
+            params: params,
         }
         log('RPC query ', data);
-        $.post({
+        return $.post({
             url: '/jsonrpc.js',
             data: JSON.stringify(data),
-            timeout: AJAX_TIMEOUT,
-            success: res => {
-                log('RPC response ', res);
-                config.success && config.success(res)
-            },
-            error: config.error
+            timeout: AJAX_TIMEOUT
+        }).then(res => {
+            log('RPC response ', res);
+            return res;
         });
     }
 }
@@ -89,46 +84,37 @@ class Player {
         log('Created player', this.id);
     }
 
-    query(params) {
-        this._server.rpc({
-            params: [ this.id, params.params ],
-            success: params.success,
-        });
-    }
-
-    _update(state) {
-        /* reset local timestamp if different from server to force full playlist refetch */
-        this._playlist_timestamp =
-            this._playlist_timestamp &&
-            this._playlist_timestamp != state.playlist_timestamp
-            ? 0 : state.playlist_timestamp;
-
-        this._state = $.extend(
-            state,
-            state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
-            state.remoteMeta || {});
-
-        log('State', this._state);
-        this._server.on_player_updated(this);
+    query(...params) {
+        return this._server.rpc(this.id, ...params);
     }
 
     update() {
-        this.query({
-            params: this._playlist_timestamp
-                ? ['status', '-', '1',  'tags:adKl']  /* only fetch current track */
-                : ['status', '0', '99', 'tags:adKl'], /* fetch full playlist */
-            success: res => {
-                this._update(res.result);
-            }
-        });
+        this.query(this._playlist_timestamp
+                   ? ['status', '-', '1',  'tags:adKl']  /* only fetch current track */
+                   : ['status', '0', '99', 'tags:adKl']) /* fetch full playlist */
+            .then(res => {
+                var state = res.result;
+                /* reset local timestamp if different from server to force full playlist refetch */
+                this._playlist_timestamp =
+                    this._playlist_timestamp &&
+                    this._playlist_timestamp != state.playlist_timestamp
+                    ? 0 : state.playlist_timestamp;
+
+                this._state = $.extend(
+                    state,
+                    state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
+                    state.remoteMeta || {});
+
+                log('State', this._state);
+                this._server.on_player_updated(this);
+            });
     }
 
     _command(...params) {
-        return this.query({
-            params: params,
-            success: res => {
+        return this.query(params)
+            .then(res => {
                 this.update();
-            }});
+            });
     }
 
     get is_synced() {

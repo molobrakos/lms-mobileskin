@@ -291,9 +291,15 @@ function player_updated(player) {
     if (player.is_master) {
 
     } else if (player.is_slave) {
-        /*$('#playerslist .nav-item.' + player.html_id).remove();
+        /*
+          if ($elm.hasClass('active'))
+          $('.carousel').carousel('next');
+          */
+        /*
+        $('#playerslist .nav-item.' + player.html_id).remove();
         $('ol.carousel-indicators li.' + player.html_id).remove();
-        $elm.remove();*/
+        $elm.remove();
+        */
     }
 
 
