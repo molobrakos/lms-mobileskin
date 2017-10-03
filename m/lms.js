@@ -104,8 +104,6 @@ class Player {
             ? 0 : state.playlist_timestamp;
 
         this._state = $.extend(
-            true, /* deep */
-            this._player_data,
             state,
             state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
             state.remoteMeta || {});
