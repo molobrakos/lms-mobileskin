@@ -349,7 +349,7 @@ function player_updated(player) {
                         alert('track clicked');
                     })
                     .find('.cover')
-                    .attr('src', track.artwork_url || '/music/0/cover_32x32.png')
+                    .attr('src', track.artwork_url || '/music/' + track.id + '/cover.jpg') /* '/music/0/cover_32x32.png' */
                     .end()
                     .find('.track')
                     .text(track.title)
