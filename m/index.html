@@ -56,17 +56,24 @@
 
         <ul class="navbar-nav ml-auto">
 
-          <li class="nav-item dropdown">
+          <li class="nav-item dropdown dropdown-menu-right">
             <a class="nav-link dropdown-toggle" href="#"
                data-toggle="dropdown">
               <span class="fa fa-link"></span></a>
 
             <div class="dropdown-menu">
+              <h6 class="dropdown-header">Sync player to</h6>
               <a class="dropdown-item" href="#">p1</a>
-              <a class="dropdown-item" href="#">p2</a>
-              <a class="dropdown-item" href="#">p3</a>
+              <a class="dropdown-item" href="#">p2+p3</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">unsync</a>
+              <h6 class="dropdown-header">Preset groups</h6>
+              <a class="dropdown-item" href="#">p1 + p2</a>
+              <a class="dropdown-item" href="#">p1 + p3</a>
+              <a class="dropdown-item" href="#">Party mode</a>
+              <div class="dropdown-divider"></div>
+              <h6 class="dropdown-header">Unsync</h6>
+              <a class="dropdown-item" href="#">This player</a>
+              <a class="dropdown-item" href="#">All</a>
             </div>
           </li>
 
@@ -135,7 +142,7 @@
       </a>
     </div> <!-- players carousel -->
 
-    <!-- simple access too volume controls for all players -->
+    <!-- volume controls -->
 
     <div class="modal fade" id="volumes">
       <div class="modal-dialog modal-lg" role="document">
@@ -232,6 +239,7 @@
             <span class="fa fa-feed">Podcasts</span>
             <span class="fa fa-feed">Pocketcasts</span>
           </div>
+
           <template>
             <li class="media">
               <img class="cover align-self-start mr-3" src="">
@@ -245,7 +253,7 @@
                   <button type="button" class="volume_up btn rounded-circle"><span class="fa fa-volume-up"></span></button>
                 </div>
               </div>
-            </div>
+        </div>
           </template>
         </div>
       </div>

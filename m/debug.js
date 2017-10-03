@@ -69,13 +69,12 @@ $(document).ajaxSuccess(function(ev, xhr, settings, data) {
         .removeClass()
         .addClass('alert alert-success')
         .text(t);
-    _log(t, 'Ajax success');
 });
 
 $(function() {
     $('body').append($('<ul id="console-log"></ul>'));
     window.log = (...args) => {
-        _log(_timestamp(), args);
+        _log(_timestamp(), ...args);
     }
     var ratio = window.devicePixelRatio || 1;
     $('#screen_size').text(screen.width + '\u00D7' + screen.height)
