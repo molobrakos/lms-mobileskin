@@ -67,7 +67,9 @@ function from_template(selector) {
 
 function formatTime(s) {
     /* seconds -> 'mm:ss' or 'hh:mm:ss' */
-    return s > 3600 ?
+    return s < 0 ?
+        '-' + formatTime(-s)
+        : s > 3600 ?
         new Date(1000 * s).toISOString().slice(11, -5) :
         new Date(1000 * s).toISOString().slice(14, -5);
 }
@@ -82,73 +84,13 @@ var active_player = null;
 
 $('.carousel').carousel({interval:false}); /* Do not auto-rotate */
 
-/* FIXME: extract common logic below */
-/*
-$('#show-volumes').click(() => {
-    $('.navbar-collapse').collapse('hide');
-    if ($('#volumes').is(':visible')) {
-        player_activated(active_player);
-        $('#players').slideDown();
-        $('#volumes').slideUp();
-    } else {
-        $('#playerslist.navbar-nav')
-            .find('.active')
-            .removeClass('active');
-        $('#players').slideUp();
-        $('#volumes').slideDown();
-    }
-});
-$('#show-browser').click(() => {
-    $('.navbar-collapse').collapse('hide');
-    if ($('#browser').is(':visible')) {
-        player_activated(active_player);
-        $('#players').slideDown();
-        $('#browser').slideUp();
-    } else {
-        $('#playerslist.navbar-nav')
-            .find('.active')
-            .removeClass('active');
-        $('#browser').slideDown();
-        $('#players').slideUp();
-    }
-});
-$('#show-settings').click(() => {
-    $('.navbar-collapse').collapse('hide');
-    if ($('#settings').is(':visible')) {
-        player_activated(active_player);
-        $('#players').show();
-        $('#settings').hide();
-    } else {
-        $('#playerslist.navbar-nav')
-            .find('.active')
-            .removeClass('active');
-        $('#settings').show();
-        $('#players').hide();
-    }
-});
-$('#show-playtlist').click(() => {
-    $('.navbar-collapse').collapse('hide');
-    if ($('#browser').is(':visible')) {
-        player_activated(active_player);
-        $('#players').slideDown();
-        $('#browser').slideUp();
-    } else {
-        $('#playerslist.navbar-nav')
-            .find('.active')
-            .removeClass('active');
-        $('#browser').slideDown();
-        $('#players').slideUp();
-    }
-});
-*/
-
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
 /* Startup                                                                  */
 /*                                                                          */
 /* ------------------------------------------------------------------------ */
 
-function player_created(server, player) {
+function player_created(_, server, player) {
     var idx = server.players.length - 1;
 
     log('New player', idx, player.name);
@@ -189,12 +131,10 @@ function player_created(server, player) {
 
     var $elm = $('.player.' + player.html_id);
 
-    $(['play', 'pause', 'stop',
-       'previous', 'next',
-       'volume_up', 'volume_down']).each((_, action) => {
-           $elm.find('button.'+action).click(() => {
-               player[action]();
-           })});
+    ['play', 'pause', 'stop', 'previous', 'next', 'volume_up', 'volume_down']
+        .forEach(action => $elm.find(
+            'button.'+action).click(() => player[action]())
+                );
 
     $elm.find('.progress.volume').click(e => {
         /* FIXME: Also allow sliding the volume control */
@@ -241,7 +181,7 @@ function player_activated(player) {
                          html_id);
 }
 
-function server_ready(server) {
+function server_ready(_, server) {
     log('Server ready');
 
     var last_active_idx = Math.max(
@@ -267,9 +207,36 @@ function server_ready(server) {
     $('.carousel').on('slid.bs.carousel', ev => {
         /* after slide */
     });
+
+    function browse_menu(menu_items) {
+        $('#browser .menu')
+            .empty()
+            .append(menu_items.map(
+                item =>
+                    from_template('#menu-item-template')
+                    .click(() => {
+                        log('Clicked', item);
+                        if (item.hasitems)
+                            alert('has items');
+                        else if (item.action)
+                            item.action().then(
+                                res => browse_menu(res));
+                        else
+                            alert('ok');
+                    })
+                    .find('.title')
+                    .text(item.name || item.filename)
+                    .end()
+                    .find('.icon')
+                    .attr('src', item.icon || '/music/' + item.id + '/cover.jpg')
+                    .end()
+            ));
+    }
+
+    $('#browser').on('show.bs.modal', ev => browse_menu(server.menu));
 }
 
-function player_updated(player) {
+function player_updated(_, player) {
     log('Updated',
         player.id,
         player.track_title,
@@ -285,9 +252,6 @@ function player_updated(player) {
 
     var $elm = $('.player.' + player.html_id);
 
-    /* FIXME: Check if a value really changed first
-       (premature optimization?) */
-
     if (player.is_master) {
 
     } else if (player.is_slave) {
@@ -302,6 +266,9 @@ function player_updated(player) {
         */
     }
 
+
+    /* FIXME: Check first if a value really changed before setting it?
+       (premature optimization?) */
 
     $elm.find('.player-name')
         .text(name);
@@ -319,11 +286,11 @@ function player_updated(player) {
         .width((player.track_duration > 0 ?
                 100 * player.track_position / player.track_duration : 0) + '%');
     $elm.find('.duration .progress-title')
-        .text(formatTime(player.track_position) +
-              (player.is_stream ? '' :
-               ' | ' + formatTime(player.track_duration) +
-               ' | -' + formatTime(player.track_duration -
-                                   player.track_position)));
+        .text(player.is_stream ?
+              formatTime(player.track_position) :
+              [formatTime(player.track_position),
+               formatTime(player.track_duration),
+               formatTime(player.track_remaining)].join(' | '));
     $elm.find('.volume .progress-bar')
         .width(player.volume + '%');
 
@@ -365,7 +332,8 @@ function player_updated(player) {
 }
 
 $(() => {
-    new Server({on_player_created: player_created,
-                on_player_updated: player_updated,
-                on_server_ready: server_ready});
+    $(new Server())
+        .on('player_created', player_created)
+        .on('player_updated', player_updated)
+        .one('server_ready', server_ready);
 });
