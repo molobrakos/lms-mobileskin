@@ -12,12 +12,10 @@ class Server {
 
     constructor(params) {
         this._players = {};
-        this.on_player_created = params.on_player_created;
-        this.on_player_updated = params.on_player_updated;
-        this.on_server_ready = params.on_server_ready;
+        this._menu = {};
         this.update().then(() => {
             this.update_players();
-            this.on_server_ready(this);
+            $(this).trigger('server_ready', this);
         });
     }
 
@@ -26,28 +24,73 @@ class Server {
     }
 
     update() {
+
+        this.rpc('', [ 'syncgroups', '?' ]).then(res => {
+            log("Sync groups:", res.result);
+        });
+
         return this.rpc('', [ 'serverstatus', '-' ])
             .then(res => {
                 res &&
                     res.result &&
                     res.result.players_loop &&
-                    $(res.result.players_loop).each(
-                        (_, player_data) => {
-                            var player = this._players[player_data.playerid] || new Player(this, player_data)
-                            if (!(player.id in this._players)) {
-                                this.on_player_created(
-                                    this,
-                                    this._players[player.id] = player);
-                            }
+                    res.result.players_loop.forEach(player_data => {
+                        var player = this._players[player_data.playerid] || new Player(this, player_data)
+                        if (!(player.id in this._players)) {
+                            $(this).trigger(
+                                'player_created',
+                                [this,
+                                 this._players[player.id] = player]);
                         }
-                    );
+                    });
+            })
+    }
+
+    get menu() {
+
+        var menu_item = (...what) => {
+            /* perform rpc call, return any result param containing loop
+               radios_loop, apps_loop, etc */
+            return this.rpc('', [ ...what, 0, 999]).then(
+                res => res.result[Object.keys(res.result).find(key => /loop/.test(key))])
+        }
+
+        return ([[ 'Favorites', 'favorites', 'items' ],
+                 [ 'Apps', 'apps' ],
+                 [ 'Radio', 'radios' ],
+                 [ 'Folder', 'musicfolder' ]])
+            .map(item => { return { name: item[0],
+                                    action: menu_item.bind(null, ...item.slice(1)) }});
+
+
+        /*
+        menu_item('radios').then(res => {
+            log('radios', res);
             });
+
+        log('MENU', menu);
+        */
+
+        /*
+
+            /*
+            var apps = reply.result.appss_loop;
+                    var dir = __dirname + '/';
+                    fs.readdir(dir, function (err, files) {
+                        files.forEach(function (file) {
+                            var fil = file.substr(0, file.lastIndexOf("."));
+                            for (var pl in apps) {
+                                if (fil === apps[pl].cmd) {
+                                    var app = require(dir + file);
+                                    self.apps[apps[pl].cmd] = new app(defaultPlayer, apps[pl].name, apps[pl].cmd, self.address, self.port);
+                                    }
+                                    }
+                                    });
+            */
     }
 
     update_players() {
-        $(this.players).each(
-            (_, player) => { player.update(); }
-        );
+        this.players.forEach(player => player.update());
     }
 
     rpc(...params) {
@@ -56,13 +99,13 @@ class Server {
             method: 'slim.request',
             params: params,
         }
-        log('RPC query ', data);
+        log('RPC query ', data.params[1], data);
         return $.post({
             url: '/jsonrpc.js',
             data: JSON.stringify(data),
             timeout: AJAX_TIMEOUT
         }).then(res => {
-            log('RPC response ', res);
+            log('RPC response ', res.result, res);
             return res;
         });
     }
@@ -91,7 +134,7 @@ class Player {
     update() {
         this.query(this._playlist_timestamp
                    ? ['status', '-', '1',  'tags:adKl']  /* only fetch current track */
-                   : ['status', '0', '99', 'tags:adKl']) /* fetch full playlist */
+                   : ['status', '0', '999', 'tags:adKl']) /* fetch full playlist */
             .then(res => {
                 var state = res.result;
                 /* reset local timestamp if different from server to force full playlist refetch */
@@ -106,7 +149,7 @@ class Player {
                     state.remoteMeta || {});
 
                 log('State', this._state);
-                this._server.on_player_updated(this);
+                $(this._server).trigger('player_updated', this);
             });
     }
 
@@ -115,6 +158,14 @@ class Player {
             .then(res => {
                 this.update();
             });
+    }
+
+    power_on() {
+        this._command('power', 1);
+    }
+
+    power_off() {
+        this._command('power', 0);
     }
 
     get is_synced() {
@@ -191,6 +242,10 @@ class Player {
 
     get track_duration() {
         return this._state.duration || 0;
+    }
+
+    get track_remaining() {
+        return this.track_position - this.track_duration;
     }
 
     get is_on() {
@@ -272,4 +327,29 @@ class Player {
     get playlist_timestamp() {
         return this._state['playlist_timestamp'];
     }
+
+    playlist_delete(idx) {
+        this._command('playlist', 'delete', idx);
+    }
+
+    playlist_move(from, to) {
+        this._command('playlist', 'move', from, to);
+    }
+
+    playlist_save(name) {
+        this._command('playlist', 'save', name);
+    }
+
+    playlist_add(item) {
+        this._command('playlist', 'add', item);
+    }
+
+    playlist_insert(item) {
+        this._command('playlist', 'insert', item);
+    }
+
+    play_favorite(fav) {
+        this._command('favorites', 'playlist', 'play', 'item_id:' + fav);
+    }
+
 }
