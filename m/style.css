@@ -1,6 +1,6 @@
 /* override bootstrap defaults */
 
-body { padding-top: 3rem;
+body { padding-top: 2rem;
        height: 100%;
        width: 100%;
        position: absolute; }
@@ -20,9 +20,9 @@ html {
 /* FIXME: handla landscape as well */
 
 @media (max-width: 575px) {
-    html { font-size: 12px; }
-    #players .player img.cover { width: 250px; height: 250px; }
-    #players .player .progress.duration { width: 250px; }
+    html { font-size: 10px; }
+    #players .player img.cover { width: 200px; height: 200px; }
+    #players .player .progress.duration { width: 200px; }
 }
 
 /* Small devices (landscape phones, 576px and up) */
@@ -52,7 +52,7 @@ html {
     #players .player .progress.duration { width: 300px; }
 }
 
-#players .player { padding-top: 5rem; }
+#players .player { padding-top: 4rem; }
 
 @media (max-height: 500px) {
     #players .player img.cover { width: 100px; height: 100px; }
