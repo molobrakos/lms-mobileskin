@@ -142,6 +142,7 @@
     </div> <!-- players carousel -->
 
     <!-- volume controls -->
+    <!-- FIXME: merge these modals -->
 
     <div class="modal fade" id="volumes">
       <div class="modal-dialog modal-lg" role="document">
@@ -203,6 +204,10 @@
                     <h5 class="mt-0 track"></h5>
                     <h6 class="artist"></h6>
                     <h6 class="album"></h6>
+                    <button type="button" class="btn"><span class="fa fa-arrow-circle-up"></span></button>
+                    <button type="button" class="btn"><span class="fa fa-arrow-circle-down"></span></button>
+                    <button type="button" class="btn"><span class="fa fa-play"></span></button>
+                    <button type="button" class="btn"><span class="fa fa-heart"></span></button>
                   </div>
                 </div>
               </li>
@@ -233,14 +238,32 @@
           </div>
           <div class="modal-body">
 
-            <ol class="navigator list-group"></ol>
+            <ol class="menu list-group">
+            </ol>
 
-            <span class="fa fa-music">Library</span>
-            <span class="fa fa-star">Favorites</span>
-            <span class="fa fa-podcast">Radio</span>
-            <span class="fa fa-spotify">Spotify</span>
-            <span class="fa fa-feed">Podcasts</span>
-            <span class="fa fa-feed">Pocketcasts</span>
+            <template id="menu-item-template">
+              <li class="list-group-item">
+                <div class="media">
+                  <img class="icon cover d-flex align-self-start mr-3" src="">
+                  <div class="media-body">
+                    <h5 class="mt-0 track title"></h5>
+                    <h6 class="artist"></h6>
+                    <h6 class="album"></h6>
+                    <button type="button" class="btn"><span class="fa fa-play"></span></button>
+                  </div>
+                </div>
+              </li>
+            </template>
+
+            <!--
+                <ol class="navigator list-group"></ol>
+
+                <span class="fa fa-music">Library</span>
+                <span class="fa fa-star">Favorites</span>
+                <span class="fa fa-podcast">Radio</span>
+                <span class="fa fa-spotify">Spotify</span>
+                <span class="fa fa-feed">Podcasts</span>
+                <span class="fa fa-feed">Pocketcasts</span>
           </div>
 
           <template>
@@ -253,6 +276,10 @@
               </div>
         </div>
           </template>
+
+        -->
+
+          </div>
         </div>
       </div>
     </div>
