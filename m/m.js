@@ -1,3 +1,5 @@
+/* -*- coding: utf-8 -*- */
+
 "use strict";
 
 /* ------------------------------------------------------------------------ */
@@ -132,9 +134,8 @@ function player_created(_, server, player) {
     var $elm = $('.player.' + player.html_id);
 
     ['play', 'pause', 'stop', 'previous', 'next', 'volume_up', 'volume_down']
-        .forEach(action => $elm.find(
-            'button.'+action).click(() => player[action]())
-                );
+        .forEach(action => $elm.find('button.'+action)
+                 .click(() => player[action]()));
 
     $elm.find('.progress.volume').click(e => {
         /* FIXME: Also allow sliding the volume control */
@@ -208,10 +209,29 @@ function server_ready(_, server) {
         /* after slide */
     });
 
-    function browse_menu(menu_items) {
+    function browse_menu(menus) {
+
+        /* last item is active menu. items before are used for breadcrumbs
+           and navigation */
+
+        var [_, active_menu] = menus.slice(-1)[0];
+
+        $('#browser .breadcrumb')
+            .empty()
+            .append(menus.map(
+                ([title, menu], idx) => $('<li>')
+                    .addClass('breadcrumb-item')
+                    .addClass(menu == active_menu ? 'active' : '')
+                    .append($('<a>')
+                            .text(title)
+                            .click(ev => {
+                                var idx=$(ev.currentTarget).parent().index();
+                                browse_menu(menus.slice(0, 1+idx), menu)}))));
+
+        /* FIXME: cleanup. + cache menu queries  locally (?) */
         $('#browser .menu')
             .empty()
-            .append(menu_items.map(
+            .append(active_menu.map(
                 item =>
                     from_template('#menu-item-template')
                     .click(() => {
@@ -220,20 +240,37 @@ function server_ready(_, server) {
                             alert('has items');
                         else if (item.action)
                             item.action().then(
-                                res => browse_menu(res));
-                        else
+                                res =>
+                                    browse_menu(
+                                        menus.concat([[item.name, res]])));
+                        else if (item.cmd) {
+                            server.rpc('', [ item.cmd, 'items', 0, 999, 'item_id:0', 'want_url:1']).then(
+                                res => log('RES', res))
+                        } else if (item.id && item.type == 'folder') {
+                            server.rpc('', ['musicfolder', 0, 999, 'type:audio', 'folder_id:'+item.id, 'tags:cd']).then(
+                                res => browse_menu(
+                                    menus.concat([[item.filename,
+                                                   res.result[Object.keys(res.result).find(key => /loop/.test(key))] ]])))
+                        } else if (id && item.type == 'audio') {
+                            /* file in music folder */
+                        } else if (item.id && item.isaudio) {
+                            active_player.play_favorite(item.id);
+                            $('.modal.show').modal('hide');
+                        } else
                             alert('ok');
                     })
                     .find('.title')
                     .text(item.name || item.filename)
                     .end()
                     .find('.icon')
-                    .attr('src', item.icon || '/music/' + item.id + '/cover.jpg')
+                    .attr('src',
+                          item.icon ||
+                          '/music/' + (item.coverid || item.id) + '/cover.jpg')
                     .end()
             ));
     }
 
-    $('#browser').on('show.bs.modal', ev => browse_menu(server.menu));
+    $('#browser').on('show.bs.modal', () => browse_menu([['Home', server.menu]]));
 }
 
 function player_updated(_, player) {
