@@ -43,50 +43,16 @@ class Server {
                                  this._players[player.id] = player]);
                         }
                     });
+
+                var p = Object.values(this._players)[0];
+                p.query('podcasts', 'items', 0, 999, 'item_id:0').then(
+                    res => log('RES', res));
+                p.query('apps', 'items', 0, 999, 'item_id:0').then(
+                    res => log('RES', res));
+                p.query('radios', 'items', 0, 999, 'item_id:0').then(
+                    res => log('RES', res));
+
             })
-    }
-
-    get menu() {
-
-        var menu_item = (...what) => {
-            /* perform rpc call, return any result param containing loop
-               radios_loop, apps_loop, etc */
-            return this.rpc('', [ ...what, 0, 999]).then(
-                res => res.result[Object.keys(res.result).find(key => /loop/.test(key))])
-        }
-
-        return ([[ 'Favorites', 'favorites', 'items' ],
-                 [ 'Apps', 'apps' ],
-                 [ 'Radio', 'radios' ],
-                 [ 'Folder', 'musicfolder' ]])
-            .map(item => { return { name: item[0],
-                                    action: menu_item.bind(null, ...item.slice(1)) }});
-
-
-        /*
-        menu_item('radios').then(res => {
-            log('radios', res);
-            });
-
-        log('MENU', menu);
-        */
-
-        /*
-
-            /*
-            var apps = reply.result.appss_loop;
-                    var dir = __dirname + '/';
-                    fs.readdir(dir, function (err, files) {
-                        files.forEach(function (file) {
-                            var fil = file.substr(0, file.lastIndexOf("."));
-                            for (var pl in apps) {
-                                if (fil === apps[pl].cmd) {
-                                    var app = require(dir + file);
-                                    self.apps[apps[pl].cmd] = new app(defaultPlayer, apps[pl].name, apps[pl].cmd, self.address, self.port);
-                                    }
-                                    }
-                                    });
-            */
     }
 
     update_players() {
@@ -128,13 +94,14 @@ class Player {
     }
 
     query(...params) {
-        return this._server.rpc(this.id, ...params);
+        return this._server.rpc(this.id, params);
     }
 
     update() {
-        this.query(this._playlist_timestamp
-                   ? ['status', '-', '1',  'tags:adKl']  /* only fetch current track */
-                   : ['status', '0', '999', 'tags:adKl']) /* fetch full playlist */
+        this.query('status',
+                   this._playlist_timestamp ? '-' : 0,
+                   this._playlist_timestamp ? 1 : 999,
+                   'tags:adKl') /* fetch only current track or full playlist */
             .then(res => {
                 var state = res.result;
                 /* reset local timestamp if different from server to force full playlist refetch */
@@ -154,7 +121,7 @@ class Player {
     }
 
     _command(...params) {
-        return this.query(params)
+        return this.query(...params)
             .then(res => {
                 this.update();
             });

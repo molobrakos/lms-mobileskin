@@ -209,68 +209,80 @@ function server_ready(_, server) {
         /* after slide */
     });
 
-    function browse_menu(menus) {
+    var main_menu = ['Home', [
+        {name: 'Favorites', cmd: 'favorites'},
+        {name: 'Apps', cmd_: 'apps'},
+        {name: 'Radio', cmd_: 'radios'},
+        {name: 'Folder', cmd_: 'musicfolder'}]];
 
-        /* last item is active menu. items before are used for breadcrumbs
-           and navigation */
+    $('#browser').on('show.bs.modal', () => browse_menu([main_menu]));
+}
 
-        var [_, active_menu] = menus.slice(-1)[0];
+function browse_menu(menus) {
 
-        $('#browser .breadcrumb')
-            .empty()
-            .append(menus.map(
-                ([title, menu], idx) => $('<li>')
-                    .addClass('breadcrumb-item')
-                    .addClass(menu == active_menu ? 'active' : '')
-                    .append($('<a>')
-                            .text(title)
-                            .click(ev => {
-                                var idx=$(ev.currentTarget).parent().index();
-                                browse_menu(menus.slice(0, 1+idx), menu)}))));
+    $('#browser .breadcrumb')
+        .empty()
+        .append(menus.map(
+            ([title, menu], idx) => $('<li>')
+                .addClass('breadcrumb-item')
+                .addClass(idx == menus.length - 1 ? 'active' : '')
+                .append($('<a>')
+                        .text(title)
+                        .click(ev => {
+                            var idx= 1 + $(ev.currentTarget).parent().index();
+                            browse_menu(menus.slice(0, idx), menu);
+                        })))
+               );
 
-        /* FIXME: cleanup. + cache menu queries  locally (?) */
-        $('#browser .menu')
-            .empty()
-            .append(active_menu.map(
-                item =>
-                    from_template('#menu-item-template')
-                    .click(() => {
-                        log('Clicked', item);
-                        if (item.hasitems)
-                            alert('has items');
-                        else if (item.action)
-                            item.action().then(
-                                res =>
-                                    browse_menu(
-                                        menus.concat([[item.name, res]])));
-                        else if (item.cmd) {
-                            server.rpc('', [ item.cmd, 'items', 0, 999, 'item_id:0', 'want_url:1']).then(
-                                res => log('RES', res))
-                        } else if (item.id && item.type == 'folder') {
-                            server.rpc('', ['musicfolder', 0, 999, 'type:audio', 'folder_id:'+item.id, 'tags:cd']).then(
-                                res => browse_menu(
-                                    menus.concat([[item.filename,
-                                                   res.result[Object.keys(res.result).find(key => /loop/.test(key))] ]])))
-                        } else if (id && item.type == 'audio') {
-                            /* file in music folder */
-                        } else if (item.id && item.isaudio) {
-                            active_player.play_favorite(item.id);
-                            $('.modal.show').modal('hide');
-                        } else
-                            alert('ok');
-                    })
-                    .find('.title')
-                    .text(item.name || item.filename)
-                    .end()
-                    .find('.icon')
-                    .attr('src',
-                          item.icon ||
-                          '/music/' + (item.coverid || item.id) + '/cover.jpg')
-                    .end()
-            ));
+
+    function browse_level(parent, cmd, ...params) {
+        active_player.query(...cmd, 0, 99, ...params).then(
+            res => browse_menu(
+                menus.concat([[parent.name || parent.title || parent.filename,
+                               res.result[Object.keys(res.result).find(key => /loop/.test(key))],
+                               cmd]])))
     }
 
-    $('#browser').on('show.bs.modal', () => browse_menu([['Home', server.menu]]));
+    /* last item is the active leaf */
+    var [_, menu, context] = menus.slice(-1)[0];
+    menu.forEach(item => log('Menu item', item));
+
+    $('#browser .menu')
+        .empty()
+        .append(menu.map(
+            item =>
+                from_template('#menu-item-template')
+                .click(() => {
+                    log('Clicked', item);
+                    if (item.hasitems && item.id)
+                        browse_level(item, [context, 'items'], 'item_id:'+item.id);
+                    else if (item.cmd)
+                        browse_level(item, [item.cmd, 'items'])
+                    else if (item.cmd_)
+                        browse_level(item, [item.cmd_])
+                    else if (item.id && item.type == 'folder')
+                        browse_level(item, ['musicfolder'], 'type:audio', 'folder_id:'+item.id, 'tags:cd')
+                    else if (id && item.type == 'audio') {
+                        /* file in music folder */
+                        /* active_player.play(item.id); */
+                    } else if (item.id && item.isaudio) {
+                        active_player.play_favorite(item.id);
+                        $('.modal.show').modal('hide');
+                    } else {
+                        log('??', item);
+                        alert('??' + item);
+                    }
+                })
+                .find('.title')
+                .text(item.name || item.title || item.filename)
+                .end()
+                .find('.icon')
+                .attr('src',
+                      item.icon ||
+                      item.image ||
+                      '/music/' + (item.coverid || item.id) + '/cover.jpg')
+                .end()
+        ));
 }
 
 function player_updated(_, player) {
