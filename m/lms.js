@@ -13,10 +13,11 @@ class Server {
     constructor(params) {
         this._players = {};
         this._menu = {};
-        this.update().then(() => {
-            this.update_players();
-            $(this).trigger('server_ready', this);
-        });
+        this.update()
+            .then(() => {
+                this.update_players();
+                $(this).trigger('server_ready', this);
+            });
     }
 
     get players() {
@@ -25,11 +26,12 @@ class Server {
 
     update() {
 
-        this.rpc('', [ 'syncgroups', '?' ]).then(res => {
-            log("Sync groups:", res.result);
-        });
+        this._query('syncgroups', '?')
+            .then(res => {
+                log("Sync groups:", res.result);
+            });
 
-        return this.rpc('', [ 'serverstatus', '-' ])
+        return this._query('serverstatus', '-')
             .then(res => {
                 res &&
                     res.result &&
@@ -43,15 +45,6 @@ class Server {
                                  this._players[player.id] = player]);
                         }
                     });
-
-                var p = Object.values(this._players)[0];
-                p.query('podcasts', 'items', 0, 999, 'item_id:0').then(
-                    res => log('RES', res));
-                p.query('apps', 'items', 0, 999, 'item_id:0').then(
-                    res => log('RES', res));
-                p.query('radios', 'items', 0, 999, 'item_id:0').then(
-                    res => log('RES', res));
-
             })
     }
 
@@ -66,6 +59,7 @@ class Server {
             params: params,
         }
         log('RPC query ', data.params[1], data);
+
         return $.post({
             url: '/jsonrpc.js',
             data: JSON.stringify(data),
@@ -74,6 +68,16 @@ class Server {
             log('RPC response ', res.result, res);
             return res;
         });
+    }
+
+    query(player, ...params) {
+        var last = params.pop();
+        params.push(last instanceof Object ? Object.entries(last).map(e => e.join(':')).join(',') : last);
+        return this.rpc(player, params);
+    }
+
+    _query(...params) {
+        return this.query('', ...params);
     }
 }
 
@@ -94,14 +98,14 @@ class Player {
     }
 
     query(...params) {
-        return this._server.rpc(this.id, params);
+        return this._server.query(this.id, ...params);
     }
 
     update() {
         this.query('status',
                    this._playlist_timestamp ? '-' : 0,
                    this._playlist_timestamp ? 1 : 999,
-                   'tags:adKl') /* fetch only current track or full playlist */
+                   {tags:'adKl'}) /* fetch only current track or full playlist */
             .then(res => {
                 var state = res.result;
                 /* reset local timestamp if different from server to force full playlist refetch */
@@ -190,11 +194,15 @@ class Player {
         return this._state.title || this._state.current_title;
    }
 
+    get track_id() {
+        return this._state.id;
+    }
+
     get track_artwork_url() {
         if (this._state.artwork_url)
             return this._state.artwork_url
-        else if (this._state.id)
-            return '/music/' + this._state.id + '/cover.jpg'
+        else if (this.track_id)
+            return '/music/' + this.track_id + '/cover.jpg'
         else
             return '/music/current/cover.jpg?player=' + this.id;
     }
@@ -316,7 +324,7 @@ class Player {
     }
 
     play_favorite(fav) {
-        this._command('favorites', 'playlist', 'play', 'item_id:' + fav);
+        this._command('favorites', 'playlist', 'play', {item_id: fav});
     }
 
 }

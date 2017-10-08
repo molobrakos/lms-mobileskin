@@ -211,9 +211,9 @@ function server_ready(_, server) {
 
     var main_menu = ['Home', [
         {name: 'Favorites', cmd: 'favorites'},
-        {name: 'Apps', cmd_: 'apps'},
-        {name: 'Radio', cmd_: 'radios'},
-        {name: 'Folder', cmd_: 'musicfolder'}]];
+        {name: 'Apps', _src: 'apps'},
+        {name: 'Radio', _src: 'radios'},
+        {name: 'Folder', _src: 'musicfolder'}]];
 
     $('#browser').on('show.bs.modal', () => browse_menu([main_menu]));
 }
@@ -230,17 +230,17 @@ function browse_menu(menus) {
                         .text(title)
                         .click(ev => {
                             var idx= 1 + $(ev.currentTarget).parent().index();
-                            browse_menu(menus.slice(0, idx), menu);
+                            browse_menu(menus.slice(0, idx));
                         })))
                );
 
-
-    function browse_level(parent, cmd, ...params) {
-        active_player.query(...cmd, 0, 99, ...params).then(
+    function browse_level(parent, ...params) {
+        params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 99);
+        active_player.query(...params).then(
             res => browse_menu(
                 menus.concat([[parent.name || parent.title || parent.filename,
                                res.result[Object.keys(res.result).find(key => /loop/.test(key))],
-                               cmd]])))
+                               params[0]]])))
     }
 
     /* last item is the active leaf */
@@ -255,13 +255,13 @@ function browse_menu(menus) {
                 .click(() => {
                     log('Clicked', item);
                     if (item.hasitems && item.id)
-                        browse_level(item, [context, 'items'], 'item_id:'+item.id);
+                        browse_level(item, context, 'items', {item_id:item.id});
+                    else if (item._src)
+                        browse_level(item, item._src)
                     else if (item.cmd)
-                        browse_level(item, [item.cmd, 'items'])
-                    else if (item.cmd_)
-                        browse_level(item, [item.cmd_])
+                        browse_level(item, item.cmd, 'items')
                     else if (item.id && item.type == 'folder')
-                        browse_level(item, ['musicfolder'], 'type:audio', 'folder_id:'+item.id, 'tags:cd')
+                        browse_level(item, 'musicfolder', {type:audio, folder_id:item.id, tags:'cd'})
                     else if (id && item.type == 'audio') {
                         /* file in music folder */
                         /* active_player.play(item.id); */
