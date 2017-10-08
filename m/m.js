@@ -210,10 +210,10 @@ function server_ready(_, server) {
     });
 
     var main_menu = ['Home', [
-        {name: 'Favorites', cmd: 'favorites'},
-        {name: 'Apps', _src: 'apps'},
-        {name: 'Radio', _src: 'radios'},
-        {name: 'Folder', _src: 'musicfolder'}]];
+        {name: 'Favorites', cmd: 'favorites', icon: 'fa-star'},
+        {name: 'Apps', _src: 'apps', icon: 'fa-rocket'},
+        {name: 'Radio', _src: 'radios', icon: 'fa-podcast'},
+        {name: 'Folder', _src: 'musicfolder', icon: 'fa-folder'}]];
 
     $('#browser').on('show.bs.modal', () => browse_menu([main_menu]));
 }
@@ -276,8 +276,12 @@ function browse_menu(menus) {
                 .find('.title')
                 .text(item.name || item.title || item.filename)
                 .end()
-                .find('.icon')
+                .find('span.icon')
+                .addClass(/fa-/.test(item.icon) ? 'fa ' + item.icon : '')
+                .end()
+                .find('img.icon')
                 .attr('src',
+                      /fa-/.test(item.icon) ? '' :
                       item.icon ||
                       item.image ||
                       '/music/' + (item.coverid || item.id) + '/cover.jpg')
