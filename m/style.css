@@ -78,7 +78,8 @@ h1, h2, h3, h4, h5 ,h6 { max-width: 100%;
 .media .artist { min-height: 1rem; }
 
 .media img.icon[src=""] { display: none !important; }
-.media span.icon { font-size: 5rem; }
+.media span.icon { font-size: 5rem; width: 5rem; height: 5rem; }
+.media span.icon:not(.fa) { display: none; }
 
 /* player */
 

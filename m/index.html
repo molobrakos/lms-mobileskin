@@ -48,7 +48,14 @@
           </template>
         </ul>
 
-        <ul class="navbar-nav ml-auto">
+        <ul id="toolbar" class="navbar-nav ml-auto">
+
+          <template id="shortcut-template">
+            <li class="nav-item" data-toggle="tooltip" data-placement="bottom">
+              <a class="nav-link" href="#"
+                 data-toggle="modal" data-target="#browser">
+                <span class="fa"></span></a></li>
+          </template>
 
           <li class="nav-item">
             <a class="nav-link" id="show-volumes" href="#"
@@ -238,13 +245,13 @@
             <template id="menu-item-template">
               <li class="list-group-item">
                 <div class="media">
-                  <span class="icon"></span>
                   <img class="icon cover d-flex align-self-start mr-3" src="">
+                  <span class="icon mr-3"></span>
                   <div class="media-body">
                     <h5 class="mt-0 track title"></h5>
                     <h6 class="artist"></h6>
                     <h6 class="album"></h6>
-                    <button type="button" class="btn"><span class="fa fa-play"></span></button>
+                    <!--  <button type="button" class="btn"><span class="fa fa-play"></span></button> -->
                   </div>
                 </div>
               </li>

@@ -72,7 +72,7 @@ class Server {
 
     query(player, ...params) {
         var last = params.pop();
-        params.push(last instanceof Object ? Object.entries(last).map(e => e.join(':')).join(',') : last);
+        params.push(last instanceof Object ? Object.entries(last).map(e => e.join(':')).join(' ') : last);
         return this.rpc(player, params);
     }
 
@@ -100,8 +100,10 @@ class Player {
     query(...params) {
         return this._server.query(this.id, ...params);
     }
-
+    /* fixme: playlist not properly updated */
     update() {
+        if (!this._playlist_timestamp)
+            log('Fetching full playlist');
         this.query('status',
                    this._playlist_timestamp ? '-' : 0,
                    this._playlist_timestamp ? 1 : 999,
@@ -114,7 +116,11 @@ class Player {
                     this._playlist_timestamp != state.playlist_timestamp
                     ? 0 : state.playlist_timestamp;
 
+                if (!this._playlist_timestamp)
+                    log('Playlist changed, refetch on next update');
+
                 this._state = $.extend(
+                    true, /* deep */
                     state,
                     state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
                     state.remoteMeta || {});
@@ -321,6 +327,10 @@ class Player {
 
     playlist_insert(item) {
         this._command('playlist', 'insert', item);
+    }
+
+    playlist_play(item) {
+        this._command('playlist', 'play', item);
     }
 
     play_favorite(fav) {

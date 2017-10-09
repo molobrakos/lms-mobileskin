@@ -92,6 +92,79 @@ $('.carousel').carousel({interval:false}); /* Do not auto-rotate */
 /*                                                                          */
 /* ------------------------------------------------------------------------ */
 
+function server_ready(_, server) {
+    log('Server ready');
+
+    var last_active_idx = Math.max(
+        0, /* fallback to first player */
+        server.players.map(player => player.html_id)
+            .indexOf(localStorage.getItem(STORAGE_KEY_ACTIVE_PLAYER)));
+
+    $('.carousel').carousel(last_active_idx);
+    player_activated(server.players[last_active_idx]);
+    $('#players').slideDown();
+
+    /* start polling for updates */
+    setInterval(() => {
+        $('#volumes').is(':visible')
+            ? server.update_players()
+            : active_player.update();
+    }, POLL_INTERVAL);
+
+    $('.carousel').on('slide.bs.carousel', ev => {
+        player_activated(server.players[ev.to]);
+    });
+
+    $('.carousel').on('slid.bs.carousel', ev => {
+        /* after slide */
+    });
+
+    var shortcuts = [{name: 'Favorites', cmd: 'favorites', icon: 'fa-star'},
+                     {name: 'Radio', cmd: 'presets', icon: 'fa-bullhorn'},
+                     {name: 'Podcasts', cmd: 'podcasts', icon: 'fa-podcast'},
+                     {name: 'Spotify', cmd: 'spotty', icon: 'fa-spotify'},
+                     {name: 'Blah', cmd: 'unknowndummy', icon: 'fa-question'}];
+
+    $.when(... shortcuts.map(
+        item => active_player.query('can', item.cmd, 'items', '?')))
+        .then((...res) => {
+            $('#toolbar')
+                .prepend(shortcuts.filter(
+                    (shortcut, idx) => res[idx].result._can).map(
+                        item =>
+                            from_template('#shortcut-template')
+                            .attr('title', item.name)
+                            .find('a')
+                            .attr('data-shortcut', item.cmd)
+                            .end()
+                            .find('.fa')
+                            .addClass(item.icon)
+                            .end()
+                    ));
+        });
+
+    var main_menu = {
+        name: 'Home',
+        items: [
+            {name: 'Favorites', cmd: 'favorites', icon: 'fa-star'},
+            {name: 'Apps', _src: 'apps', icon: 'fa-rocket'},
+            {name: 'Radio', _src: 'radios', icon: 'fa-podcast'},
+            {name: 'Folder', _src: 'musicfolder', icon: 'fa-folder'}]};
+
+    $('#browser').on('show.bs.modal', (ev) => {
+        var shortcut = $(ev.relatedTarget).data('shortcut');
+        if (shortcut)
+            /* FIXME: reuse browse_level */
+            /* FIXME: don't display until loaded */
+            active_player.query(shortcut, 'items', 0, 99).then(
+                res => browse_menu([{name: shortcuts.find(s => s.cmd == shortcut).name,
+                                     items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
+                                     context: shortcut}]));
+        else
+            browse_menu([main_menu]);
+    });
+}
+
 function player_created(_, server, player) {
     var idx = server.players.length - 1;
 
@@ -182,52 +255,16 @@ function player_activated(player) {
                          html_id);
 }
 
-function server_ready(_, server) {
-    log('Server ready');
-
-    var last_active_idx = Math.max(
-        0, /* fallback to first player */
-        server.players.map(player => player.html_id)
-            .indexOf(localStorage.getItem(STORAGE_KEY_ACTIVE_PLAYER)));
-
-    $('.carousel').carousel(last_active_idx);
-    player_activated(server.players[last_active_idx]);
-    $('#players').slideDown();
-
-    /* start polling for updates */
-    setInterval(() => {
-        $('#volumes').is(':visible')
-            ? server.update_players()
-            : active_player.update();
-    }, POLL_INTERVAL);
-
-    $('.carousel').on('slide.bs.carousel', ev => {
-        player_activated(server.players[ev.to]);
-    });
-
-    $('.carousel').on('slid.bs.carousel', ev => {
-        /* after slide */
-    });
-
-    var main_menu = ['Home', [
-        {name: 'Favorites', cmd: 'favorites', icon: 'fa-star'},
-        {name: 'Apps', _src: 'apps', icon: 'fa-rocket'},
-        {name: 'Radio', _src: 'radios', icon: 'fa-podcast'},
-        {name: 'Folder', _src: 'musicfolder', icon: 'fa-folder'}]];
-
-    $('#browser').on('show.bs.modal', () => browse_menu([main_menu]));
-}
-
 function browse_menu(menus) {
 
     $('#browser .breadcrumb')
         .empty()
         .append(menus.map(
-            ([title, menu], idx) => $('<li>')
+            (menu, idx) => $('<li>')
                 .addClass('breadcrumb-item')
                 .addClass(idx == menus.length - 1 ? 'active' : '')
                 .append($('<a>')
-                        .text(title)
+                        .text(menu.name)
                         .click(ev => {
                             var idx= 1 + $(ev.currentTarget).parent().index();
                             browse_menu(menus.slice(0, idx));
@@ -238,41 +275,20 @@ function browse_menu(menus) {
         params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 99);
         active_player.query(...params).then(
             res => browse_menu(
-                menus.concat([[parent.name || parent.title || parent.filename,
-                               res.result[Object.keys(res.result).find(key => /loop/.test(key))],
-                               params[0]]])))
+                menus.concat([{name: parent.name || parent.title || parent.filename,
+                               items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
+                               context: params[0]}])))
     }
 
     /* last item is the active leaf */
-    var [_, menu, context] = menus.slice(-1)[0];
-    menu.forEach(item => log('Menu item', item));
+    var menu = menus.slice(-1)[0];
+    menu.items.forEach(item => log('Menu item', item));
 
     $('#browser .menu')
         .empty()
-        .append(menu.map(
+        .append(menu.items.map(
             item =>
                 from_template('#menu-item-template')
-                .click(() => {
-                    log('Clicked', item);
-                    if (item.hasitems && item.id)
-                        browse_level(item, context, 'items', {item_id:item.id});
-                    else if (item._src)
-                        browse_level(item, item._src)
-                    else if (item.cmd)
-                        browse_level(item, item.cmd, 'items')
-                    else if (item.id && item.type == 'folder')
-                        browse_level(item, 'musicfolder', {type:audio, folder_id:item.id, tags:'cd'})
-                    else if (id && item.type == 'audio') {
-                        /* file in music folder */
-                        /* active_player.play(item.id); */
-                    } else if (item.id && item.isaudio) {
-                        active_player.play_favorite(item.id);
-                        $('.modal.show').modal('hide');
-                    } else {
-                        log('??', item);
-                        alert('??' + item);
-                    }
-                })
                 .find('.title')
                 .text(item.name || item.title || item.filename)
                 .end()
@@ -286,6 +302,20 @@ function browse_menu(menus) {
                       item.image ||
                       '/music/' + (item.coverid || item.id) + '/cover.jpg')
                 .end()
+                .click(() => {
+                    log('Clicked', item);
+                    if (item.id && item.isaudio) {
+                        active_player._command(menu.context, 'playlist', 'play', {item_id: item.id});
+                        $('.modal.show').modal('hide');
+                    } else if (item._src)
+                        browse_level(item, item._src)
+                    else if (item.cmd)
+                        browse_level(item, item.cmd, 'items')
+                    else if (item.hasitems && item.id)
+                        browse_level(item, menu.context, 'items', {item_id: item.id});
+                    else if (item.id && item.type == 'folder')
+                        browse_level(item, 'musicfolder', {type: 'audio', folder_id: item.id, tags: 'cd'})
+                })
         ));
 }
 
