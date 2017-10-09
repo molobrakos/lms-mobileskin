@@ -1,6 +1,8 @@
 # Responsive / Mobile skin for Logitech media server / Squeezeserver
 
-![ScreenShot](screenshot.png) 
+![ScreenShot](screenshot_01.png) 
+![ScreenShot](screenshot_02.png) 
+![ScreenShot](screenshot_03.png) 
 
 ## Installation
 
