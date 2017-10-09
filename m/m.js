@@ -2,6 +2,9 @@
 
 "use strict";
 
+/* FIXME: use jekyll to generate installable file */
+/* FIXME: create proper plugin */
+
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
 /* Some initialization                                                      */
@@ -105,6 +108,7 @@ function server_ready(_, server) {
     $('#players').slideDown();
 
     /* start polling for updates */
+    /* FIXME: must update all players some times anyway (sync groups etc) */
     setInterval(() => {
         $('#volumes').is(':visible')
             ? server.update_players()
@@ -115,15 +119,12 @@ function server_ready(_, server) {
         player_activated(server.players[ev.to]);
     });
 
-    $('.carousel').on('slid.bs.carousel', ev => {
-        /* after slide */
-    });
-
-    var shortcuts = [{name: 'Favorites', cmd: 'favorites', icon: 'fa-star'},
-                     {name: 'Radio', cmd: 'presets', icon: 'fa-bullhorn'},
-                     {name: 'Podcasts', cmd: 'podcasts', icon: 'fa-podcast'},
-                     {name: 'Spotify', cmd: 'spotty', icon: 'fa-spotify'},
-                     {name: 'Blah', cmd: 'unknowndummy', icon: 'fa-question'}];
+    var shortcuts = [
+        {title: 'Favorites', cmd: 'favorites', icon: 'fa-star'},
+        {title: 'Radio',     cmd: 'presets',   icon: 'fa-bullhorn'},
+        {title: 'Podcasts',  cmd: 'podcasts',  icon: 'fa-podcast'},
+        {title: 'Spotify',   cmd: 'spotty',    icon: 'fa-spotify'},
+        {title: 'Blah',      cmd: 'dummy',     icon: 'fa-question'}];
 
     $.when(... shortcuts.map(
         item => active_player.query('can', item.cmd, 'items', '?')))
@@ -133,7 +134,7 @@ function server_ready(_, server) {
                     (shortcut, idx) => res[idx].result._can).map(
                         item =>
                             from_template('#shortcut-template')
-                            .attr('title', item.name)
+                            .attr('title', item.title)
                             .find('a')
                             .attr('data-shortcut', item.cmd)
                             .end()
@@ -144,20 +145,19 @@ function server_ready(_, server) {
         });
 
     var main_menu = {
-        name: 'Home',
-        items: [
-            {name: 'Favorites', cmd: 'favorites', icon: 'fa-star'},
-            {name: 'Apps', _src: 'apps', icon: 'fa-rocket'},
-            {name: 'Radio', _src: 'radios', icon: 'fa-podcast'},
-            {name: 'Folder', _src: 'musicfolder', icon: 'fa-folder'}]};
+        title: 'Home', items: [
+            {title: 'Favorites', cmd: 'favorites',   icon: 'fa-star'},
+            {title: 'Apps',     _cmd: 'apps',        icon: 'fa-rocket'},
+            {title: 'Radio',    _cmd: 'radios',      icon: 'fa-bullhorn'},
+            {title: 'Folder',   _cmd: 'musicfolder', icon: 'fa-folder'}]};
 
     $('#browser').on('show.bs.modal', (ev) => {
         var shortcut = $(ev.relatedTarget).data('shortcut');
         if (shortcut)
-            /* FIXME: reuse browse_level */
-            /* FIXME: don't display until loaded */
+            /* FIXME: reuse browse_level function below */
+            /* FIXME: don't display modal until content finished loaded */
             active_player.query(shortcut, 'items', 0, 99).then(
-                res => browse_menu([{name: shortcuts.find(s => s.cmd == shortcut).name,
+                res => browse_menu([{title: shortcuts.find(s => s.cmd == shortcut).title,
                                      items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
                                      context: shortcut}]));
         else
@@ -264,7 +264,7 @@ function browse_menu(menus) {
                 .addClass('breadcrumb-item')
                 .addClass(idx == menus.length - 1 ? 'active' : '')
                 .append($('<a>')
-                        .text(menu.name)
+                        .text(menu.title)
                         .click(ev => {
                             var idx= 1 + $(ev.currentTarget).parent().index();
                             browse_menu(menus.slice(0, idx));
@@ -275,7 +275,7 @@ function browse_menu(menus) {
         params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 99);
         active_player.query(...params).then(
             res => browse_menu(
-                menus.concat([{name: parent.name || parent.title || parent.filename,
+                menus.concat([{title: parent.name || parent.title || parent.filename,
                                items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
                                context: params[0]}])))
     }
@@ -286,7 +286,8 @@ function browse_menu(menus) {
 
     $('#browser .menu')
         .empty()
-        .append(menu.items.map(
+        .append(
+            menu.items.map(
             item =>
                 from_template('#menu-item-template')
                 .find('.title')
@@ -307,8 +308,8 @@ function browse_menu(menus) {
                     if (item.id && item.isaudio) {
                         active_player._command(menu.context, 'playlist', 'play', {item_id: item.id});
                         $('.modal.show').modal('hide');
-                    } else if (item._src)
-                        browse_level(item, item._src)
+                    } else if (item._cmd)
+                        browse_level(item, item._cmd)
                     else if (item.cmd)
                         browse_level(item, item.cmd, 'items')
                     else if (item.hasitems && item.id)
@@ -399,7 +400,7 @@ function player_updated(_, player) {
                         alert('track clicked');
                     })
                     .find('.cover')
-                    .attr('src', track.artwork_url || '/music/' + track.id + '/cover.jpg') /* '/music/0/cover_32x32.png' */
+                    .attr('src', track.artwork_url || '/music/' + track.id + '/cover.jpg')
                     .end()
                     .find('.track')
                     .text(track.title)

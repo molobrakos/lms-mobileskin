@@ -54,6 +54,7 @@ function _log(timestamp, ...args) {
                                 message + '</li>'));
 }
 
+/* FIXME: display connection error in non-debug ui as well */
 $(document).ajaxError(function(ev, xhr, settings, error) {
     var t = _timestamp();
     $('#debug')

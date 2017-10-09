@@ -100,7 +100,8 @@ class Player {
     query(...params) {
         return this._server.query(this.id, ...params);
     }
-    /* fixme: playlist not properly updated */
+    /* FIXME: playlist not properly updated until next update, but then deleted again */
+    /* FIXME: artist in ui not updated (leftover) when switching from spotty to radio */
     update() {
         if (!this._playlist_timestamp)
             log('Fetching full playlist');
@@ -274,11 +275,11 @@ class Player {
     }
 
     volume_up() {
-        return this._command('mixer', 'volume', '+5');
+        return this._command('mixer', 'volume', this.volume < 10 ? '+1' : '+5');
     }
 
     volume_down() {
-        return this._command('mixer', 'volume', '-5');
+        return this._command('mixer', 'volume', this.volume < 10 ? '-1' : '-5');
     }
 
     stop() {
