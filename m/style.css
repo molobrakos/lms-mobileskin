@@ -21,8 +21,10 @@ html {
 
 @media (max-width: 575px) {
     html { font-size: 10px; }
+    .navbar { font-size: 18px; }
     #players .player img.cover { width: 200px; height: 200px; }
     #players .player .progress.duration { width: 200px; }
+    #playerslist li { display: none; }
 }
 
 /* Small devices (landscape phones, 576px and up) */
