@@ -94,7 +94,6 @@ class Player {
         this._server = server;
         this._player_data = player_data;
         this._state = {};
-        /*this._playlist_timestamp = 0;*/
         log('Created player', this.id);
     }
 
@@ -119,6 +118,7 @@ class Player {
                        to force full playlist refetch on next update */
                     log('Playlist changed, refetch on next update');
                     state.playlist_timestamp = 0; /* overwrite on next fetch */
+                    state.playlist_loop = [];
                 } else if (this.playlist_timestamp == state.playlist_timestamp) {
                     /* Playlist unchanged, don't overwrite what we have*/
                     log('Playlist unchanged');
