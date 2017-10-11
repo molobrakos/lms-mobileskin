@@ -7,7 +7,7 @@
 
 ## Installation
 
-Copy (or symlik) ```m/``` directory to server skin directory (e.g. ```/usr/share/squeezeboxserver/HTML/m```)
+Copy (or symlink) ```m/``` directory to server skin directory (e.g. ```/usr/share/squeezeboxserver/HTML/m```)
 Example
 ```
 cp -a m /usr/share/squeezeboxserver/HTML/m
@@ -40,3 +40,7 @@ docker run -d --name lms \
        molobrakos:lms \
        --nobrowsecache
 ```
+
+## To do
+
+- Convert into a proper plugin
