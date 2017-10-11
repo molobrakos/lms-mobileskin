@@ -65,12 +65,13 @@ html {
     #players .player { padding-top: 20rem; }
 }
 
+/* cut off headers to fit width */
 h1, h2, h3, h4, h5 ,h6 { max-width: 100%;
                          white-space: nowrap;
                          overflow: hidden;
                          text-overflow: ellipsis; }
-
-/*h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; } */
+/* force empty headers to occupy vertical space anyway */
+h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; }
 
 /* playlist */
 

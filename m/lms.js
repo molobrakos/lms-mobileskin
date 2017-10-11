@@ -71,8 +71,9 @@ class Server {
     }
 
     query(player, ...params) {
-        var last = params.pop();
-        params.push(last instanceof Object ? Object.entries(last).map(e => e.join(':')).join(' ') : last);
+        if (params[params.length-1] instanceof Object)
+            /* Handle tagged params */
+            params.push(... Object.entries(params.pop()).map(e => e.join(':')));
         return this.rpc(player, params);
     }
 
@@ -93,7 +94,7 @@ class Player {
         this._server = server;
         this._player_data = player_data;
         this._state = {};
-        this._playlist_timestamp = 0;
+        /*this._playlist_timestamp = 0;*/
         log('Created player', this.id);
     }
 
@@ -103,25 +104,28 @@ class Player {
     /* FIXME: playlist not properly updated until next update, but then deleted again */
     /* FIXME: artist in ui not updated (leftover) when switching from spotty to radio */
     update() {
-        if (!this._playlist_timestamp)
+        if (!this.playlist_timestamp)
             log('Fetching full playlist');
         this.query('status',
-                   this._playlist_timestamp ? '-' : 0,
-                   this._playlist_timestamp ? 1 : 999,
+                   this.playlist_timestamp ? '-' : 0,
+                   this.playlist_timestamp ? 1 : 999,
                    {tags:'adKl'}) /* fetch only current track or full playlist */
             .then(res => {
                 var state = res.result;
-                /* reset local timestamp if different from server to force full playlist refetch */
-                this._playlist_timestamp =
-                    this._playlist_timestamp &&
-                    this._playlist_timestamp != state.playlist_timestamp
-                    ? 0 : state.playlist_timestamp;
 
-                if (!this._playlist_timestamp)
+                if (this.playlist_timestamp &&
+                    this.playlist_timestamp != state.playlist_timestamp) {
+                    /* Reset local timestamp if different from server
+                       to force full playlist refetch on next update */
                     log('Playlist changed, refetch on next update');
+                    state.playlist_timestamp = 0; /* overwrite on next fetch */
+                } else if (this.playlist_timestamp == state.playlist_timestamp) {
+                    /* Playlist unchanged, don't overwrite what we have*/
+                    log('Playlist unchanged');
+                    state.playlist_loop = this._state.playlist_loop;
+                }
 
                 this._state = $.extend(
-                    true, /* deep */
                     state,
                     state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
                     state.remoteMeta || {});
@@ -219,7 +223,7 @@ class Player {
     }
 
     set track_position(position) {
-        return this._command('time', position);
+        return this._command('time', "" + position);
     }
 
     get track_duration() {
@@ -303,7 +307,7 @@ class Player {
     }
 
     get playlist_tracks() {
-        return this._state['playlist_loop'];
+        return this._state['playlist_loop'] || [];
     }
 
     get playlist_timestamp() {

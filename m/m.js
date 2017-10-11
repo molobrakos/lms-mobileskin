@@ -157,9 +157,11 @@ function server_ready(_, server) {
             /* FIXME: reuse browse_level function below */
             /* FIXME: don't display modal until content finished loaded */
             active_player.query(shortcut, 'items', 0, 99).then(
-                res => browse_menu([{title: shortcuts.find(s => s.cmd == shortcut).title,
-                                     items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
-                                     context: shortcut}]));
+                res => {
+                    browse_menu([{title: shortcuts.find(s => s.cmd == shortcut).title,
+                                  items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
+                                  context: shortcut}])
+                });
         else
             browse_menu([main_menu]);
     });
@@ -308,6 +310,9 @@ function browse_menu(menus) {
                     if (item.id && item.isaudio) {
                         active_player._command(menu.context, 'playlist', 'play', {item_id: item.id});
                         $('.modal.show').modal('hide');
+                    } else if (item.id && item.type == 'audio' && item.url) {
+                        active_player.playlist_play(decodeURIComponent(item.url));
+                        $('.modal.show').modal('hide');
                     } else if (item._cmd)
                         browse_level(item, item._cmd)
                     else if (item.cmd)
@@ -315,7 +320,7 @@ function browse_menu(menus) {
                     else if (item.hasitems && item.id)
                         browse_level(item, menu.context, 'items', {item_id: item.id});
                     else if (item.id && item.type == 'folder')
-                        browse_level(item, 'musicfolder', {type: 'audio', folder_id: item.id, tags: 'cd'})
+                        browse_level(item, 'musicfolder', {type: 'audio', folder_id: item.id, tags: 'cdu'})
                 })
         ));
 }
@@ -327,27 +332,20 @@ function player_updated(_, player) {
         player.track_artist,
         player.track_artwork_url);
 
-    var group = player.group;
-    var name = player.name; /*group.map(p => p.name).join('+') */
-
-    $('#playerslist .nav-item.' + player.html_id)
-        .find('a')
-        .text(name);
-
     var $elm = $('.player.' + player.html_id);
 
-    if (player.is_master) {
+    if (player.is_slave) {
 
-    } else if (player.is_slave) {
+        /* FIXME: if this is the active slide, we must change before removing it! */
         /*
           if ($elm.hasClass('active'))
           $('.carousel').carousel('next');
-          */
-        /*
-        $('#playerslist .nav-item.' + player.html_id).remove();
-        $('ol.carousel-indicators li.' + player.html_id).remove();
-        $elm.remove();
         */
+
+        /*
+          $('#playerslist .nav-item.' + player.html_id).remove();
+          $('ol.carousel-indicators li.' + player.html_id).remove();
+          $('#players .player.' + player.html_id).remove(); */
     }
 
 
@@ -355,9 +353,11 @@ function player_updated(_, player) {
        (premature optimization?) */
 
     $elm.find('.player-name')
-        .text(name);
+        .text(player.name);
+    $elm.find('.player-group')
+        .text(player.is_synced ? player.group.map(p => p.name).join('+') : '');
     $elm.find('.player-id')
-        .text(group.map(p => p.id).join('+'));
+        .text(player.group.map(p => p.id).join('+'));
     $elm.find('.artist')
         .text(player.track_artist);
     $elm.find('.album')
@@ -388,8 +388,10 @@ function player_updated(_, player) {
                    player.is_stream ? 'stream' : 'file'].join(' '));
 
     $elm = $('.playlist.' + player.html_id);
-    if (player.playlist_timestamp != $elm.data(DATA_KEY_PLAYLIST_TIMESTAMP)) {
+    if (player.playlist_timestamp &&
+        player.playlist_timestamp != $elm.data(DATA_KEY_PLAYLIST_TIMESTAMP)) {
         log('Updating playlist', player.html_id);
+        player.playlist_tracks.forEach(track => log('Playlist track', track.artist, track.title));
         $elm.data(DATA_KEY_PLAYLIST_TIMESTAMP,
                   player.playlist_timestamp)
             .empty()

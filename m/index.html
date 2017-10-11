@@ -44,7 +44,7 @@
 
         <ul id="playerslist" class="navbar-nav mr-auto">
           <template id="playerslist-template">
-            <li class="nav-item"><a class="nav-link" href="#"></a></li>
+            <li class="player nav-item"><a class="nav-link player-name" href="#"></a></li>
           </template>
         </ul>
 
@@ -131,6 +131,7 @@
             </div> <!-- controls -->
             <div class="carousel-caption d-none d-block">
               <h5 class="player-name"></h5>
+              <h6 class="player-group"></h6>
               [% IF url_query == "debug" %]
               <p class="player-id"></p>
               [% END %]
