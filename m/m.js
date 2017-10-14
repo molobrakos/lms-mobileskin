@@ -371,7 +371,7 @@ function player_updated(_, player) {
         .text(player.track_album);
     $elm.find('.track')
         .text(player.track_title);
-    $elm.find('.cover img')
+    $elm.find('img.cover')
         .attr('src', player.track_artwork_url);
     $elm.find('.duration .progress-bar')
         .width((player.track_duration > 0 ?
@@ -408,7 +408,7 @@ function player_updated(_, player) {
                     .click(() => {
                         alert('track clicked');
                     })
-                    .find('.cover')
+                    .find('img.cover')
                     .attr('src', track.artwork_url || '/music/' + track.id + '/cover.jpg')
                     .end()
                     .find('.track')

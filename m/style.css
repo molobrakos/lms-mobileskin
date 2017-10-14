@@ -67,7 +67,7 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 
 .playlist { display: none; }
 .playlist.active { display: block; }
-.media .cover img { height: 5rem; width: 5rem; }
+.media .cover { height: 5rem; width: 5rem; }
 .media .artist { min-height: 1rem; }
 
 .media img.icon[src=""] { display: none !important; }
@@ -79,9 +79,10 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 #players { display: none; } /* hide initially */
 
 #players .player {
-                   color: white; }
+    color: white;
+    margin-top: 4.5rem;
+}
 
-#players .player { padding-top: 4.5rem; }
 
 .player .metadata { position: relative;}
 .player .overlay { position: absolute;
@@ -89,7 +90,7 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
                    right: 0;
                    left: 0;
                    background: rgba(0, 0, 0, .5); }
-.player .cover img { object-fit: cover; }
+#player .player .cover img { object-fit: cover; }
 .player .trackdata { padding-top: 1rem; }
 
 #players .player .progress.duration { width: 100%; }
@@ -144,6 +145,16 @@ body.debug .player-id { display: inline; }
     transition: transform 0.3s ease;
     transition: transform 0.3s ease, -webkit-transform 0.3s ease;
 }
+
+.carousel-caption {
+    margin-bottom: 2rem;
+}
+
+/* if navbar at bottom
+.carousel-indicators, .carousel-caption {
+    margin-bottom: 5rem;
+}
+*/
 
 #debug { position: absolute;
          bottom: 0px;
