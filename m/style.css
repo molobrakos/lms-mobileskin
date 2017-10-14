@@ -1,9 +1,11 @@
 /* override bootstrap defaults */
 
-body { padding-top: 2rem;
+body {
        height: 100%;
        width: 100%;
-       position: absolute; }
+       position: absolute;
+       font-family: 'Roboto', sans-serif; }
+
 #players { min-height: 100%;
            height: 100%; }
 .player { min-height: 100%;
@@ -17,21 +19,15 @@ html {
     font-size: 10px;
 }
 
-/* FIXME: handla landscape as well */
-
 @media (max-width: 575px) {
     html { font-size: 10px; }
     .navbar { font-size: 18px; }
-    #players .player img.cover { width: 200px; height: 200px; }
-    #players .player .progress.duration { width: 200px; }
     #playerslist li { display: none; }
 }
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
     html { font-size: 12px; }
-    #players .player img.cover { width: 250px; height: 250px; }
-    #players .player .progress.duration { width: 250px; }
 }
 
 /* Medium devices (tablets, 768px and up) */
@@ -49,20 +45,14 @@ html {
     html { font-size: 18px; }
 }
 
-@media (min-width: 1200px) and (min-height: 1200px) {
-    #players .player img.cover { width: 300px; height: 300px; }
-    #players .player .progress.duration { width: 300px; }
+@media (max-width: 767px) and (orientation: portrait) {
+    .player .metadata { width: 100vw;
+                        height: 100vw; }
 }
 
-#players .player { padding-top: 4rem; }
-
-@media (max-height: 500px) {
-    #players .player img.cover { width: 100px; height: 100px; }
-    #players .player .progress.duration { width: 100px; }
-}
-
-@media (min-height: 992px) and (min-width: 1200px) {
-    #players .player { padding-top: 20rem; }
+@media (orientation: landscape) {
+    .player .metadata { width: 50vw;
+                        height: 50vw; }
 }
 
 /* cut off headers to fit width */
@@ -77,7 +67,7 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 
 .playlist { display: none; }
 .playlist.active { display: block; }
-.media img.cover { height: 5rem; width: 5rem; }
+.media .cover img { height: 5rem; width: 5rem; }
 .media .artist { min-height: 1rem; }
 
 .media img.icon[src=""] { display: none !important; }
@@ -88,14 +78,38 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 
 #players { display: none; } /* hide initially */
 
-#players .player { padding-bottom: 10rem;
+#players .player {
                    color: white; }
+
+#players .player { padding-top: 4.5rem; }
+
+.player .metadata { position: relative;}
+.player .overlay { position: absolute;
+                   bottom: 0;
+                   right: 0;
+                   left: 0;
+                   background: rgba(0, 0, 0, .5); }
+.player .cover img { object-fit: cover; }
+.player .trackdata { padding-top: 1rem; }
+
+#players .player .progress.duration { width: 100%; }
+
+.duration .progress-title { float: left;
+                            overflow: hidden;
+                            white-space: nowrap; }
+
+.player .controls { padding-top: 0.5rem; }
 
 .player .controls .btn {
     width: 4rem;
     height: 4rem;
     font-size: 1.2rem;
     margin: 0.2rem;
+}
+
+.player .controls .btn-sm {
+    background: rgba(0, 0, 0, .2);
+    color: white;
 }
 
 .player .controls .btn-xl {
@@ -107,8 +121,8 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 body .player-id { display: none; }
 body.debug .player-id { display: inline; }
 
-.progress.duration { border-radius: 0; margin-bottom: 1rem; }
-.progress-title { position: absolute; right: 0; left: 0; color: white; mix-blend-mode: difference; } /* FIXME: get this to work somehow, white text on blue bg, black text on grey bg */
+.progress.duration { background: rgba(0, 0, 0, 0); }
+.progress { border-radius: 0; }
 .player .track { min-height: 1rem; }
 
 .player button.pause { display: none; }
@@ -121,13 +135,8 @@ body.debug .player-id { display: inline; }
 .player.paused button.pause,
 .player.stopped button.pause { display: none; }
 
-.player.stream .duration.progress { background-color: transparent; }
-.player.stream .gduration.progress .progress-title { color: white; mix-blend-mode: initial; }
-
 .player.synced button.sync { display: inline; }
 .player.unsynced button.unsync { display: none; }
-
-#volumes .progress { }
 
 /* faster sliding speed */
 .carousel-item {

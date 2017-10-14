@@ -22,7 +22,6 @@ var STORAGE_KEY_ACTIVE_PLAYER = 'active_player';
 /* DOM node storage */
 var DATA_KEY_PLAYLIST_TIMESTAMP = 'playlist_timestamp';
 
-/* Base background gradient colors */
 var BGCOLORS = ["fc4a1a", "f7b733",
                 "aa000c", "ff00ff",
                 "00b09b", "96c93d",
@@ -206,6 +205,12 @@ function player_created(_, server, player) {
         .addClass(player.html_id)
         .appendTo('#volumes .modal-body')
 
+    $('.dropdown-menu .syncing')
+        .after($('<a>')
+               .addClass('dropdown-item')
+               .attr('href', '#')
+               .text(player.name));
+
     var $elm = $('.player.' + player.html_id);
 
     ['play', 'pause', 'stop', 'previous', 'next', 'volume_up', 'volume_down']
@@ -355,7 +360,9 @@ function player_updated(_, player) {
     $elm.find('.player-name')
         .text(player.name);
     $elm.find('.player-group')
-        .text(player.is_synced ? player.group.map(p => p.name).join('+') : '');
+        .text(player.is_synced ? player.group
+              .filter(p => p != player)
+              .map(p => p.name).join('+') : '');
     $elm.find('.player-id')
         .text(player.group.map(p => p.id).join('+'));
     $elm.find('.artist')
@@ -364,12 +371,12 @@ function player_updated(_, player) {
         .text(player.track_album);
     $elm.find('.track')
         .text(player.track_title);
-    $elm.find('.cover')
+    $elm.find('.cover img')
         .attr('src', player.track_artwork_url);
     $elm.find('.duration .progress-bar')
         .width((player.track_duration > 0 ?
                 100 * player.track_position / player.track_duration : 0) + '%');
-    $elm.find('.duration .progress-title')
+    $elm.find('.progress-title')
         .text(player.is_stream ?
               formatTime(player.track_position) :
               [formatTime(player.track_position),

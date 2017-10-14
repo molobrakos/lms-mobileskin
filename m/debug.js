@@ -79,6 +79,7 @@ $(function() {
     }
     var ratio = window.devicePixelRatio || 1;
     $('#screen_size').text(screen.width + '\u00D7' + screen.height)
+    $('#screen_orientation').text(screen.orientation.type);
     $('#screen_size_dp').text(screen.width * ratio + '\u00D7' + screen.height * ratio + ' (ratio: ' + ratio + ')');
     $('#is_touch').text('ontouchstart' in document.documentElement);
 });
