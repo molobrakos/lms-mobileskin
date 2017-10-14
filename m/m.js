@@ -119,11 +119,14 @@ function server_ready(_, server) {
     });
 
     var shortcuts = [
-        {title: 'Favorites', cmd: 'favorites', icon: 'fa-star'},
-        {title: 'Radio',     cmd: 'presets',   icon: 'fa-bullhorn'},
-        {title: 'Podcasts',  cmd: 'podcasts',  icon: 'fa-podcast'},
-        {title: 'Spotify',   cmd: 'spotty',    icon: 'fa-spotify'},
-        {title: 'Blah',      cmd: 'dummy',     icon: 'fa-question'}];
+        {title: 'Favorites',   cmd: 'favorites',   icon: 'fa-star'},
+        {title: 'Radio',       cmd: 'presets',     icon: 'fa-bullhorn'},
+        {title: 'Podcasts',    cmd: 'podcasts',    icon: 'fa-podcast'},
+        {title: 'Pocketcasts', cmd: 'pocketcasts', icon: 'fa-podcast'},
+        {title: 'Spotify',     cmd: 'spotty',      icon: 'fa-spotify'},
+        {title: 'Blah',        cmd: 'dummy',       icon: 'fa-question'}];
+
+    /* FIXME: Only display podcasts shortcuts if pocketcasts not available */
 
     $.when(... shortcuts.map(
         item => active_player.query('can', item.cmd, 'items', '?')))
