@@ -1,4 +1,4 @@
-# Responsive / Mobile skin for Squeezeserver (Logitech media server)
+# Responsive / Mobile skin for Slimserver (Logitech media server)
 
 ![ScreenShot](screenshot_01.png) 
 ![ScreenShot](screenshot_02.png) 
