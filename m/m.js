@@ -202,17 +202,24 @@ function player_created(_, server, player) {
     from_template('#playlist-template')
         .addClass(player.html_id)
         .addClass(idx ? '' : 'active')
-        .appendTo('#playlist .modal-body')
+        .appendTo('#playlist .modal-body');
 
     from_template('#volumes template')
         .addClass(player.html_id)
-        .appendTo('#volumes .modal-body')
+        .appendTo('#volumes .modal-body');
 
-    $('.dropdown-menu .syncing')
-        .after($('<a>')
-               .addClass('dropdown-item')
-               .attr('href', '#')
-               .text(player.name));
+    ['sync', 'unsync']
+        .forEach(sync =>
+                 $('.dropdown-header.' + sync)
+                 .after($('<a>')
+                        .addClass('dropdown-item')
+                        .addClass(player.html_id)
+                        .addClass(sync)
+                        .attr('href', '#')
+                        .text(player.name)
+                        .click(() => {
+                            /* handle */
+                        })));
 
     var $elm = $('.player.' + player.html_id);
 
@@ -333,7 +340,7 @@ function browse_menu(menus) {
         ));
 }
 
-function player_updated(_, player) {
+function player_updated(_, server, player) {
     log('Updated',
         player.id,
         player.track_title,
@@ -363,9 +370,13 @@ function player_updated(_, player) {
     $elm.find('.player-name')
         .text(player.name);
     $elm.find('.player-group')
-        .text(player.is_synced ? player.group
-              .filter(p => p != player)
-              .map(p => p.name).join('+') : '');
+        .text(player
+              .sync_partners
+              .map(p => p.name).join('+'))
+        .prepend(player.is_synced ?
+                 $('<span>')
+                 .addClass('sync-icon fa fa-link') : '');
+
     $elm.find('.player-id')
         .text(player.group.map(p => p.id).join('+'));
     $elm.find('.artist')
@@ -425,6 +436,22 @@ function player_updated(_, player) {
                     .end()
             ));
     }
+
+    $('.dropdown-menu.syncing .dropdown-item').hide();
+    server.players.forEach(other => {
+        if (!other.is_slave && !player.group.includes(other))
+            $('.dropdown-item.sync.'+other.html_id)
+            .text(other
+                  .group
+                  .map(p => p.name).join('+'))
+            .show();
+        if (player.sync_partners.includes(other))
+            $('.dropdown-item.unsync.'+other.html_id)
+            .text(other.name)
+            .show();
+        if (player.group.length != server.players.length)
+            $('.dropdown-item#party').show();
+    });
 }
 
 $(() => {

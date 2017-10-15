@@ -100,8 +100,8 @@ class Player {
     query(...params) {
         return this._server.query(this.id, ...params);
     }
-    /* FIXME: playlist not properly updated until next update, but then deleted again */
-    /* FIXME: artist in ui not updated (leftover) when switching from spotty to radio */
+
+    /* FIXME: clear artist/track/album to prevent lefover from last track if new track has empty field */
     update() {
         if (!this.playlist_timestamp)
             log('Fetching full playlist');
@@ -131,7 +131,7 @@ class Player {
                     state.remoteMeta || {});
 
                 log('State', this._state);
-                $(this._server).trigger('player_updated', this);
+                $(this._server).trigger('player_updated', [this._server, this]);
             });
     }
 
@@ -150,31 +150,36 @@ class Player {
         this._command('power', 0);
     }
 
+    /* FIXME: clean up sync helper methods */
+
     get is_synced() {
-        return this.master;
+        return this._master;
     }
 
-    get is_master() {
-        return this.master == this;
-    }
-
-    get is_slave() {
-        return this.master && !this.is_master;
-    }
-
-    get master() {
+    get _master() {
         return this._state.sync_master && this._server._players[this._state.sync_master];
     }
 
-    get slaves() {
+    get _slaves() {
         return this._state.sync_slaves ?
             this._state.sync_slaves.split(',').map(
                 id => this._server._players[id]) : [];
     }
 
+    get is_slave() {
+        return this._master && this._master != this;
+    }
+
     get group() {
         /* return list of all players in sync group */
-        return this.is_slave ? this.master.group : [this].concat(this.slaves)
+        return this.is_slave ? this._master.group : [this].concat(this._slaves)
+    }
+
+    get group_name() {
+    }
+
+    get sync_partners() {
+        return this.group.filter(p => p != this);
     }
 
     get ip() {
@@ -223,7 +228,7 @@ class Player {
     }
 
     set track_position(position) {
-        return this._command('time', "" + position);
+        return this._command('time', '' + position);
     }
 
     get track_duration() {

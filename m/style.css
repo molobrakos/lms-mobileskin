@@ -139,6 +139,8 @@ body.debug .player-id { display: inline; }
 .player.synced button.sync { display: inline; }
 .player.unsynced button.unsync { display: none; }
 
+.player.unsynced span.synced-icon { display: none; }
+
 /* faster sliding speed */
 .carousel-item {
     transition: -webkit-transform 0.3s ease;
@@ -147,7 +149,7 @@ body.debug .player-id { display: inline; }
 }
 
 .carousel-caption {
-    margin-bottom: 2rem;
+    margin-bottom: 4rem;
 }
 
 /* if navbar at bottom

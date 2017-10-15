@@ -9,6 +9,10 @@ $(() => {
 
     $('.carousel')
         .on('touchstart', e => {
+
+            /* FIXME: Chrome warning, passive event listener.
+               https://github.com/jquery/jquery/issues/2871 */
+
             if (!e.touches.length)
                 return;
             var start = e.touches[0].pageX;
