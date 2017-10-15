@@ -1,5 +1,8 @@
-<!-- -*- mode: html; indent-tabs-mode: nil; -*- -->
-
+[%# <!-- -*- mode: html; indent-tabs-mode: nil; -*- --> -%]
+[% DEFAULT debug = 0 -%]
+[% IF url_query == "debug" OR url_query == "debug-screen" -%]
+[% debug = 1 -%]
+[% END -%]
 <!DOCTYPE html>
 <html>
   <head>
@@ -11,7 +14,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="#414141">
 
 
-    [% IF url_query == "debug" %]
+    [% IF debug %]
     <meta http-equiv="cache-control" content="no-cache" />
     [% END %]
 
@@ -31,14 +34,14 @@
 
     <link rel="stylesheet" href="[% webroot %]style.css" />
 
-    <link rel="manifest" href="manifest.js" />  <!-- because .json extension not served by lms -->
+    <link rel="manifest" href="manifest.js" />  [%#  <!-- because .json extension not served by lms --> %]
     <link rel="apple-touch-icon" href="[% webroot %]html/images/apple-touch-icon.png"/>
     <link rel="icon" href="[% webroot %]favicon.ico"/>
   </head>
 
   <body>
 
-    <!-- FIXME: Move navbar to page bottom instead for easier thumb reach -->
+    [%# <!-- FIXME: Move navbar to page bottom instead for easier thumb reach --> %]
 
     <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
 
@@ -138,17 +141,17 @@
                 <div class="volume progress w-25"><div class="progress-bar"></div></div>
                 <button type="button" class="volume_up btn btn-sm rounded-circle"><span class="fa fa-volume-up"></span></button>
               </div>
-            </div> <!-- controls -->
+            </div> [%# <!-- controls --> %]
             <div class="carousel-caption d-none d-block">
               <h5 class="player-name"></h5>
               <h6 class="player-group small"></h6>
-              [% IF url_query == "debug" %]
+              [% IF debug %]
               <p class="player-id"></p>
               [% END %]
             </div>
-          </div> <!-- player carousel-item -->
+          </div> [%# <!-- player carousel-item --> %]
         </template>
-      </div> <!-- carousel-inner -->
+      </div> [%# <!-- carousel-inner --> %]
 
       <a class="carousel-control-prev" href="#players" data-slide="prev">
         <span class="carousel-control-prev-icon"></span>
@@ -156,10 +159,10 @@
       <a class="carousel-control-next" href="#players" data-slide="next">
         <span class="carousel-control-next-icon"></span>
       </a>
-    </div> <!-- players carousel -->
+    </div> [%# <!-- players carousel --> %]
 
-    <!-- volume controls -->
-    <!-- FIXME: merge these modals -->
+    [%# <!-- volume controls --> %]
+    [%# <!-- FIXME: merge these modals --> %]
 
     <div class="modal fade" id="volumes">
       <div class="modal-dialog modal-lg" role="document">
@@ -195,7 +198,7 @@
       </div>
     </div>
 
-    <!-- playlist -->
+    [%# <!-- playlist --> %]
 
     <div class="modal fade" id="playlist">
       <div class="modal-dialog modal-lg" role="document">
@@ -234,8 +237,8 @@
       </div>
     </div>
 
-    <!-- browser for local libray, favorites, podcasts, radio, spotify, etc -->
-    <!-- FIXME: use bootstrap scrollspy for index -->
+    [%# <!-- browser for local libray, favorites, podcasts, radio, spotify, etc --> %]
+    [%# <!-- FIXME: use bootstrap scrollspy for index --> %]
 
     <div class="modal fade" id="browser">
       <div class="modal-dialog modal-lg" role="document">
@@ -257,7 +260,9 @@
                   <div class="media-body">
                     <h5 class="mt-0 track title"></h5>
                     <h6 class="artist"></h6>
-                    <!--  <button type="button" class="btn"><span class="fa fa-play"></span></button> -->
+                    [%# <!--  <button type="button"
+                    class="btn"><span class="fa
+                    fa-play"></span></button> --> %]
                   </div>
                 </div>
               </li>
@@ -267,7 +272,7 @@
       </div>
     </div>
 
-    <!-- preferences -->
+    [%# <!-- preferences --> %]
 
     <div class="modal fade" id="settings">
       <div class="modal-dialog modal-lg" role="document">
@@ -290,7 +295,7 @@
               </label>
             </div>
 
-            [% IF url_query == "debug" %]
+            [% IF debug %]
 
             <dl>
               <dt>Screen size (w&times;h)</dt>
@@ -343,12 +348,15 @@
 
             <a href="/Default">Standard skin</a><br/>
 
-            <!-- FIXME: Separate settings for console logging and on screen debug -->
+            [%# <!-- FIXME: Separate settings for console logging and on screen debug --> %]
 
-            [% IF url_query == "debug" %]
-            <a class="debug-off" href="[% webroot %]">Turn debug off</a>
+            [% IF debug %]
+            <a href="[% webroot %]">Turn debug off</a><br/>
+            [% IF url_query != "debug-screen" %]
+            <a href="[% webroot %]?debug-screen">Debug log to screen</a>
+            [% END %]
             [% ELSE %]
-            <a class="debug-on" href="[% webroot %]?debug">Turn debug on</a>
+            <a href="[% webroot %]?debug">Turn debug on</a>
             [% END %]
 
           </form>
@@ -360,15 +368,15 @@
       </div>
     </div>
 
-    [% IF url_query == "debug" %]
+    [% IF debug %]
     <span id="debug"></span>
     [% END %]
 
   </body>
 
-  [% IF url_query == "debug" %]
+  [% IF debug %]
 
-  <!-- Non-minified versions -->
+  [%# Non-minified versions %]
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"
           integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
@@ -384,7 +392,7 @@
 
   [% ELSE %]
 
-  <!-- Minified versions -->
+  [%#  Minified versions %]
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
           integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="

@@ -1,6 +1,8 @@
 "use strict";
 
-$('head').append(`
+var LOG_SCREEN = /\/\?debug-screen/.test(window.location.href);
+
+LOG_SCREEN && $('head').append(`
 <style>
 #console-log { background-color: black;
                opacity: .5;
@@ -48,10 +50,12 @@ function _debug_str(obj) {
 
 function _log(timestamp, ...args) {
     console.log(...args);
-    var message = _debug_str(args);
-    $('#console-log').prepend($('<li><span class="date">' +
-                                timestamp + '</span>' +
-                                message + '</li>'));
+    if (LOG_SCREEN) {
+        var message = _debug_str(args);
+        $('#console-log').prepend($('<li><span class="date">' +
+                                    timestamp + '</span>' +
+                                    message + '</li>'));
+    }
 }
 
 /* FIXME: display connection error in non-debug ui as well */
@@ -73,13 +77,16 @@ $(document).ajaxSuccess(function(ev, xhr, settings, data) {
 });
 
 $(function() {
-    $('body').append($('<ul id="console-log"></ul>'));
-    window.log = (...args) => {
-        _log(_timestamp(), ...args);
-    }
     var ratio = window.devicePixelRatio || 1;
     $('#screen_size').text(screen.width + '\u00D7' + screen.height)
     $('#screen_orientation').text(screen.orientation.type);
     $('#screen_size_dp').text(screen.width * ratio + '\u00D7' + screen.height * ratio + ' (ratio: ' + ratio + ')');
     $('#is_touch').text('ontouchstart' in document.documentElement);
+
+    if (LOG_SCREEN) {
+        $('body').append($('<ul id="console-log"></ul>'));
+        window.log = (...args) => {
+            _log(_timestamp(), ...args);
+        }
+    }
 });

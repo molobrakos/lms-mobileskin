@@ -154,6 +154,8 @@ function server_ready(_, server) {
             {title: 'Folder',   _cmd: 'musicfolder', icon: 'fa-folder'}]};
 
     $('#browser').on('show.bs.modal', (ev) => {
+        var modal = this;
+        log(modal, this);
         var shortcut = $(ev.relatedTarget).data('shortcut');
         if (shortcut) {
             /* FIXME: reuse browse_level function below */
