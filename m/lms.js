@@ -175,9 +175,6 @@ class Player {
         return this.is_slave ? this._master.group : [this].concat(this._slaves)
     }
 
-    get group_name() {
-    }
-
     get sync_partners() {
         return this.group.filter(p => p != this);
     }
