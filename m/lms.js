@@ -180,7 +180,11 @@ class Player {
     }
 
     sync(partner) {
+        return this._command('sync', partner.id);
+    }
 
+    unsync() {
+        return this._command('sync', '-');
     }
 
     get ip() {
@@ -321,31 +325,31 @@ class Player {
     }
 
     playlist_delete(idx) {
-        this._command('playlist', 'delete', idx);
+        return this._command('playlist', 'delete', idx);
     }
 
     playlist_move(from, to) {
-        this._command('playlist', 'move', from, to);
+        return this._command('playlist', 'move', from, to);
     }
 
     playlist_save(name) {
-        this._command('playlist', 'save', name);
+        return this._command('playlist', 'save', name);
     }
 
     playlist_add(item) {
-        this._command('playlist', 'add', item);
+        return this._command('playlist', 'add', item);
     }
 
     playlist_insert(item) {
-        this._command('playlist', 'insert', item);
+        return this._command('playlist', 'insert', item);
     }
 
     playlist_play(item) {
-        this._command('playlist', 'play', item);
+        return this._command('playlist', 'play', item);
     }
 
     play_favorite(fav) {
-        this._command('favorites', 'playlist', 'play', {item_id: fav});
+        return this._command('favorites', 'playlist', 'play', {item_id: fav});
     }
 
 }

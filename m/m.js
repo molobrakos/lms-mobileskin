@@ -212,19 +212,21 @@ function player_created(_, server, player) {
 
     [false, true]
         .forEach(sync =>
-                 $('.dropdown-header.' + sync ? 'sync' : 'unsync')
+                 $('.dropdown-header.' + (sync ? 'sync' : 'unsync'))
                  .after($('<a>')
                         .addClass('dropdown-item')
                         .addClass(player.html_id)
                         .addClass(sync ? 'sync' : 'unsync')
                         .attr('href', '#')
                         .text(player.name)
-                        .click(() => {
-                            /* this player = current player */
-                            /* other player = player */
-                            /* action = sync */
-
-                        })));
+                        .click(() => { sync
+                                       ? active_player.sync(player)
+                                       : player.unsync(); })));
+    $('.dropdown-item#party').click(() => {
+        server
+            .players
+            .filter(player => player != active_player)
+            .forEach(player => active_player.sync(player))});
 
     var $elm = $('.player.' + player.html_id);
 
@@ -455,6 +457,10 @@ function player_updated(_, server, player) {
             .show();
         if (player.group.length != server.players.length)
             $('.dropdown-item#party').show();
+        /* FIXME: To be able to set the state of the 'Unsync all'
+           menu item we must know the sync state for all players
+           - by sending periodic 'syncgroups ?'-queries */
+        /* $('.dropdown-item#no-party').show(); */
     });
 }
 
