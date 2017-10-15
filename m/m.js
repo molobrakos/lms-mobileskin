@@ -154,6 +154,8 @@ function server_ready(_, server) {
             {title: 'Folder',   _cmd: 'musicfolder', icon: 'fa-folder'}]};
 
     $('#browser').on('show.bs.modal', (ev) => {
+        /* FIXME: make back button close modal
+           https://gist.github.com/thedamon/9276193 */
         var modal = this;
         log(modal, this);
         var shortcut = $(ev.relatedTarget).data('shortcut');
@@ -355,21 +357,6 @@ function player_updated(_, server, player) {
         player.track_artwork_url);
 
     var $elm = $('.player.' + player.html_id);
-
-    if (player.is_slave) {
-
-        /* FIXME: if this is the active slide, we must change before removing it! */
-        /*
-          if ($elm.hasClass('active'))
-          $('.carousel').carousel('next');
-        */
-
-        /*
-          $('#playerslist .nav-item.' + player.html_id).remove();
-          $('ol.carousel-indicators li.' + player.html_id).remove();
-          $('#players .player.' + player.html_id).remove(); */
-    }
-
 
     /* FIXME: Check first if a value really changed before setting it?
        (premature optimization?) */
