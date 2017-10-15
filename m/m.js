@@ -155,16 +155,16 @@ function server_ready(_, server) {
 
     $('#browser').on('show.bs.modal', (ev) => {
         var shortcut = $(ev.relatedTarget).data('shortcut');
-        if (shortcut)
+        if (shortcut) {
             /* FIXME: reuse browse_level function below */
-            /* FIXME: don't display modal until content finished loaded */
+            /* FIXME: delay modal display until dynamic content finished loaded */
             active_player.query(shortcut, 'items', 0, 99).then(
                 res => {
                     browse_menu([{title: shortcuts.find(s => s.cmd == shortcut).title,
                                   items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
                                   context: shortcut}])
                 });
-        else
+        } else
             browse_menu([main_menu]);
     });
 }
