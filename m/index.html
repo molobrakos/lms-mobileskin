@@ -85,6 +85,7 @@
               <h6 id="preset" class="dropdown-header">Preset groups</h6>
               <a class="dropdown-item disabled" href="#">Not implemented</a>
               <a id="party" class="dropdown-item" href="#">Party mode</a>
+              <a id="no-party" class="dropdown-item" href="#">Unsync all</a>
             </div>
           </li>
 
@@ -145,9 +146,6 @@
             <div class="carousel-caption d-none d-block">
               <h5 class="player-name"></h5>
               <h6 class="player-group small"></h6>
-              [% IF debug %]
-              <p class="player-id"></p>
-              [% END %]
             </div>
           </div> [%# <!-- player carousel-item --> %]
         </template>

@@ -210,17 +210,20 @@ function player_created(_, server, player) {
         .addClass(player.html_id)
         .appendTo('#volumes .modal-body');
 
-    ['sync', 'unsync']
+    [false, true]
         .forEach(sync =>
-                 $('.dropdown-header.' + sync)
+                 $('.dropdown-header.' + sync ? 'sync' : 'unsync')
                  .after($('<a>')
                         .addClass('dropdown-item')
                         .addClass(player.html_id)
-                        .addClass(sync)
+                        .addClass(sync ? 'sync' : 'unsync')
                         .attr('href', '#')
                         .text(player.name)
                         .click(() => {
-                            /* handle */
+                            /* this player = current player */
+                            /* other player = player */
+                            /* action = sync */
+
                         })));
 
     var $elm = $('.player.' + player.html_id);
@@ -370,7 +373,9 @@ function player_updated(_, server, player) {
        (premature optimization?) */
 
     $elm.find('.player-name')
-        .text(player.name);
+        .text(DEBUG ?
+              player.name + ' (' + player.id + ')'
+              : player.name);
     $elm.find('.player-group')
         .text(player
               .sync_partners
@@ -378,9 +383,6 @@ function player_updated(_, server, player) {
         .prepend(player.is_synced ?
                  $('<span>')
                  .addClass('sync-icon fa fa-link') : '');
-
-    $elm.find('.player-id')
-        .text(player.group.map(p => p.id).join('+'));
     $elm.find('.artist')
         .text(player.track_artist);
     $elm.find('.album')

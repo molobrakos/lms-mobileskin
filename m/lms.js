@@ -179,6 +179,10 @@ class Player {
         return this.group.filter(p => p != this);
     }
 
+    sync(partner) {
+
+    }
+
     get ip() {
         return this._player_data.ip;
     }
