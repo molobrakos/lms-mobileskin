@@ -92,12 +92,9 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 
 /* #players .player .progress.duration { width: 100%; } */
 
-.player .controls { padding-top: 0.5rem; }
-
 .player .controls .btn {
     width: 4rem;
     height: 4rem;
-    font-size: 1.2rem;
     margin: 0.2rem;
 }
 
@@ -109,7 +106,16 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 .player .controls .btn-xl {
     width: 8rem;
     height: 8rem;
-    font-size: 2rem;
+}
+
+.player .controls {
+    width: 70% !important;
+    margin-left: 15% !important;
+    margin-right: 15% !important;
+}
+
+.player .controls .volume {
+    margin-top: -10px;
 }
 
 body .player-id { display: none; }
