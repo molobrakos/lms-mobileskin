@@ -37,12 +37,12 @@ html {
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-    html { font-size: 16px; }
+    html { font-size: 20px; }
 }
 
 /* Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
-    html { font-size: 18px; }
+    html { font-size: 14px; }
 }
 
 @media (max-width: 767px) and (orientation: portrait) {

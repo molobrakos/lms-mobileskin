@@ -384,9 +384,7 @@ function player_updated(_, server, player) {
        (premature optimization?) */
 
     $elm.find('.player-name')
-        .text(DEBUG ?
-              player.name + ' (' + player.id + ')'
-              : player.name);
+        .text(player.name);
     $elm.find('.player-group')
         .text(player
               .sync_partners
