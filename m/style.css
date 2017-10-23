@@ -118,6 +118,9 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
     margin-top: -10px;
 }
 
+.navbar .nav-item span.fa {
+    text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135; }
+
 body .player-id { display: none; }
 body.debug .player-id { display: inline; }
 
