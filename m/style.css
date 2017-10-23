@@ -21,8 +21,6 @@ html {
 
 @media (max-width: 575px) {
     html { font-size: 10px; }
-    .navbar { font-size: 18px; }
-    #playerslist li { display: none; }
 }
 
 /* Small devices (landscape phones, 576px and up) */
@@ -37,12 +35,12 @@ html {
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-    html { font-size: 20px; }
+    html { font-size: 16px; }
 }
 
 /* Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
-    html { font-size: 14px; }
+    html { font-size: 20px; }
 }
 
 @media (max-width: 767px) and (orientation: portrait) {
@@ -80,7 +78,6 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 
 #players .player {
     color: white;
-    margin-top: 4.5rem;
 }
 
 
@@ -93,11 +90,7 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 #player .player .cover img { object-fit: cover; }
 .player .trackdata { padding-top: 1rem; }
 
-#players .player .progress.duration { width: 100%; }
-
-.duration .progress-title { float: left;
-                            overflow: hidden;
-                            white-space: nowrap; }
+/* #players .player .progress.duration { width: 100%; } */
 
 .player .controls { padding-top: 0.5rem; }
 
@@ -122,8 +115,12 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 body .player-id { display: none; }
 body.debug .player-id { display: inline; }
 
-.progress.duration { background: rgba(0, 0, 0, 0); }
 .progress { border-radius: 0; }
+.progress.duration { background: rgba(0, 0, 0, 0); }
+.progress.duration .progress-title {
+                                     overflow: hidden;
+                                     white-space: nowrap; }
+
 .player .track { min-height: 1rem; }
 
 .player button.pause { display: none; }
@@ -156,11 +153,10 @@ body.debug .player-id { display: inline; }
     background-image: linear-gradient(to bottom, #ffffff 0%, #343a40 100%);
 }
 
-/* if navbar at bottom
-.carousel-indicators, .carousel-caption {
+/* if navbar at bottom */
+.carousel-indicators {
     margin-bottom: 5rem;
 }
-*/
 
 #debug { position: absolute;
          bottom: 0px;
