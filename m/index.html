@@ -66,6 +66,16 @@
                 <span class="fa"></span></a></li>
           </template>
 
+          <li class="nav-item" data-toggle="tooltip" title="Search">
+            <a class="nav-link" id="mute-all" href="#">
+              <span class="fa fa-search"></span>
+          </a></li>
+
+          <li class="nav-item" data-toggle="tooltip" title="Mute all">
+            <a class="nav-link" id="mute-all" href="#">
+              <span class="fa fa-volume-off"></span>
+          </a></li>
+
           <li class="nav-item" data-toggle="tooltip" title="All players">
             <a class="nav-link" id="show-volumes" href="#"
                data-toggle="modal" data-target="#volumes">
@@ -119,7 +129,7 @@
         <template id="player-template">
           <div class="player carousel-item">
             <div class="metadata mx-auto">
-              <div class="cover">
+              <div class="cover w-100 h-100">
                 <img class="cover w-100 h-100" src="">
                 <div class="overlay">
                   <div class="trackdata">
@@ -162,7 +172,7 @@
     [%# <!-- volume controls --> %]
     [%# <!-- FIXME: merge these modals --> %]
 
-    <div class="modal fade" id="volumes">
+    <div class="modal fade dark compact" id="volumes">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -198,7 +208,7 @@
 
     [%# <!-- playlist --> %]
 
-    <div class="modal fade" id="playlist">
+    <div class="modal fade dark compact" id="playlist">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -238,7 +248,7 @@
     [%# <!-- browser for local libray, favorites, podcasts, radio, spotify, etc --> %]
     [%# <!-- FIXME: use bootstrap scrollspy for index --> %]
 
-    <div class="modal fade" id="browser">
+    <div class="modal fade dark compact" id="browser">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -253,11 +263,10 @@
             <template id="menu-item-template">
               <li class="list-group-item">
                 <div class="media">
-                  <img class="icon cover d-flex align-self-start mr-3" src="">
-                  <span class="icon mr-3"></span>
+                  <img class="icon cover d-flex align-self-start mr-2" src="">
+                  <span class="icon mr-2"></span>
                   <div class="media-body">
-                    <h5 class="mt-0 track title"></h5>
-                    <h6 class="artist"></h6>
+                    <span class="title h5"></span>
                     [%# <!--  <button type="button"
                     class="btn"><span class="fa
                     fa-play"></span></button> --> %]
@@ -272,7 +281,7 @@
 
     [%# <!-- preferences --> %]
 
-    <div class="modal fade" id="settings">
+    <div class="modal fade dark compact" id="settings">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">

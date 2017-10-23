@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -28,7 +28,7 @@ class Server {
 
         this._query('syncgroups', '?')
             .then(res => {
-                log("Sync groups:", res.result);
+                log('Sync groups:', res.result);
             });
 
         return this._query('serverstatus', '-')

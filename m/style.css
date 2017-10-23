@@ -152,6 +152,10 @@ body.debug .player-id { display: inline; }
     margin-bottom: 4rem;
 }
 
+.carousel-inner, .modal-content {
+    background-image: linear-gradient(to bottom, #ffffff 0%, #343a40 100%);
+}
+
 /* if navbar at bottom
 .carousel-indicators, .carousel-caption {
     margin-bottom: 5rem;
@@ -162,3 +166,14 @@ body.debug .player-id { display: inline; }
          bottom: 0px;
          right: 0px;
          z-index: 10; }
+
+@media (max-width: 767px) {
+    /* override bootstrap defaults for more compact look */
+    .modal.compact .modal-dialog { margin: 0px; }
+    .modal.compact .modal-content { border: none; border-radius: 0px; width: 100%; }
+    .modal.compact .modal-body { padding: 0px; }
+    .modal.compact .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; }
+}
+
+.modal.dark .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; background: #212529; color: white; }
+.modal.dark .modal-body .list-group-item:nth-child(odd) { background: #343a40; }

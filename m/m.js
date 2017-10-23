@@ -1,9 +1,18 @@
 /* -*- coding: utf-8 -*- */
 
-"use strict";
+'use strict';
 
-/* FIXME: use jekyll to generate installable file */
-/* FIXME: create proper plugin */
+/* FIXME: Use jekyll to generate installable file */
+/* FIXME: Create proper plugin */
+/* FIXME: Number of items returner currently capped */
+/* FIXME: Pagination for large number of returned items */
+/* FIXME: Plugin search (e.g. spotty) */
+/* FIXME: Less space in browser modal */
+/* FIXME: Full height album art in browser modal */
+/* FIXME: Server rescaling of album art, request correct size */
+/* FIXME: Global "mute all"-button */
+/* FIXME: Navbar att bottom of screen */
+/* FIXME: Navbar larger size esp. on larger screens */
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -22,13 +31,13 @@ var STORAGE_KEY_ACTIVE_PLAYER = 'active_player';
 /* DOM node storage */
 var DATA_KEY_PLAYLIST_TIMESTAMP = 'playlist_timestamp';
 
-var BGCOLORS = ["fc4a1a", "f7b733",
-                "aa000c", "ff00ff",
-                "00b09b", "96c93d",
-                "c94b4b", "4b134f",
-                "11000c", "1100ff",
-                "00aa0c", "11f1ff",
-                "ff8008", "ffc837"];
+var BGCOLORS = ['fc4a1a', 'f7b733',
+                'aa000c', 'ff00ff',
+                '00b09b', '96c93d',
+                'c94b4b', '4b134f',
+                '11000c', '1100ff',
+                '00aa0c', '11f1ff',
+                'ff8008', 'ffc837'];
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -54,8 +63,8 @@ if ('serviceWorker' in navigator) {
     log('Service Worker available');
     navigator.serviceWorker
         .register('./sw.js')
-        .then(reg => log("Service worker installed"))
-        .catch(err => log("Service Worker not registered: " + err));
+        .then(reg => log('Service worker installed'))
+        .catch(err => log('Service Worker not registered: ' + err));
 }
 
 /* ------------------------------------------------------------------------ */
@@ -69,13 +78,27 @@ function from_template(selector) {
     return $($(selector).html())
 }
 
-function formatTime(s) {
+function format_time(s) {
     /* seconds -> 'mm:ss' or 'hh:mm:ss' */
     return s < 0 ?
-        '-' + formatTime(-s)
+        '-' + format_time(-s)
         : s > 3600 ?
         new Date(1000 * s).toISOString().slice(11, -5) :
         new Date(1000 * s).toISOString().slice(14, -5);
+}
+
+function rescaled($img, url, thumb) {
+    /* Let the server handle image rescaling */
+    var w = thumb ? 50 : 400;
+    var h = thumb ? 50 : 400;
+    return $img.attr('src', url);
+    return $img.attr('src', "".concat(
+        url.slice(0, url.lastIndexOf('.')),
+        '_',
+        w,
+        'x',
+        h,
+        url.slice(url.lastIndexOf('.'))))
 }
 
 /* ------------------------------------------------------------------------ */
@@ -192,9 +215,6 @@ function player_created(_, server, player) {
     from_template('#player-template')
         .addClass(player.html_id)
         .addClass(idx ? '' : 'active')
-        .css('background-image', 'linear-gradient(to bottom, #' +
-             BGCOLORS[2*idx+0 % BGCOLORS.length] + ' 0%, #' +
-             BGCOLORS[2*idx+1 % BGCOLORS.length] + ' 100%)')
         .appendTo('.carousel-inner');
 
     from_template('#carousel-indicator-template')
@@ -306,14 +326,31 @@ function browse_menu(menus) {
                                context: params[0]}])))
     }
 
+    function menu_item_clicked(context, item) {
+        log('Clicked', item);
+        if (item.id && item.isaudio) {
+            active_player._command(context, 'playlist', 'play', {item_id: item.id});
+            $('.modal.show').modal('hide');
+        } else if (item.url && item.type == 'audio') {
+            active_player.playlist_play(decodeURIComponent(item.url));
+            $('.modal.show').modal('hide');
+        } else if (item._cmd)
+            browse_level(item, item._cmd)
+        else if (item.cmd)
+            browse_level(item, item.cmd, 'items')
+        else if (item.id && item.hasitems)
+            browse_level(item, context, 'items', {item_id: item.id});
+        else if (item.id && item.type == 'folder')
+            browse_level(item, 'musicfolder', {type: 'audio', folder_id: item.id, tags: 'cdu'})
+    }
+
     /* last item is the active leaf */
     var menu = menus.slice(-1)[0];
     menu.items.forEach(item => log('Menu item', item));
 
     $('#browser .menu')
         .empty()
-        .append(
-            menu.items.map(
+        .append(menu.items.map(
             item =>
                 from_template('#menu-item-template')
                 .find('.title')
@@ -323,29 +360,14 @@ function browse_menu(menus) {
                 .addClass(/fa-/.test(item.icon) ? 'fa ' + item.icon : '')
                 .end()
                 .find('img.icon')
-                .attr('src',
-                      /fa-/.test(item.icon) ? '' :
-                      item.icon ||
-                      item.image ||
-                      '/music/' + (item.coverid || item.id) + '/cover.jpg')
+                .each((_, img) => rescaled(
+                    $(img),
+                        /fa-/.test(item.icon) ? '' :
+                        item.icon ||
+                        item.image ||
+                        '/music/' + (item.coverid || item.id) + '/cover.jpg', true))
                 .end()
-                .click(() => {
-                    log('Clicked', item);
-                    if (item.id && item.isaudio) {
-                        active_player._command(menu.context, 'playlist', 'play', {item_id: item.id});
-                        $('.modal.show').modal('hide');
-                    } else if (item.id && item.type == 'audio' && item.url) {
-                        active_player.playlist_play(decodeURIComponent(item.url));
-                        $('.modal.show').modal('hide');
-                    } else if (item._cmd)
-                        browse_level(item, item._cmd)
-                    else if (item.cmd)
-                        browse_level(item, item.cmd, 'items')
-                    else if (item.hasitems && item.id)
-                        browse_level(item, menu.context, 'items', {item_id: item.id});
-                    else if (item.id && item.type == 'folder')
-                        browse_level(item, 'musicfolder', {type: 'audio', folder_id: item.id, tags: 'cdu'})
-                })
+                .click(() => menu_item_clicked(menu.context, item))
         ));
 }
 
@@ -378,17 +400,23 @@ function player_updated(_, server, player) {
         .text(player.track_album);
     $elm.find('.track')
         .text(player.track_title);
+
+    log($elm.find('img.cover').width());
+    log($elm.find('img.cover').height());
+    log(player.track_artwork_url);
+
     $elm.find('img.cover')
-        .attr('src', player.track_artwork_url);
+        .each((_, img) => rescaled(
+            $(img), player.track_artwork_url));
     $elm.find('.duration .progress-bar')
         .width((player.track_duration > 0 ?
                 100 * player.track_position / player.track_duration : 0) + '%');
     $elm.find('.progress-title')
         .text(player.is_stream ?
-              formatTime(player.track_position) :
-              [formatTime(player.track_position),
-               formatTime(player.track_duration),
-               formatTime(player.track_remaining)].join(' | '));
+              format_time(player.track_position) :
+              [format_time(player.track_position),
+               format_time(player.track_duration),
+               format_time(player.track_remaining)].join(' | '));
     $elm.find('.volume .progress-bar')
         .width(player.volume + '%');
 
@@ -416,7 +444,9 @@ function player_updated(_, server, player) {
                         alert('track clicked');
                     })
                     .find('img.cover')
-                    .attr('src', track.artwork_url || '/music/' + track.id + '/cover.jpg')
+                    .each((_, img) => rescaled(
+                        $(img),
+                        track.artwork_url || '/music/' + track.id + '/cover.jpg', true))
                     .end()
                     .find('.track')
                     .text(track.title)
