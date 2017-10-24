@@ -9,7 +9,8 @@
 /* FIXME: Plugin search (e.g. spotty) */
 /* FIXME: Less space in browser modal */
 /* FIXME: Full height album art in browser modal */
-/* FIXME: Server rescaling of album art, request correct size */
+/* FIXME: Server rescaling of album art, request correct size for main view and browser/playlist view */
+/* FIXME: Merge playlist, browser view */
 /* FIXME: Global "mute all"-button */
 /* FIXME: Navbar att bottom of screen */
 /* FIXME: Navbar larger size esp. on larger screens */
@@ -393,11 +394,11 @@ function player_updated(_, server, player) {
                  $('<span>')
                  .addClass('sync-icon fa fa-link') : '');
     $elm.find('.artist')
-        .text(player.track_artist);
+        .text(player.track_artist || '');
     $elm.find('.album')
-        .text(player.track_album);
+        .text(player.track_album || '');
     $elm.find('.track')
-        .text(player.track_title);
+        .text(player.track_title || '');
 
     log($elm.find('img.cover').width());
     log($elm.find('img.cover').height());
