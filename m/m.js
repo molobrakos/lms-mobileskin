@@ -86,6 +86,7 @@ $(window).resize(() => {
 })
 function rescaled($img, context, url) {
     /* Let the server handle image rescaling */
+    return $img.attr('src', url);
 
     var img_dims = window.img_dims = window.img_dims || {};
     if (!img_dims[context] && $img.width()) {
