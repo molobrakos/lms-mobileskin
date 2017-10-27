@@ -47,16 +47,12 @@ html {
 }
 
 @media (max-width: 767px) and (orientation: portrait) {
-    .player .metadata { min-width: 100vw;
-                        min-height: 100vw;
-                        width: 100vw;
+    .player .metadata { width: 100vw;
                         heigh: 100vw; }
 }
 
 @media (orientation: landscape) {
-    .player .metadata { min-width: 30vw;
-                        min-height: 30vw;
-                        width: 30vw;
+    .player .metadata { width: 30vw;
                         height: 30vw; }
 }
 
@@ -72,7 +68,7 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 
 .playlist { display: none; }
 .playlist.active { display: block; }
-.media .cover { min-height: 5rem; min-width: 5rem; }
+.media .cover { height: 5rem; width: 5rem; }
 .media .artist { min-height: 1rem; }
 
 .media img.icon[src=""] { display: none !important; }
