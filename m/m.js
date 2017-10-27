@@ -21,24 +21,16 @@
 /*                                                                          */
 /* ------------------------------------------------------------------------ */
 
-var DEBUG = /\/\?debug/.test(window.location.href);
-var MOBILE = /Mobi/.test(navigator.userAgent);
+const DEBUG = /\/\?debug/.test(window.location.href);
+const MOBILE = /Mobi/.test(navigator.userAgent);
 
-var POLL_INTERVAL = DEBUG ? 3000 : 500; /* ms */
+const POLL_INTERVAL = DEBUG ? 3000 : 500; /* ms */
 
 /* LocalStorage */
-var STORAGE_KEY_ACTIVE_PLAYER = 'active_player';
+const STORAGE_KEY_ACTIVE_PLAYER = 'active_player';
 
 /* DOM node storage */
-var DATA_KEY_PLAYLIST_TIMESTAMP = 'playlist_timestamp';
-
-var BGCOLORS = ['fc4a1a', 'f7b733',
-                'aa000c', 'ff00ff',
-                '00b09b', '96c93d',
-                'c94b4b', '4b134f',
-                '11000c', '1100ff',
-                '00aa0c', '11f1ff',
-                'ff8008', 'ffc837'];
+const DATA_KEY_PLAYLIST_TIMESTAMP = 'playlist_timestamp';
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -88,18 +80,34 @@ function format_time(s) {
         new Date(1000 * s).toISOString().slice(14, -5);
 }
 
-function rescaled($img, url, thumb) {
+$(window).resize(() => {
+    log('Deleteing image dimensions context cache');
+    window.img_dims = {};
+})
+function rescaled($img, context, url) {
     /* Let the server handle image rescaling */
-    var w = thumb ? 50 : 400;
-    var h = thumb ? 50 : 400;
+
+    var img_dims = window.img_dims = window.img_dims || {};
+    if (!img_dims[context] && $img.width()) {
+        log('Has dimenstions, rescaling and storing ' + url);
+        img_dims[context] = [$img.width(), $img.height()]
+    }
+    if (img_dims[context]) {
+        let [w, h] = img_dims[context];
+        log('Known context dimensions for ' + context +
+            ', rescaling ' + url);
+        let new_url = ''.concat(
+            url.slice(0, url.lastIndexOf('.')),
+            '_', w, 'x', h,
+            url.slice(url.lastIndexOf('.')))
+        log('Rescaling ' + url + ' to ' +
+            new_url + ' (' +
+            w + 'x' +
+            h + ')');
+        return $img.attr('src', new_url)
+    }
+    log('Not rescaling ' + url);
     return $img.attr('src', url);
-    return $img.attr('src', "".concat(
-        url.slice(0, url.lastIndexOf('.')),
-        '_',
-        w,
-        'x',
-        h,
-        url.slice(url.lastIndexOf('.'))))
 }
 
 /* ------------------------------------------------------------------------ */
@@ -121,7 +129,7 @@ $('.carousel').carousel({interval:false}); /* Do not auto-rotate */
 function server_ready(_, server) {
     log('Server ready');
 
-    var last_active_idx = Math.max(
+    let last_active_idx = Math.max(
         0, /* fallback to first player */
         server.players.map(player => player.html_id)
             .indexOf(localStorage.getItem(STORAGE_KEY_ACTIVE_PLAYER)));
@@ -142,7 +150,7 @@ function server_ready(_, server) {
         player_activated(server.players[ev.to]);
     });
 
-    var shortcuts = [
+    let shortcuts = [
         {title: 'Favorites',   cmd: 'favorites',   icon: 'fa-star'},
         {title: 'Radio',       cmd: 'presets',     icon: 'fa-bullhorn'},
         {title: 'Podcasts',    cmd: 'podcasts',    icon: 'fa-podcast'},
@@ -170,7 +178,7 @@ function server_ready(_, server) {
                     ));
         });
 
-    var main_menu = {
+    let main_menu = {
         title: 'Home', items: [
             {title: 'Favorites', cmd: 'favorites',   icon: 'fa-star'},
             {title: 'Apps',     _cmd: 'apps',        icon: 'fa-rocket'},
@@ -180,9 +188,9 @@ function server_ready(_, server) {
     $('#browser').on('show.bs.modal', (ev) => {
         /* FIXME: make back button close modal
            https://gist.github.com/thedamon/9276193 */
-        var modal = this;
+        let modal = this;
         log(modal, this);
-        var shortcut = $(ev.relatedTarget).data('shortcut');
+        let shortcut = $(ev.relatedTarget).data('shortcut');
         if (shortcut) {
             /* FIXME: reuse browse_level function below */
             /* FIXME: delay modal display until dynamic content finished loaded */
@@ -198,7 +206,7 @@ function server_ready(_, server) {
 }
 
 function player_created(_, server, player) {
-    var idx = server.players.length - 1;
+    let idx = server.players.length - 1;
 
     log('New player', idx, player.name);
 
@@ -251,7 +259,7 @@ function player_created(_, server, player) {
             .filter(player => player != active_player)
             .forEach(player => active_player.sync(player))});
 
-    var $elm = $('.player.' + player.html_id);
+    let $elm = $('.player.' + player.html_id);
 
     ['play', 'pause', 'stop', 'previous', 'next', 'volume_up', 'volume_down']
         .forEach(action => $elm.find('button.'+action)
@@ -259,11 +267,11 @@ function player_created(_, server, player) {
 
     $elm.find('.progress.volume').click(e => {
         /* FIXME: Also allow sliding the volume control */
-        var $this = $(e.currentTarget);
-        var x = e.pageX - $this.offset().left;
-        var level = 100 * x / $this.width();
+        let $this = $(e.currentTarget);
+        let x = e.pageX - $this.offset().left;
+        let level = 100 * x / $this.width();
         /* Prevent accidental volume explosions */
-        var THRESHOLD = 30;
+        let THRESHOLD = 30;
         if (level < THRESHOLD)
             player.volume = level;
         else if (level > player.volume)
@@ -273,8 +281,8 @@ function player_created(_, server, player) {
     });
 
     $elm.find('.progress.duration').click(e => {
-        var $this = $(e.currentTarget);
-        var x = e.pageX - $this.offset().left;
+        let $this = $(e.currentTarget);
+        let x = e.pageX - $this.offset().left;
         if (player.track_duration > 0) {
             player.track_position =
                 Math.floor(player.track_duration * x / $this.width());
@@ -283,7 +291,7 @@ function player_created(_, server, player) {
 }
 
 function player_activated(player) {
-    var html_id = player.html_id;
+    let html_id = player.html_id;
     player.update();
     active_player = player;
     $('#playerslist.navbar-nav')
@@ -313,7 +321,7 @@ function browse_menu(menus) {
                 .append($('<a>')
                         .text(menu.title)
                         .click(ev => {
-                            var idx= 1 + $(ev.currentTarget).parent().index();
+                            let idx= 1 + $(ev.currentTarget).parent().index();
                             browse_menu(menus.slice(0, idx));
                         })))
                );
@@ -346,7 +354,7 @@ function browse_menu(menus) {
     }
 
     /* last item is the active leaf */
-    var menu = menus.slice(-1)[0];
+    let menu = menus.slice(-1)[0];
     menu.items.forEach(item => log('Menu item', item));
 
     $('#browser .menu')
@@ -363,6 +371,7 @@ function browse_menu(menus) {
                 .find('img.icon')
                 .each((_, img) => rescaled(
                     $(img),
+                    'browser',
                         /fa-/.test(item.icon) ? '' :
                         item.icon ||
                         item.image ||
@@ -379,7 +388,7 @@ function player_updated(_, server, player) {
         player.track_artist,
         player.track_artwork_url);
 
-    var $elm = $('.player.' + player.html_id);
+    let $elm = $('.player.' + player.html_id);
 
     /* FIXME: Check first if a value really changed before setting it?
        (premature optimization?) */
@@ -400,13 +409,14 @@ function player_updated(_, server, player) {
     $elm.find('.track')
         .text(player.track_title || '');
 
-    log($elm.find('img.cover').width());
-    log($elm.find('img.cover').height());
-    log(player.track_artwork_url);
+    log('Cover dimensions (' +
+        $elm.find('img.cover').width() + 'x' +
+        $elm.find('img.cover').height() + '): ' +
+        player.track_artwork_url);
 
     $elm.find('img.cover')
         .each((_, img) => rescaled(
-            $(img), player.track_artwork_url));
+            $(img), 'cover', player.track_artwork_url));
     $elm.find('.duration .progress-bar')
         .width((player.track_duration > 0 ?
                 100 * player.track_position / player.track_duration : 0) + '%');
@@ -445,6 +455,7 @@ function player_updated(_, server, player) {
                     .find('img.cover')
                     .each((_, img) => rescaled(
                         $(img),
+                        'playlist',
                         track.artwork_url || '/music/' + track.id + '/cover.jpg', true))
                     .end()
                     .find('.track')

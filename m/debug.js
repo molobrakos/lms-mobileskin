@@ -1,6 +1,6 @@
 "use strict";
 
-var LOG_SCREEN = /\/\?debug-screen/.test(window.location.href);
+const LOG_SCREEN = /\/\?debug-screen/.test(window.location.href);
 
 LOG_SCREEN && $('head').append(`
 <style>
@@ -27,7 +27,7 @@ LOG_SCREEN && $('head').append(`
 </style>
 `);
 
-var TZOFFSET = new Date().getTimezoneOffset() * 60000;
+const TZOFFSET = new Date().getTimezoneOffset() * 60000;
 
 function _timestamp() {
     /* 'hh:mm:ss.sss' */
@@ -51,7 +51,7 @@ function _debug_str(obj) {
 function _log(timestamp, ...args) {
     console.log(...args);
     if (LOG_SCREEN) {
-        var message = _debug_str(args);
+        let message = _debug_str(args);
         $('#console-log').prepend($('<li><span class="date">' +
                                     timestamp + '</span>' +
                                     message + '</li>'));
@@ -60,7 +60,7 @@ function _log(timestamp, ...args) {
 
 /* FIXME: display connection error in non-debug ui as well */
 $(document).ajaxError(function(ev, xhr, settings, error) {
-    var t = _timestamp();
+    let t = _timestamp();
     $('#debug')
         .removeClass()
         .addClass('alert alert-warning')
@@ -69,7 +69,7 @@ $(document).ajaxError(function(ev, xhr, settings, error) {
 });
 
 $(document).ajaxSuccess(function(ev, xhr, settings, data) {
-    var t = _timestamp();
+    let t = _timestamp();
     $('#debug')
         .removeClass()
         .addClass('alert alert-success')
@@ -77,7 +77,7 @@ $(document).ajaxSuccess(function(ev, xhr, settings, data) {
 });
 
 $(function() {
-    var ratio = window.devicePixelRatio || 1;
+    let ratio = window.devicePixelRatio || 1;
     $('#screen_size').text(screen.width + '\u00D7' + screen.height)
     $('#screen_orientation').text(screen.orientation.type);
     $('#screen_size_dp').text(screen.width * ratio + '\u00D7' + screen.height * ratio + ' (ratio: ' + ratio + ')');

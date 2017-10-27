@@ -6,7 +6,7 @@
 /*                                                                          */
 /* ------------------------------------------------------------------------ */
 
-var AJAX_TIMEOUT = 3000;  /* ms */
+const AJAX_TIMEOUT = 3000;  /* ms */
 
 class Server {
 
@@ -37,7 +37,7 @@ class Server {
                     res.result &&
                     res.result.players_loop &&
                     res.result.players_loop.forEach(player_data => {
-                        var player = this._players[player_data.playerid] || new Player(this, player_data)
+                        let player = this._players[player_data.playerid] || new Player(this, player_data)
                         if (!(player.id in this._players)) {
                             $(this).trigger(
                                 'player_created',
@@ -53,7 +53,7 @@ class Server {
     }
 
     rpc(...params) {
-        var data = {
+        let data = {
             id: 1,
             method: 'slim.request',
             params: params,
@@ -110,7 +110,7 @@ class Player {
                    this.playlist_timestamp ? 1 : 999,
                    {tags:'adKl'}) /* fetch only current track or full playlist */
             .then(res => {
-                var state = res.result;
+                let state = res.result;
 
                 if (this.playlist_timestamp &&
                     this.playlist_timestamp != state.playlist_timestamp) {

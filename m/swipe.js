@@ -1,6 +1,6 @@
 'use strict';
 
-var THRESHOLD = 25;
+const THRESHOLD = 50;
 
 $(() => {
 
@@ -15,11 +15,11 @@ $(() => {
 
             if (!e.touches.length)
                 return;
-            var start = e.touches[0].pageX;
-            var $this = $(e.currentTarget);
+            let start = e.touches[0].pageX;
+            let $this = $(e.currentTarget);
             $this.on('touchmove', e => {
-                var x = e.touches[0].pageX;
-                var diff = start - x;
+                let x = e.touches[0].pageX;
+                let diff = start - x;
                 if (Math.abs(diff) >= THRESHOLD) {
                     $this.off('touchmove');
                     $this.carousel(diff > 0 ? 'next' : 'prev');
