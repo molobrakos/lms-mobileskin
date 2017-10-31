@@ -194,4 +194,4 @@ body.debug .player-id { display: inline; }
 }
 
 .modal.dark .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; background: #212529; color: white; }
-.modal.dark .modal-body .list-group-item:nth-child(odd) { background: #343a40; }
+/* .modal.dark .modal-body .list-group-item:nth-child(odd) { background: #343a40; } */

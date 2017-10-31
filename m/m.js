@@ -14,6 +14,12 @@
 /* FIXME: Global "mute all"-button */
 /* FIXME: Navbar att bottom of screen */
 /* FIXME: Navbar larger size esp. on larger screens */
+/* FIXME: Spinner when loading browser menu items. Also spinner when polling */
+/* FIXME: Handle timeout/404/etc when loading browser menu items */
+/* FIXME: Pre-load podcast icons in background. */
+/* FIXME: Why no icons for favorites? */
+/* FIXME: On screen/non-touch: hide playlist controls until hover,
+          then display on top  */
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -345,11 +351,11 @@ function browse_menu(menus) {
             active_player.playlist_play(decodeURIComponent(item.url));
             $('.modal.show').modal('hide');
         } else if (item._cmd)
-            browse_level(item, item._cmd)
+            browse_level(item, item._cmd, {want_url: 1})
         else if (item.cmd)
-            browse_level(item, item.cmd, 'items')
+            browse_level(item, item.cmd, 'items', {want_url: 1})
         else if (item.id && item.hasitems)
-            browse_level(item, context, 'items', {item_id: item.id});
+            browse_level(item, context, 'items', {item_id: item.id, want_url: 1});
         else if (item.id && item.type == 'folder')
             browse_level(item, 'musicfolder', {type: 'audio', folder_id: item.id, tags: 'cdu'})
     }
