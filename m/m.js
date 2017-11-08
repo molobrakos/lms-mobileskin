@@ -12,6 +12,7 @@
 /* FIXME: Server rescaling of album art, request correct size for main view and browser/playlist view */
 /* FIXME: Merge playlist, browser view */
 /* FIXME: Global "mute all"-button */
+/* FIXME: Implement search across local lib + plugins */
 /* FIXME: Navbar att bottom of screen */
 /* FIXME: Navbar larger size esp. on larger screens */
 /* FIXME: Spinner when loading browser menu items. Also spinner when polling */
@@ -20,6 +21,7 @@
 /* FIXME: Why no icons for favorites? */
 /* FIXME: On screen/non-touch: hide playlist controls until hover,
           then display on top  */
+/* FIXME: Overflow: scroll for modal dialogs */
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
