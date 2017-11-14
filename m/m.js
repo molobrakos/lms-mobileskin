@@ -22,6 +22,9 @@
 /* FIXME: On screen/non-touch: hide playlist controls until hover,
           then display on top  */
 /* FIXME: Overflow: scroll for modal dialogs */
+/* FIXME: Terminology Unsync/Include */
+/* FIXME: When selected player in group of >=3 players, offer to unlink it from
+          the rest of group with one click, i.e. Unsync from P2+P3 */
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -161,9 +164,9 @@ function server_ready(_, server) {
 
     let shortcuts = [
         {title: 'Favorites',   cmd: 'favorites',   icon: 'fa-star'},
-        {title: 'Radio',       cmd: 'presets',     icon: 'fa-bullhorn'},
-        {title: 'Podcasts',    cmd: 'podcasts',    icon: 'fa-podcast'},
-        {title: 'Pocketcasts', cmd: 'pocketcasts', icon: 'fa-podcast'},
+        {title: 'Radio',       cmd: 'presets',     icon: 'fa-podcast'}, /* no fa-antenna */
+        {title: 'Podcasts',    cmd: 'podcasts',    icon: 'fa-rss'}, /* later, switch to fa-podcast */
+        {title: 'Pocketcasts', cmd: 'pocketcasts', icon: 'fa-rss'}, /* later, switch to brand icon */
         {title: 'Spotify',     cmd: 'spotty',      icon: 'fa-spotify'},
         {title: 'Blah',        cmd: 'dummy',       icon: 'fa-question'}];
 
@@ -505,4 +508,7 @@ $(() => {
         .on('player_created', player_created)
         .on('player_updated', player_updated)
         .one('server_ready', server_ready);
+    ga('send', 'screenview', {
+	screenName: 'Home'
+    });
 });

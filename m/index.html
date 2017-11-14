@@ -6,6 +6,18 @@
 <!DOCTYPE html>
 <html>
   <head>
+
+    [%# <!-- Google Analytics --> -%]
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-109619412-1', 'auto');
+      ga('set', 'appName', 'lms-mobileskin');
+      ga('set', 'appVersion', '0.0.1');
+      ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    [%# <!-- End Google Analytics --> -%]
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
@@ -429,6 +441,6 @@
 
   <script src="[% webroot %]lms.js"></script>
   <script src="[% webroot %]swipe.js"></script>
-  <script src="[% webroot %]m.js"></script>
-
+  <script async src="[% webroot %]m.js"></script>
+  
 </html>
