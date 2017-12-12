@@ -20,7 +20,7 @@ release: tag
 		-X POST $(GITHUB_URL_RELEASE) \
 		-d "\
 		{\
-		\"tag_name\": \"v$(VERSION)\",\
+		\"tag_name\": \"v$(VERSION)\"\
 		}"
 
 release.zip: release
