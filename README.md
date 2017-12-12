@@ -1,20 +1,33 @@
 # Responsive / Mobile skin for Slimserver (Logitech media server)
 
-![ScreenShot](screenshot_01.png) 
-![ScreenShot](screenshot_02.png) 
+![ScreenShot](screenshot_01.png)
+![ScreenShot](screenshot_02.png)
 
 ## Installation
 
-Copy (or symlink) ```m/``` directory to server skin directory (e.g. ```/usr/share/squeezeboxserver/HTML/m```)
+Either:
+
+1. Open the LMS GUI
+2. Click on Settings
+3. Select the Plugins tab
+4. At bottom of the page add the repo URL: http://raw.githubusercontent.com/molobrakos/lms-mobileskin/master/public.xml
+5. Install the plugin and enable as usual
+
+Or:
+
+1. Download the source
+2. Check on the information-page in the LMS-settings for your plugin-folders
+3. Copy (or symlink) the ```m/``` directory to server skin directory (e.g. ```/usr/share/squeezeboxserver/HTML/m```)
 Example
 ```
 cp -a m /usr/share/squeezeboxserver/HTML/m
 ```
+4. Restart LMS
 
 ## Usage
 
-Access the skin through ```http://yourserver:9000/m/```.
-Select "add to start screen" in your device, if supported.
+1. Access the skin through ```http://<yourserver>:9000/m/```.
+2. Select "add to start screen" in your device, if supported.
 
 ## Development
 
@@ -39,6 +52,4 @@ docker run -d --name lms \
        --nobrowsecache
 ```
 
-## To do
-
-- Convert into a proper plugin
+For discussion, errors and feature requests: http://forums.slimdevices.com/showthread.php?107988-Mobile-responsive-skin
