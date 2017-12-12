@@ -1,0 +1,14 @@
+<?xml version='1.0' standalone='yes'?>
+<extensions>
+  <description>A mobile/responsive skin for LMS</description>
+  <creator>Erik Eriksson</creator>
+  <version>0.0.1</version>
+  <defaultState>enabled</defaultState>
+  <homepageURL>http://forums.slimdevices.com/showthread.php?107988-Mobile-responsive-skin</homepageURL>
+  <targetApplication>
+    <maxVersion>*</maxVersion>
+    <minVersion>7.9</minVersion>
+    <id>SlimServer</id>
+  </targetApplication>
+  <name>LMS mobile skin</name>
+</extensions>
