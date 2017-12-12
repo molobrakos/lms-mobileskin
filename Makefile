@@ -1,6 +1,13 @@
-# FIXME: minify etc
+defalt: zip
 
-release:
+tag:
 	bumpversion patch
-	mkdir -p dist
-	zip -9y dist/foo.zip m/*.{html,css,js,json}
+
+release: tag
+	echo
+
+zip: release.zip
+	zip -9r --symlinks $@ m/*html m/*.css m/*.js m/*.json
+
+upload: zip
+	echo
