@@ -16,11 +16,11 @@ tag:
 
 release: tag
 	echo $(VERSION)
-	true || curl --user $(GITHUB_CREDENTIALS) \
+	curl --user $(GITHUB_CREDENTIALS) \
 		-X POST $(GITHUB_URL_RELEASE) \
 		-d "\
 		{\
-		\"tag_name\": \"$(VERSION)\",\
+		\"tag_name\": \"v$(VERSION)\",\
 		}"
 
 release.zip: release
