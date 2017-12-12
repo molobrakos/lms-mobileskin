@@ -1,12 +1,27 @@
-defalt: zip
+GITHUB_USER=molobrakos
+GITHUB_TOKEN=$(shell cat $(HOME)/.github.token)
+GITHUB_REPO=$(notdir $(PWD))
+GITHUB_CREDENTIALS=$(GITHUB_USER):$(GITHUB_TOKEN)
+GITHUB_URL_RELEASE=https://api.github.com/repos/$(GITHUB_USER)/$(GITHUB_REPO)/releases
+ZIP=zip -9r --symlinks
+
+.PHONY: default tag release zip upload
+
+default: release.zip
 
 tag:
-	bumpversion patch
+	echo
+#	bumpversion patch
 
 release: tag
-	echo
+	true || curl --user $(GITHUB_CREDENTIALS) \
+		-X POST $(GITHUB_URL_RELEASE) \
+		-d "\
+		{\
+		\"tag_name\": \"$(VERSION)\",\
+		}"
 
-zip: release.zip
-	zip -9r --symlinks $@ m/*html m/*.css m/*.js m/*.json
+release.zip: release
+	@$(ZIP) $@ m/*html m/*.css m/*.js m/*.json
 
-upload: zip
+upload: release.zip
