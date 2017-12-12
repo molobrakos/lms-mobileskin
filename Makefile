@@ -4,6 +4,7 @@ GITHUB_REPO=$(notdir $(PWD))
 GITHUB_CREDENTIALS=$(GITHUB_USER):$(GITHUB_TOKEN)
 GITHUB_URL_RELEASE=https://api.github.com/repos/$(GITHUB_USER)/$(GITHUB_REPO)/releases
 ZIP=zip -9r --symlinks
+VERSION=$(shell grep current_version .bumpversion.cfg | cut -d "=" -f 2)
 
 .PHONY: default tag release zip upload
 
@@ -11,9 +12,10 @@ default: release.zip
 
 tag:
 	echo
-#	bumpversion patch
+	bumpversion patch
 
 release: tag
+	echo $(VERSION)
 	true || curl --user $(GITHUB_CREDENTIALS) \
 		-X POST $(GITHUB_URL_RELEASE) \
 		-d "\
