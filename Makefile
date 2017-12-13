@@ -21,8 +21,8 @@ $(ASSET): $(SRC)
 	@$(ZIP) $@ $^
 
 asset: $(ASSET) $(BUMPVERSION_CFG)
-	sed -i "s#<sha>.*</sha>#<sha>${CHK}</sha>#" public.xml
-	git commit -m "Updated SHA1" m/public.xml
+	sed -i "s/<sha>.*<\/sha>/<sha>$(SHA)<\/sha>/" public.xml
+	git commit -m "Updated SHA1" public.xml
 
 release: asset
 	github-release $(GITHUB_REPO) create --publish $(VERSION) $(ASSET)
