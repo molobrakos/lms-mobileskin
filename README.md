@@ -15,7 +15,7 @@ Either:
 
 Or:
 
-1. Download the source
+1. Download release.zip from https://github.com/molobrakos/lms-mobileskin/releases/latest
 2. Check on the information-page in the LMS-settings for your plugin-folders
 3. Copy (or symlink) the ```m/``` directory to server skin directory (e.g. ```/usr/share/squeezeboxserver/HTML/m```)
 Example
@@ -23,6 +23,11 @@ Example
 cp -a m /usr/share/squeezeboxserver/HTML/m
 ```
 4. Restart LMS
+
+Or:
+
+1. Check or the source from github with git clone
+2. etc.
 
 ## Usage
 
