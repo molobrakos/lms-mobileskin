@@ -24,7 +24,7 @@ $(ASSET): $(SRC) $(BUMPVERSION_CFG)
 asset: $(ASSET)
 
 release: asset
-	github-release $(GITHUB_REPO) create $(VERSION) $(ASSET)
+	github-release $(GITHUB_REPO) create --publish $(VERSION) $(ASSET)
 
 clean:
 	echo
