@@ -13,15 +13,15 @@ ASSET=release-$(VERSION).zip
 
 .PHONY: default upload release
 
-default: zip
+default: release
 
 bumpversion:
 	bumpversion patch
 
-$(ASSET): $(SRC) $(BUMPVERSION_CFG)
+$(ASSET): $(SRC)
 	@$(ZIP) $@ $^
 
-asset: $(ASSET)
+asset: $(ASSET) $(BUMPVERSION_CFG)
 
 release: asset
 	github-release $(GITHUB_REPO) create --publish $(VERSION) $(ASSET)
