@@ -25,6 +25,7 @@ asset: $(ASSET) $(BUMPVERSION_CFG)
 	git commit -m "Updated SHA1" public.xml
 
 release: asset
+	git push
 	github-release $(GITHUB_REPO) create --publish $(VERSION) $(ASSET)
 
 clean:
