@@ -32,7 +32,7 @@ Or:
 ## Usage
 
 1. Access the skin through ```http://<yourserver>:9000/m/```.
-2. Select "add to start screen" in your device, if supported.
+2. Select "Add to start screen" in your device, if supported.
 
 ## Development
 
