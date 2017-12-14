@@ -7,8 +7,8 @@
   <defaultState>enabled</defaultState>
   <homepageURL>http://forums.slimdevices.com/showthread.php?107988-Mobile-responsive-skin</homepageURL>
   <targetApplication>
+    <minVersion>7.9.1</minVersion>
     <maxVersion>*</maxVersion>
-    <minVersion>7.9</minVersion>
     <id>SlimServer</id>
   </targetApplication>
   <name>LMS mobile skin</name>
