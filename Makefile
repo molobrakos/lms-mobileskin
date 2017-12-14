@@ -25,9 +25,12 @@ asset: $(ASSET) $(BUMPVERSION_CFG)
 	sed -i "s/<sha>.*<\/sha>/<sha>$(SHA)<\/sha>/" public.xml
 	git commit -m "Updated SHA1" public.xml
 
-release: bumpversion asset
+release-it: asset
 	git push
 	github-release $(GITHUB_REPO) create --publish $(VERSION) $(ASSET)
+
+release: bumpversion
+	make release-it
 
 clean:
 	echo
