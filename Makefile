@@ -6,7 +6,7 @@ GITHUB_REPO="$(GITHUB_USER)/$(REPO)"
 ZIP=zip -9r --symlinks
 BUMPVERSION_CFG=.bumpversion.cfg
 VERSION=$(shell grep current_version $(BUMPVERSION_CFG) | cut -d "=" -f 2 | xargs)
-ASSET=release-$(VERSION).zip
+ASSET=dist/release-$(VERSION).zip
 SHA=$(shell sha1sum -b $(ASSET) | cut -d " " -f 1)
 SRC=install.xml Plugin.pm HTML
 
@@ -19,7 +19,9 @@ bumpversion:
 	bumpversion patch
 
 $(ASSET): $(SRC)
-	@$(ZIP) $@ $^
+	cd plugin && \
+	@$(ZIP) $@ $^ && \
+	cd ..
 
 asset: $(ASSET) $(BUMPVERSION_CFG)
 	sed -i "s/<sha>.*<\/sha>/<sha>$(SHA)<\/sha>/" public.xml
