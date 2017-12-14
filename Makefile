@@ -8,7 +8,7 @@ BUMPVERSION_CFG=.bumpversion.cfg
 VERSION=$(shell grep current_version $(BUMPVERSION_CFG) | cut -d "=" -f 2 | xargs)
 ASSET=release-$(VERSION).zip
 SHA=$(shell sha1sum -b $(ASSET) | cut -d " " -f 1)
-SRC=install.xml $(wildcard HTML/m/*.html HTML/m/*.css HTML/m/*.js HTML/m/*.json)
+SRC=install.xml Plugin.pm HTML
 
 .PHONY: default upload release
 
