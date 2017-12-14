@@ -19,6 +19,7 @@ bumpversion:
 	bumpversion patch
 
 $(ASSET): $(SRC)
+	mkdir -p dist && \
 	cd plugin && \
 	@$(ZIP) $@ $^ && \
 	cd ..
