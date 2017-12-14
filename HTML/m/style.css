@@ -1,0 +1,197 @@
+/* override bootstrap defaults */
+
+body {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    font-family: 'Roboto', sans-serif;
+}
+
+#players { min-height: 100%;
+           height: 100%; }
+
+.player { min-height: 100%;
+          height: 100%; }
+
+.carousel-inner { min-height: 100%;
+                  height: 100%; }
+
+/* responsive sizes */
+
+html {
+    font-size: 10px;
+}
+
+@media (max-width: 575px) {
+    html { font-size: 10px; }
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+    html { font-size: 12px; }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    html { font-size: 14px; }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    html { font-size: 16px; }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    html { font-size: 20px; }
+}
+
+@media (max-width: 767px) and (orientation: portrait) {
+    .player .metadata { width: 100vw;
+                        heigh: 100vw; }
+}
+
+@media (orientation: landscape) {
+    .player .metadata { width: 30vw;
+                        height: 30vw; }
+}
+
+/* cut off headers to fit width */
+h1, h2, h3, h4, h5 ,h6 { max-width: 100%;
+                         white-space: nowrap;
+                         overflow: hidden;
+                         text-overflow: ellipsis; }
+/* force empty headers to occupy vertical space anyway */
+h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; }
+
+/* playlist */
+
+.playlist { display: none; }
+.playlist.active { display: block; }
+.media .cover { height: 5rem; width: 5rem; }
+.media .artist { min-height: 1rem; }
+
+.media img.icon[src=""] { display: none !important; }
+.media span.icon { font-size: 5rem; width: 5rem; height: 5rem; }
+.media span.icon:not(.fa) { display: none; }
+
+/* player */
+
+#players { display: none; } /* hide initially */
+
+#players .player {
+    color: white;
+}
+
+
+.player .metadata { position: relative;}
+.player .overlay { position: absolute;
+                   bottom: 0;
+                   right: 0;
+                   left: 0;
+                   background: rgba(0, 0, 0, .5); }
+#player .player .cover img { object-fit: cover; }
+.player .trackdata { padding-top: 1rem; }
+
+/* #players .player .progress.duration { width: 100%; } */
+
+.player .controls .btn {
+    width: 3rem;
+    height: 3rem;
+    margin: 0.2rem;
+}
+
+.player .controls .btn-sm {
+    background: rgba(0, 0, 0, .2);
+    color: white;
+}
+
+.player .controls .btn-xl {
+    width: 5rem;
+    height: 5rem;
+}
+
+.player .controls {
+    width: 70% !important;
+    margin-left: 15% !important;
+    margin-right: 15% !important;
+}
+
+.player .controls .volume {
+    margin-top: -10px;
+}
+
+.navbar .nav-item span.fa {
+/*    text-shadow:
+    0px 1px 0px #999,
+    0px 2px 0px #888,
+    0px 3px 0px #777,
+    0px 4px 0px #666,
+    0px 5px 0px #555,
+    0px 6px 0px #444,
+    0px 7px 0px #333,
+    0px 8px 7px #001135;
+*/
+}
+
+body .player-id { display: none; }
+body.debug .player-id { display: inline; }
+
+.progress { border-radius: 0; }
+.progress.duration { background: rgba(0, 0, 0, 0); }
+.progress.duration .progress-title {
+                                     overflow: hidden;
+                                     white-space: nowrap; }
+
+.player .track { min-height: 1rem; }
+
+.player button.pause { display: none; }
+
+.player.stopped button.play,
+.player.paused button.play,
+.player.playing button.pause { display: inline; }
+
+.player.playing button.play,
+.player.paused button.pause,
+.player.stopped button.pause { display: none; }
+
+.player.synced button.sync { display: inline; }
+.player.unsynced button.unsync { display: none; }
+
+.player.unsynced span.synced-icon { display: none; }
+
+/* faster sliding speed */
+.carousel-item {
+    transition: -webkit-transform 0.3s ease;
+    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, -webkit-transform 0.3s ease;
+}
+
+.carousel-caption {
+    margin-bottom: 4rem;
+}
+
+.carousel-inner, .modal-content {
+    background-image: linear-gradient(to bottom, #ffffff 0%, #343a40 100%);
+}
+
+/* if navbar at bottom */
+.carousel-indicators {
+    margin-bottom: 5rem;
+}
+
+#debug { position: absolute;
+         bottom: 0px;
+         right: 0px;
+         z-index: 10; }
+
+@media (max-width: 767px) {
+    /* override bootstrap defaults for more compact look */
+    .modal.compact .modal-dialog { margin: 0px; }
+    .modal.compact .modal-content { border: none; border-radius: 0px; width: 100%; }
+    .modal.compact .modal-body { padding: 0px; }
+    .modal.compact .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; }
+}
+
+.modal.dark .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; background: #212529; color: white; }
+/* .modal.dark .modal-body .list-group-item:nth-child(odd) { background: #343a40; } */

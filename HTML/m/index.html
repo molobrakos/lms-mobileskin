@@ -1,0 +1,443 @@
+[%# <!-- -*- mode: html; indent-tabs-mode: nil; -*- --> -%]
+[% DEFAULT debug = 0 -%]
+[% IF url_query == "debug" OR url_query == "debug-screen" -%]
+[% debug = 1 -%]
+[% END -%]
+<!DOCTYPE html>
+<html>
+  <head>
+
+    [%# <!-- Google Analytics --> -%]
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-109619412-1', 'auto');
+      ga('set', 'appName', 'lms-mobileskin');
+      ga('set', 'appVersion', '0.0.1');
+      ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    [%# <!-- End Google Analytics --> -%]
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#414141">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#414141">
+    <meta name="version" content="0.0.20">
+
+    [% IF debug %]
+    <meta http-equiv="cache-control" content="no-cache" />
+    [% END %]
+
+    <title>[% "SQUEEZEBOX_SERVER" | string %]</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha256-QUyqZrt5vIjBumoqQV0jM8CgGqscFfdGhN+nVCqX0vc="
+          crossorigin="anonymous" />
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0="
+          crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="[% webroot %]style.css" />
+
+    <link rel="manifest" href="manifest.js" />  [%#  <!-- because .json extension not served by lms --> %]
+    <link rel="apple-touch-icon" href="[% webroot %]html/images/apple-touch-icon.png"/>
+    <link rel="icon" href="[% webroot %]favicon.ico"/>
+  </head>
+
+  <body>
+
+    [%# <!-- FIXME: Move navbar to page bottom instead for easier thumb reach --> %]
+
+    <nav class="navbar navbar-expand navbar-dark bg-dark fixed-bottom">
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#content">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="content">
+
+        <ul id="playerslist" class="navbar-nav mr-auto">
+          <template id="playerslist-template">
+            <li class="player nav-item d-none d-sm-block"><a class="nav-link player-name" href="#"></a></li>
+          </template>
+        </ul>
+
+        <ul id="toolbar" class="navbar-nav ml-auto">
+
+          <template id="shortcut-template">
+            <li class="nav-item" data-toggle="tooltip" data-placement="bottom">
+              <a class="nav-link" href="#"
+                 data-toggle="modal" data-target="#browser">
+                <span class="fa fa-2x"></span></a></li>
+          </template>
+
+          [%#
+          <!-- FIXME: Implement search -->
+          <li class="nav-item" data-toggle="tooltip" title="Search">
+            <a class="nav-link" id="search" href="#">
+              <span class="fa fa-2x fa-search"></span>
+          </a></li>
+
+          <!-- FIXME: Implement mute all -->
+          <li class="nav-item" data-toggle="tooltip" title="Mute all">
+            <a class="nav-link" id="mute-all" href="#">
+              <span class="fa fa-2x fa-volume-off"></span>
+          </a></li>
+          %]
+
+          <li class="nav-item" data-toggle="tooltip" title="All players">
+            <a class="nav-link" id="show-volumes" href="#"
+               data-toggle="modal" data-target="#volumes">
+              <span class="fa fa-2x fa-volume-up"></span></a></li>
+
+          <li class="nav-item dropup" data-toggle="tooltip" title="Syncing">
+
+            <a class="nav-link dropdown-toggle" href="#"
+               data-toggle="dropdown">
+              <span class="fa fa-2x fa-link"></span></a>
+
+            <div class="syncing dropdown-menu">
+              <h6 class="sync dropdown-header">Include</h6>
+              <div class="dropdown-divider"></div>
+              <h6 class="unsync dropdown-header">Unsync</h6>
+              <div class="dropdown-divider"></div>
+              <h6 id="preset" class="dropdown-header">Preset groups</h6>
+              <a class="dropdown-item disabled" href="#">Not implemented</a>
+              <a id="party" class="dropdown-item" href="#">Party mode</a>
+              <a id="no-party" class="dropdown-item" href="#">Unsync all</a>
+            </div>
+          </li>
+
+          <li class="nav-item" data-toggle="tooltip" title="Playlist">
+            <a class="nav-link" id="show-playlist" href="#"
+               data-toggle="modal" data-target="#playlist">
+              <span class="fa fa-2x fa-list-ol"></span></a></li>
+
+          <li class="nav-item" data-toggle="tooltip" title="Music sources">
+            <a class="nav-link" id="show-browser" href="#"
+               data-toggle="modal" data-target="#browser">
+              <span class="fa fa-2x fa-music"></span></a></li>
+
+          <li class="nav-item" data-toggle="tooltip" title="Settings">
+            <a class="nav-link" id="show-settings" href="#"
+               data-toggle="modal" data-target="#settings">
+              <span class="fa fa-2x fa-cog"></span></a></li>
+
+        </ul>
+      </div>
+    </nav>
+
+    <div id="players" class="carousel slide" data-interval="false" data-ride="false">
+
+      <ol class="carousel-indicators"></ol>
+      <template id="carousel-indicator-template">
+        <li data-target="#players" data-slide-to="0" class=""></li>
+      </template>
+
+      <div class="carousel-inner">
+        <template id="player-template">
+          <div class="player carousel-item">
+            <div class="metadata mx-auto">
+              <div class="cover w-100 h-100">
+                <img class="cover w-100 h-100" src="">
+                <div class="overlay">
+                  <div class="trackdata">
+                    <h2 class="track text-center"></h2>
+                    <h4 class="artist text-center"></h4>
+                  </div>
+                  <div class="duration progress d-block mx-auto">
+                    <div class="progress-bar">
+                      <div class="progress-title"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="controls">
+              <div class="row justify-content-center align-items-center">
+                <button type="button" class="previous btn btn-sm rounded-circle skipable"><span class="fa fa-step-backward"></span></button>
+                <button type="button" class="play btn btn-primary btn-xl rounded-circle"><span class="fa fa-play"></span></button>
+                <button type="button" class="pause btn btn-primary btn-xl rounded-circle"><span class="fa fa-pause"></span></button>
+                <button type="button" class="next btn btn-sm rounded-circle skipable"><span class="fa fa-step-forward"></span></button>
+              </div>
+              <div class="volume row justify-content-center align-items-center">
+                <button type="button" class="volume_down btn btn-sm rounded-circle"><span class="fa fa-volume-down"></span></button>
+                <div class="volume progress w-50"><div class="progress-bar"></div></div>
+                <button type="button" class="volume_up btn btn-sm rounded-circle"><span class="fa fa-volume-up"></span></button>
+              </div>
+            </div> [%# <!-- controls --> %]
+            <div class="carousel-caption d-none d-block">
+              <span class="player-name h5"></span>
+              <span class="player-group small"></span>
+            </div>
+          </div> [%# <!-- player carousel-item --> %]
+        </template>
+      </div> [%# <!-- carousel-inner --> %]
+
+      <a class="carousel-control-prev" href="#players" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </a>
+      <a class="carousel-control-next" href="#players" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </a>
+    </div> [%# <!-- players carousel --> %]
+
+    [%# <!-- volume controls --> %]
+    [%# <!-- FIXME: merge these modals --> %]
+
+    <div class="modal fade dark compact" id="volumes">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Volumes</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <ol class="playlist list-group">
+              <template>
+                <li class="list-group-item player">
+                  <div class="media">
+                    <img class="cover align-self-start mr-3" src="">
+                    <div class="media-body">
+                      <h5 class="mt-0 player-name"></h5>
+                      <h6 class="track"></h6>
+                      <h6 class="artist"></h6>
+                      <div class="row justify-content-center align-items-center">
+                        <button type="button" class="volume_down btn rounded-circle"><span class="fa fa-volume-down"></span></button>
+                        <div class="volume progress w-50 mx-2"><div class="progress-bar"></div></div>
+                        <button type="button" class="volume_up btn rounded-circle"><span class="fa fa-volume-up"></span></button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </template>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    [%# <!-- playlist --> %]
+
+    <div class="modal fade dark compact" id="playlist">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Playlist</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+
+            <template id="playlist-template">
+              <ol class="playlist list-group"></ol>
+            </template>
+
+            <template id="playlist-item-template">
+              <li class="list-group-item">
+                <div class="media">
+                  <img class="cover d-flex align-self-start mr-3" src="">
+                  <div class="media-body">
+                    <h5 class="mt-0 track"></h5>
+                    <h6 class="artist"></h6>
+                    <button type="button" class="btn"><span class="fa fa-arrow-circle-up"></span></button>
+                    <button type="button" class="btn"><span class="fa fa-arrow-circle-down"></span></button>
+                    <button type="button" class="btn"><span class="fa fa-play"></span></button>
+                    <button type="button" class="btn"><span class="fa fa-heart"></span></button>
+                  </div>
+                </div>
+              </li>
+            </template>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    [%# <!-- browser for local libray, favorites, podcasts, radio, spotify, etc --> %]
+    [%# <!-- FIXME: use bootstrap scrollspy for index --> %]
+
+    <div class="modal fade dark compact" id="browser">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <ol class="modal-title breadcrumb"></ol>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <ol class="menu list-group">
+            </ol>
+            <template id="menu-item-template">
+              <li class="list-group-item">
+                <div class="media">
+                  <img class="icon cover d-flex align-self-start mr-2" src="">
+                  <span class="icon mr-2"></span>
+                  <div class="media-body">
+                    <span class="title h5"></span>
+                    [%# <!--  <button type="button"
+                    class="btn"><span class="fa
+                    fa-play"></span></button> --> %]
+                  </div>
+                </div>
+              </li>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    [%# <!-- preferences --> %]
+
+    <div class="modal fade dark compact" id="settings">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Settings</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <form class="modal-body">
+            <div class="form-group">
+            </div>
+            <div class="form-group">
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input type="checkbox" class="form-check-input">
+                Auto-sync players
+              </label>
+            </div>
+
+            [% IF debug %]
+
+            <dl>
+              <dt>Screen size (w&times;h)</dt>
+              <dd id="screen_size"></dd>
+
+              <dt>Screen size, device pixels (w&times;h)</dt>
+              <dd id="screen_size_dp"></dd>
+
+              <dt>Screen orientation</dt>
+              <dd id="screen_orientation"></dd>
+
+              <dt>Bootstrap screen size</dt>
+              <dd id="screen_size_bs">
+                <span class="d-sm-none">xs (&lt;576px)</span>
+                <span class="d-none d-sm-block d-md-none d-lg-none d-xl-none">sm (&ge;576px)</span>
+                <span class="d-none d-md-block d-lg-none d-xl-none">md (&ge;768px)</span>
+                <span class="d-none d-lg-block d-xl-none">lg (&ge;992px)</span>
+                <span class="d-none d-xl-block">xl (&ge;1200px)</span>
+              </dd>
+
+              <dt>Touch</dt>
+              <dd id="is_touch"></dd>
+
+              <dt>url query</dt>
+              <dd>[% url_query %]</dd>
+
+              <dt>content-type</dt>
+              <dd>[% content-type %]</dd>
+
+              <dt>path</dt>
+              <dd>[% path %]</dd>
+
+              <dt>host</dt>
+              <dd>[% host %]</dd>
+
+              <dt>webroot</dt>
+              <dd>[% webroot %]</dd>
+
+              <dt>skinOverride</dt>
+              <dd>[% skinOverride %]</dd>
+
+              <dt>userAgent</dt>
+              <dd>[% userAgent %]</dd>
+
+              <dt>browserType</dt>
+              <dd>[% browserType %]</dd>
+            </dl>
+
+            [% END %]
+
+            <a href="/Default">Standard skin</a><br/>
+
+            [%# <!-- FIXME: Separate settings for console logging and on screen debug --> %]
+
+            [% IF debug %]
+            <a href="[% webroot %]">Turn debug off</a><br/>
+            [% IF url_query != "debug-screen" %]
+            <a href="[% webroot %]?debug-screen">Debug log to screen</a>
+            [% END %]
+            [% ELSE %]
+            <a href="[% webroot %]?debug">Turn debug on</a>
+            [% END %]
+
+          </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    [% IF debug %]
+    <span id="debug"></span>
+    [% END %]
+
+  </body>
+
+  [% IF debug %]
+
+  [%# Non-minified versions %]
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"
+          integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+          crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+          integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+          crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.js"
+          integrity="sha256-o5aEI5KgisQLdZNoCMhg5OQcBDXoUHF5P1ubIREMaZg="
+          crossorigin="anonymous"></script>
+
+
+  [% ELSE %]
+
+  [%#  Minified versions %]
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+          crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+          integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+          crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+          integrity="sha256-GIa8Vh3sfESnVB2CN3rYGkD/MklvMq0lmITweQxE1qU="
+          crossorigin="anonymous"></script>
+
+  [% END %]
+
+  <script src="[% webroot %]lms.js"></script>
+  <script src="[% webroot %]swipe.js"></script>
+  <script async src="[% webroot %]m.js"></script>
+
+</html>
