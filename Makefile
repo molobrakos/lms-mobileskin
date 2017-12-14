@@ -8,7 +8,7 @@ BUMPVERSION_CFG=.bumpversion.cfg
 VERSION=$(shell grep current_version $(BUMPVERSION_CFG) | cut -d "=" -f 2 | xargs)
 ASSET=dist/release-$(VERSION).zip
 SHA=$(shell sha1sum -b $(ASSET) | cut -d " " -f 1)
-SRC=plugin/install.xml plugin/Plugin.pm plugin/HTML
+SRC=src/install.xml src/Plugin.pm src/HTML
 
 .PHONY: default upload release
 
@@ -20,7 +20,7 @@ bumpversion:
 
 $(ASSET): $(SRC)
 	mkdir -p dist
-	cd plugin && $(ZIP) ../$@ .
+	cd src && $(ZIP) ../$@ .
 
 asset: $(ASSET) $(BUMPVERSION_CFG)
 	sed -i "s/<sha>.*<\/sha>/<sha>$(SHA)<\/sha>/" public.xml
