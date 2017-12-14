@@ -12,7 +12,8 @@ SRC=install.xml Plugin.pm HTML
 
 .PHONY: default upload release
 
-default: release
+default:
+	@echo "Use make release to release"
 
 bumpversion:
 	bumpversion patch
@@ -24,7 +25,7 @@ asset: $(ASSET) $(BUMPVERSION_CFG)
 	sed -i "s/<sha>.*<\/sha>/<sha>$(SHA)<\/sha>/" public.xml
 	git commit -m "Updated SHA1" public.xml
 
-release: asset
+release: bumpversion asset
 	git push
 	github-release $(GITHUB_REPO) create --publish $(VERSION) $(ASSET)
 
