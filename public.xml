@@ -3,7 +3,7 @@
     <title lang="EN">LMS mobile skin</title>
   </details>
   <plugins>
-    <plugin name="LMSMobileSin" version="0.0.23" minTarget="7.9" maxTarget="*">
+    <plugin name="LMSMobileSkin" version="0.0.23" minTarget="7.9" maxTarget="*">
       <title lang="EN">LMS mobile skin</title>
       <desc lang="EN">A mobile/responsive skin for LMS</desc>
       <url>
