@@ -25,6 +25,7 @@
 /* FIXME: Terminology Unsync/Include */
 /* FIXME: When selected player in group of >=3 players, offer to unlink it from
           the rest of group with one click, i.e. Unsync from P2+P3 */
+/* FIXME: Option to save current sync setup, e.g. kitchen+bedroom etc (local storage only) */
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -509,6 +510,6 @@ $(() => {
         .on('player_updated', player_updated)
         .one('server_ready', server_ready);
     ga('send', 'screenview', {
-	screenName: 'Home'
+        screenName: 'Home'
     });
 });
