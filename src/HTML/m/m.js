@@ -207,7 +207,7 @@ function server_ready(_, server) {
         if (shortcut) {
             /* FIXME: reuse browse_level function below */
             /* FIXME: delay modal display until dynamic content finished loaded */
-            active_player.query(shortcut, 'items', 0, 99).then(
+            active_player.query(shortcut, 'items', 0, 255).then(
                 res => {
                     browse_menu([{title: shortcuts.find(s => s.cmd == shortcut).title,
                                   items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
@@ -340,16 +340,18 @@ function browse_menu(menus) {
                );
 
     function browse_level(parent, ...params) {
-        params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 99);
+        const title = parent.name || parent.title || parent.filename;
+        log('Browse level', title, 'parent', parent, 'parent type', parent.type)
+        params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 255);
         active_player.query(...params).then(
             res => browse_menu(
-                menus.concat([{title: parent.name || parent.title || parent.filename,
+                menus.concat([{title: title,
                                items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
                                context: params[0]}])))
     }
 
     function menu_item_clicked(context, item) {
-        log('Clicked', item);
+        log('Clicked', item, 'in context', context);
         if (item.id && item.isaudio) {
             active_player._command(context, 'playlist', 'play', {item_id: item.id});
             $('.modal.show').modal('hide');
