@@ -28,7 +28,7 @@ docker run -d --name $CONTAINER \
        -v $CACHE_DIR:/cache \
        -v $LOG_DIR:/logs \
        -v $MUSIC_DIR:/music \
-       -v $HOME/src/lms-mobileskin/m:/usr/share/squeezeboxserver/HTML/m:ro \
+       -v $HOME/src/lms-mobileskin/src/HTML/m:/usr/share/squeezeboxserver/HTML/m:ro \
        $IMAGE \
        --nobrowsecache
 
