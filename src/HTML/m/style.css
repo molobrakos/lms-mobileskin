@@ -113,7 +113,6 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
     color: white;
 }
 
-
 .player .metadata { position: relative;}
 .player .overlay { position: absolute;
                    bottom: 0;
@@ -178,7 +177,7 @@ body.debug .player-id { display: inline; }
 
 
 .carousel-inner, .modal-content {
-    background-image: linear-gradient(to bottom, #ffffff 0%, #343a40 100%);
+
 }
 
 #debug { position: absolute;
@@ -186,5 +185,6 @@ body.debug .player-id { display: inline; }
          right: 0px;
          z-index: 10; }
 
-.modal .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; background: #212529; color: white; }
-/* .modal.dark .modal-body .list-group-item:nth-child(odd) { background: #343a40; } */
+.modal .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; }
+.modal .modal-body .list-group-item:nth-child(odd) { background: rgba(0,0,0,0.3); }
+.modal .modal-body .list-group-item:hover { background: rgba(0,0,0,0.5); }
