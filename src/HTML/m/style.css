@@ -153,10 +153,13 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 body .player-id { display: none; }
 body.debug .player-id { display: inline; }
 
+.progress.duration .progress-bar { height: 30px; }
 .progress.duration { background: rgba(0, 0, 0, 0); }
-.progress.duration .progress-title {
-                                     overflow: hidden;
-                                     white-space: nowrap; }
+.progress.duration .progress-title { overflow: hidden;
+                                     white-space: nowrap;
+                                     position: absolute;
+                                     bottom: 0px;
+                                     background: rgba(0,0,0,0.2);}
 
 .player .track { min-height: 1rem; }
 
