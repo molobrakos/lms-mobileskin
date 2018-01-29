@@ -81,10 +81,12 @@ body {
 /* fill screen */
 
 #players { min-height: 100%;
-           height: 100%; }
+           height: 100%;
+           display: none; /* hide initially */ }
 
 .player { min-height: 100%;
-          height: 100%; }
+          height: 100%;
+          color: white; }
 
 /* cut off headers to fit width */
 h1, h2, h3, h4, h5 ,h6 { max-width: 100%;
@@ -107,12 +109,6 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 
 /* player */
 
-#players { display: none; } /* hide initially */
-
-#players .player {
-    color: white;
-}
-
 .player .metadata { position: relative;}
 .player .overlay { position: absolute;
                    bottom: 0;
@@ -121,8 +117,6 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
                    background: rgba(0, 0, 0, .5); }
 #player .player .cover img { object-fit: cover; }
 .player .trackdata { padding-top: 1rem; }
-
-/* #players .player .progress.duration { width: 100%; } */
 
 .player .controls .btn {
     width: 3rem;
@@ -178,9 +172,7 @@ body.debug .player-id { display: inline; }
 
 .player.unsynced span.synced-icon { display: none; }
 
-
 .carousel-inner, .modal-content {
-
 }
 
 #debug { position: absolute;
