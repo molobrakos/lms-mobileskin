@@ -26,6 +26,7 @@
 /* FIXME: When selected player in group of >=3 players, offer to unlink it from
           the rest of group with one click, i.e. Unsync from P2+P3 */
 /* FIXME: Option to save current sync setup, e.g. kitchen+bedroom etc (local storage only) */
+/* FIXME: Cache generated menus, e.g. spotify, or at least don't display until received */
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -169,7 +170,7 @@ function server_ready(_, server) {
         {title: 'Podcasts',    cmd: 'podcasts',    icon: 'fa-rss'}, /* later, switch to fa-podcast */
         {title: 'Pocketcasts', cmd: 'pocketcasts', icon: 'fa-rss'}, /* later, switch to brand icon */
         {title: 'Spotify',     cmd: 'spotty',      icon: 'fa-spotify'},
-        {title: 'Blah',        cmd: 'dummy',       icon: 'fa-question'}];
+        {title: 'Blah',        cmd: 'dummy',       icon: 'fa-question'}]; /* will not be enabled */
 
     /* FIXME: Only display podcasts shortcuts if pocketcasts not available */
 
@@ -325,6 +326,12 @@ function player_activated(player) {
 
 function browse_menu(menus) {
 
+    /* menus is array like:
+       [{ title: 'top item', items: [ { name: 'sub-menu' }, { name: 'sub-menu-2' }]},
+        { title: 'sub-menu', items: [ { name: 'leaf' }, { name: 'leaf-2' }]},
+        { title: 'leaf', items: [ { name: 'displayed-menu-item-1' }, { name: 'displayed-menu-item-2' }]}],
+    */
+
     $('#browser .breadcrumb')
         .empty()
         .append(menus.map(
@@ -334,21 +341,24 @@ function browse_menu(menus) {
                 .append($('<a>')
                         .text(menu.title)
                         .click(ev => {
-                            let idx= 1 + $(ev.currentTarget).parent().index();
+                            /* Show menu with parent as new leaf */
+                            let idx = 1 + $(ev.currentTarget).parent().index();
                             browse_menu(menus.slice(0, idx));
                         })))
                );
 
     function browse_level(parent, ...params) {
-        const title = parent.name || parent.title || parent.filename;
-        log('Browse level', title, 'parent', parent, 'parent type', parent.type)
-        params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 255);
-        active_player.query(...params).then(
-            res => browse_menu(
+        active_player.query(...params).then(res => {
+            const title = parent.name || parent.title || parent.filename;
+            /* params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 255); */
+            const context = params[0];
+            log('Browse level', title, 'parent', parent, 'parent type', parent.type, 'params', params);
+            log('res', res);
+            browse_menu(
                 menus.concat([{title: title,
                                items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
-                               context: params[0]}])))
-    }
+                               context: context}]));
+        })}
 
     function menu_item_clicked(context, item) {
         log('Clicked', item, 'in context', context);
@@ -362,7 +372,11 @@ function browse_menu(menus) {
             browse_level(item, item._cmd, {want_url: 1})
         else if (item.cmd)
             browse_level(item, item.cmd, 'items', {want_url: 1})
-        else if (item.id && item.hasitems)
+        else if (item.id && item.hasitems && item.type == 'search') {
+            let term = $('.search-term').val();
+            log('search term', term);
+            browse_level(item, context, 'items', {item_id: item.id, want_url: 1, search: term})
+        } else if (item.id && item.hasitems)
             browse_level(item, context, 'items', {item_id: item.id, want_url: 1});
         else if (item.id && item.type == 'folder')
             browse_level(item, 'musicfolder', {type: 'audio', folder_id: item.id, tags: 'cdu'})
@@ -376,9 +390,13 @@ function browse_menu(menus) {
         .empty()
         .append(menu.items.map(
             item =>
-                from_template('#menu-item-template')
+                from_template(item.type == 'search' ?
+                              '#search-menu-item-template' : '#menu-item-template')
                 .find('.title')
                 .text(item.name || item.title || item.filename)
+                .end()
+                .find('input.form-control')
+                .attr('placeholder', item.name)
                 .end()
                 .find('span.icon')
                 .addClass(/fa-/.test(item.icon) ? 'fa ' + item.icon : '')
@@ -392,17 +410,22 @@ function browse_menu(menus) {
                         item.image ||
                         '/music/' + (item.coverid || item.id) + '/cover.jpg', true))
                 .end()
-                .click(() => menu_item_clicked(menu.context, item))
+                .find('.clickable')
+                .click(() => {
+                    menu_item_clicked(menu.context, item);
+                })
+                .end()
         ));
 }
 
 function player_updated(_, server, player) {
+    /*
     log('Updated',
         player.id,
         player.track_title,
         player.track_artist,
         player.track_artwork_url);
-
+        */
     let $elm = $('.player.' + player.html_id);
 
     /* FIXME: Check first if a value really changed before setting it?
@@ -424,10 +447,12 @@ function player_updated(_, server, player) {
     $elm.find('.track')
         .text(player.track_title || '');
 
-    log('Cover dimensions (' +
-        $elm.find('img.cover').width() + 'x' +
-        $elm.find('img.cover').height() + '): ' +
-        player.track_artwork_url);
+    /*
+      log('Cover dimensions (' +
+      $elm.find('img.cover').width() + 'x' +
+      $elm.find('img.cover').height() + '): ' +
+      player.track_artwork_url);
+    */
 
     $elm.find('img.cover')
         .each((_, img) => rescaled(
