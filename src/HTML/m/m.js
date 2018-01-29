@@ -98,16 +98,16 @@ function rescaled($img, context, url) {
     /* Let the server handle image rescaling */
     return $img.attr('src', url);
 
-    var img_dims = window.img_dims = window.img_dims || {};
+    const img_dims = window.img_dims = window.img_dims || {};
     if (!img_dims[context] && $img.width()) {
         log('Has dimenstions, rescaling and storing ' + url);
         img_dims[context] = [$img.width(), $img.height()]
     }
     if (img_dims[context]) {
-        let [w, h] = img_dims[context];
+        const [w, h] = img_dims[context];
         log('Known context dimensions for ' + context +
             ', rescaling ' + url);
-        let new_url = ''.concat(
+        const new_url = ''.concat(
             url.slice(0, url.lastIndexOf('.')),
             '_', w, 'x', h,
             url.slice(url.lastIndexOf('.')))
@@ -127,7 +127,7 @@ function rescaled($img, context, url) {
 /*                                                                          */
 /* ------------------------------------------------------------------------ */
 
-var active_player = null;
+let active_player = null;
 
 $('.carousel').carousel({interval:false}); /* Do not auto-rotate */
 
@@ -140,14 +140,14 @@ $('.carousel').carousel({interval:false}); /* Do not auto-rotate */
 function server_ready(_, server) {
     log('Server ready');
 
-    let last_active_idx = Math.max(
+    const last_active_idx = Math.max(
         0, /* fallback to first player */
         server.players.map(player => player.html_id)
             .indexOf(localStorage.getItem(STORAGE_KEY_ACTIVE_PLAYER)));
 
     $('.carousel').carousel(last_active_idx);
     player_activated(server.players[last_active_idx]);
-    $('#players').slideDown();
+    $('#players').slideDown(); /* display it */
 
     /* start polling for updates */
     /* FIXME: must update all players some times anyway (sync groups etc) */
@@ -161,7 +161,7 @@ function server_ready(_, server) {
         player_activated(server.players[ev.to]);
     });
 
-    let shortcuts = [
+    const shortcuts = [
         {title: 'Favorites',   cmd: 'favorites',   icon: 'fa-star'},
         {title: 'Radio',       cmd: 'presets',     icon: 'fa-podcast'}, /* no fa-antenna */
         {title: 'Podcasts',    cmd: 'podcasts',    icon: 'fa-rss'}, /* later, switch to fa-podcast */
@@ -189,7 +189,7 @@ function server_ready(_, server) {
                     ));
         });
 
-    let main_menu = {
+    const main_menu = {
         title: 'Home', items: [
             {title: 'Favorites', cmd: 'favorites',   icon: 'fa-star'},
             {title: 'Apps',     _cmd: 'apps',        icon: 'fa-rocket'},
@@ -199,9 +199,9 @@ function server_ready(_, server) {
     $('#browser').on('show.bs.modal', (ev) => {
         /* FIXME: make back button close modal
            https://gist.github.com/thedamon/9276193 */
-        let modal = this;
+        const modal = this;
         log(modal, this);
-        let shortcut = $(ev.relatedTarget).data('shortcut');
+        const shortcut = $(ev.relatedTarget).data('shortcut');
         if (shortcut) {
             /* FIXME: reuse browse_level function below */
             /* FIXME: delay modal display until dynamic content finished loaded */
@@ -217,7 +217,7 @@ function server_ready(_, server) {
 }
 
 function player_created(_, server, player) {
-    let idx = server.players.length - 1;
+    const idx = server.players.length - 1;
 
     log('New player', idx, player.name);
 
@@ -272,19 +272,19 @@ function player_created(_, server, player) {
             .filter(player => player != active_player)
             .forEach(player => active_player.sync(player))});
 
-    let $elm = $('.player.' + player.html_id);
-
+    const $elm = $('.player.' + player.html_id);
+    
     ['play', 'pause', 'stop', 'previous', 'next', 'volume_up', 'volume_down']
         .forEach(action => $elm.find('button.'+action)
                  .click(() => player[action]()));
 
     $elm.find('.progress.volume').click(e => {
         /* FIXME: Also allow sliding the volume control */
-        let $this = $(e.currentTarget);
-        let x = e.pageX - $this.offset().left;
-        let level = 100 * x / $this.width();
+        const $this = $(e.currentTarget);
+        const x = e.pageX - $this.offset().left;
+        const level = 100 * x / $this.width();
         /* Prevent accidental volume explosions */
-        let THRESHOLD = 30;
+        const THRESHOLD = 30;
         if (level < THRESHOLD)
             player.volume = level;
         else if (level > player.volume)
@@ -294,8 +294,8 @@ function player_created(_, server, player) {
     });
 
     $elm.find('.progress.duration').click(e => {
-        let $this = $(e.currentTarget);
-        let x = e.pageX - $this.offset().left;
+        const $this = $(e.currentTarget);
+        const x = e.pageX - $this.offset().left;
         if (player.track_duration > 0) {
             player.track_position =
                 Math.floor(player.track_duration * x / $this.width());
@@ -304,7 +304,7 @@ function player_created(_, server, player) {
 }
 
 function player_activated(player) {
-    let html_id = player.html_id;
+    const html_id = player.html_id;
     player.update();
     active_player = player;
     $('#playerslist.navbar-nav')
@@ -341,14 +341,14 @@ function browse_menu(menus) {
                         .text(menu.title)
                         .click(ev => {
                             /* Show menu with parent as new leaf */
-                            let idx = 1 + $(ev.currentTarget).parent().index();
+                            const idx = 1 + $(ev.currentTarget).parent().index();
                             browse_menu(menus.slice(0, idx));
                         })))
                );
 
     function browse_level(parent, ...params) {
         active_player.query(...params).then(res => {
-            const title = parent.name || parent.title || parent.filename;
+            const title = parent.search_term || parent.name || parent.title || parent.filename;
             /* params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 255); */
             const context = params[0];
             log('Browse level', title, 'parent', parent, 'parent type', parent.type, 'params', params);
@@ -372,9 +372,8 @@ function browse_menu(menus) {
         else if (item.cmd)
             browse_level(item, item.cmd, 'items', {want_url: 1})
         else if (item.id && item.hasitems && item.type == 'search') {
-            let term = $('.search-term').val();
-            log('search term', term);
-            browse_level(item, context, 'items', {item_id: item.id, want_url: 1, search: term})
+            const term = $('.search-term').val();
+            browse_level($.extend(item, {search_term: term}), context, 'items', {item_id: item.id, want_url: 1, search: term})
         } else if (item.id && item.hasitems)
             browse_level(item, context, 'items', {item_id: item.id, want_url: 1});
         else if (item.id && item.type == 'folder')
@@ -382,7 +381,7 @@ function browse_menu(menus) {
     }
 
     /* last item is the active leaf */
-    let menu = menus.slice(-1)[0];
+    const menu = menus.slice(-1)[0];
     menu.items.forEach(item => log('Menu item', item));
 
     $('#browser .menu')
