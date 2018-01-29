@@ -65,7 +65,7 @@ $(document).ajaxError(function(ev, xhr, settings, error) {
         .removeClass()
         .addClass('alert alert-warning')
         .text(t);
-    _log(t, 'Ajax error', ev, xhr, settings, error);
+    _log(t, 'Ajax error', error, ev, xhr, settings);
 });
 
 $(document).ajaxSuccess(function(ev, xhr, settings, data) {
