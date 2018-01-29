@@ -229,7 +229,7 @@ class Player {
     }
 
     get track_position() {
-        return this._state.time || 0;
+        return Math.floor(this._state.time) || 0;
     }
 
     set track_position(position) {
@@ -237,7 +237,7 @@ class Player {
     }
 
     get track_duration() {
-        return this._state.duration || 0;
+        return Math.floor(this._state.duration || 0);
     }
 
     get track_remaining() {
