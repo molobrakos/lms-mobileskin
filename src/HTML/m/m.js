@@ -6,7 +6,6 @@
 /* FIXME: Create proper plugin */
 /* FIXME: Number of items returner currently capped */
 /* FIXME: Pagination for large number of returned items */
-/* FIXME: Plugin search (e.g. spotty) */
 /* FIXME: Less space in browser modal */
 /* FIXME: Full height album art in browser modal */
 /* FIXME: Server rescaling of album art, request correct size for main view and browser/playlist view */
@@ -255,6 +254,8 @@ function player_created(_, server, player) {
         .addClass(player.html_id)
         .appendTo('#volumes .modal-body');
 
+    /* FIXME: Instead of separate sections for sync/unsync, just list all platers
+       with checkmark if synced, and toggle sync when clicked */
     [false, true]
         .forEach(sync =>
                  $('.dropdown-header.' + (sync ? 'sync' : 'unsync'))
