@@ -1,3 +1,5 @@
+# pip3 install --user githubrelease
+
 REPO=$(notdir $(PWD))
 
 GITHUB_USER=molobrakos
