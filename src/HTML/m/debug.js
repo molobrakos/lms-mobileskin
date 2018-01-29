@@ -82,6 +82,7 @@ $(function() {
     $('#screen_orientation').text(screen.orientation.type);
     $('#screen_size_dp').text(screen.width * ratio + '\u00D7' + screen.height * ratio + ' (ratio: ' + ratio + ')');
     $('#is_touch').text('ontouchstart' in document.documentElement);
+    $('#is_mobile').text(MOBILE);
 
     if (LOG_SCREEN) {
         $('body').append($('<ul id="console-log"></ul>'));
