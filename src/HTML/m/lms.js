@@ -58,14 +58,14 @@ class Server {
             method: 'slim.request',
             params: params,
         }
-        log('RPC query ', data.params[1], data);
 
+        /* log('RPC query ', data.params[1], data); */
         return $.post({
             url: '/jsonrpc.js',
             data: JSON.stringify(data),
             timeout: AJAX_TIMEOUT
         }).then(res => {
-            log('RPC response ', res.result, res);
+            /* log('RPC response ', res.result, res); */
             return res;
         });
     }
@@ -121,7 +121,7 @@ class Player {
                     state.playlist_loop = [];
                 } else if (this.playlist_timestamp == state.playlist_timestamp) {
                     /* Playlist unchanged, don't overwrite what we have*/
-                    log('Playlist unchanged');
+                    /* log('Playlist unchanged'); */
                     state.playlist_loop = this._state.playlist_loop;
                 }
 
@@ -130,7 +130,7 @@ class Player {
                     state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
                     state.remoteMeta || {});
 
-                log('State', this._state);
+                /* log('State', this._state); */
                 $(this._server).trigger('player_updated', [this._server, this]);
             });
     }
