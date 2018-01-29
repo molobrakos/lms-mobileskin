@@ -3,7 +3,6 @@
 'use strict';
 
 /* FIXME: Use jekyll to generate installable file */
-/* FIXME: Create proper plugin */
 /* FIXME: Number of items returner currently capped */
 /* FIXME: Pagination for large number of returned items */
 /* FIXME: Less space in browser modal */
@@ -12,7 +11,6 @@
 /* FIXME: Merge playlist, browser view */
 /* FIXME: Global "mute all"-button */
 /* FIXME: Implement search across local lib + plugins */
-/* FIXME: Navbar att bottom of screen */
 /* FIXME: Navbar larger size esp. on larger screens */
 /* FIXME: Spinner when loading browser menu items. Also spinner when polling */
 /* FIXME: Handle timeout/404/etc when loading browser menu items */
