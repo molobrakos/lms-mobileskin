@@ -181,5 +181,5 @@ body.debug .player-id { display: inline; }
          z-index: 10; }
 
 .modal .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; }
-.modal .modal-body .list-group-item:nth-child(odd) { background: rgba(0,0,0,0.3); }
-.modal .modal-body .list-group-item:hover { background: rgba(0,0,0,0.5); }
+.modal .modal-body .list-group-item:nth-child(odd) { background: rgba(0,0,0,.05); }
+.modal .modal-body .list-group-item:hover { background: rgba(0,0,0,0.3); }
