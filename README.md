@@ -1,7 +1,7 @@
 # Responsive / Mobile skin for Slimserver (Logitech media server)
 
-![ScreenShot](screenshot_01.png)
-![ScreenShot](screenshot_02.png)
+![ScreenShot](screenshots/screenshot_01.png)
+![ScreenShot](screenshots/screenshot_02.png)
 
 ## Installation
 
