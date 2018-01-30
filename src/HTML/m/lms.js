@@ -179,6 +179,10 @@ class Player {
         return this.group.filter(p => p != this);
     }
 
+    is_synced_to(player) {
+        return this.group.includes(player);
+    }
+
     sync(partner) {
         return this._command('sync', partner.id);
     }

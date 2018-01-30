@@ -254,26 +254,34 @@ function player_created(_, server, player) {
 
     /* FIXME: Instead of separate sections for sync/unsync, just list all platers
        with checkmark if synced, and toggle sync when clicked */
-    [false, true]
-        .forEach(sync =>
-                 $('.dropdown-header.' + (sync ? 'sync' : 'unsync'))
-                 .after($('<a>')
-                        .addClass('dropdown-item')
-                        .addClass(player.html_id)
-                        .addClass(sync ? 'sync' : 'unsync')
-                        .attr('href', '#')
-                        .text(player.name)
-                        .click(() => { sync
-                                       ? active_player.sync(player)
-                                       : player.unsync(); })));
+
+    $('<a>')
+        .addClass('dropdown-item')
+        .addClass(player.html_id)
+        .attr('href', '#')
+        .text(player.name)
+        .click(() => {
+            log(player, player.is_synced);
+            if (active_player.is_synced_to(player))
+                player.unsync();
+            else
+                active_player.sync(player);
+        })
+        .insertBefore('.dropdown-menu.sync .dropdown-divider');
+
     $('.dropdown-item#party').click(() => {
         server
             .players
             .filter(player => player != active_player)
             .forEach(player => active_player.sync(player))});
 
+    $('.dropdown-item#no-party').click(() => {
+        server
+            .players
+            .forEach(p => p.unsync())});
+
     const $elm = $('.player.' + player.html_id);
-    
+
     ['play', 'pause', 'stop', 'previous', 'next', 'volume_up', 'volume_down']
         .forEach(action => $elm.find('button.'+action)
                  .click(() => player[action]()));
@@ -496,37 +504,32 @@ function player_updated(_, server, player) {
                         'playlist',
                         track.artwork_url || '/music/' + track.id + '/cover.jpg', true))
                     .end()
-                    .find('.track')
-                    .text(track.title)
-                    .end()
-                    .find('.artist')
-                    .text(track.artist)
-                    .end()
-                    .find('.album')
-                    .text(track.album)
-                    .end()
+                    .find('.track').text(track.title).end()
+                    .find('.artist').text(track.artist).end()
+                    .find('.album').text(track.album).end()
             ));
     }
 
-    $('.dropdown-menu.syncing .dropdown-item').hide();
     server.players.forEach(other => {
-        if (!other.is_slave && !player.group.includes(other))
-            $('.dropdown-item.sync.'+other.html_id)
+        const $other = $('.dropdown-menu.sync .dropdown-item.'+other.html_id)
+        if (player == other)
+            $other.hide();
+        else if (player.is_synced_to(other))
+            $other
+            .addClass('active')
+            .text(other.name)
+            .show();
+        else
+            $other
+            .removeClass('active')
             .text(other
                   .group
                   .map(p => p.name).join('+'))
             .show();
-        if (player.sync_partners.includes(other))
-            $('.dropdown-item.unsync.'+other.html_id)
-            .text(other.name)
-            .show();
-        if (player.group.length != server.players.length)
-            $('.dropdown-item#party').show();
-        /* FIXME: To be able to set the state of the 'Unsync all'
-           menu item we must know the sync state for all players
-           - by sending periodic 'syncgroups ?'-queries */
-        /* $('.dropdown-item#no-party').show(); */
     });
+
+    $('.dropdown-item#party').toggle(player.group.length != server.players.length);
+    $('.dropdown-item#no-party').toggle(server.players.some(p => p.is_synced));
 }
 
 $(() => {
