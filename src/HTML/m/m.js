@@ -349,12 +349,12 @@ function browse_menu(menus) {
                );
 
     function browse_level(parent, ...params) {
+	/* add <start>=0, <itemsPerResponse>=255 before any tagged params */
+	params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 255);
         active_player.query(...params).then(res => {
-            const title = parent.search_term || parent.name || parent.title || parent.filename;
-            /* params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 255); */
-            const context = params[0];
+	    const title = parent.search_term || parent.name || parent.title || parent.filename;
+	    const context = params[0];
             log('Browse level', title, 'parent', parent, 'parent type', parent.type, 'params', params);
-            log('res', res);
             browse_menu(
                 menus.concat([{title: title,
                                items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
