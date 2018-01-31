@@ -19,9 +19,6 @@
 /* FIXME: On screen/non-touch: hide playlist controls until hover,
           then display on top  */
 /* FIXME: Overflow: scroll for modal dialogs */
-/* FIXME: Terminology Unsync/Include */
-/* FIXME: When selected player in group of >=3 players, offer to unlink it from
-          the rest of group with one click, i.e. Unsync from P2+P3 */
 /* FIXME: Option to save current sync setup, e.g. kitchen+bedroom etc (local storage only) */
 /* FIXME: Cache generated menus, e.g. spotify, or at least don't display until received */
 
@@ -251,9 +248,6 @@ function player_created(_, server, player) {
     from_template('#volumes template')
         .addClass(player.html_id)
         .appendTo('#volumes .modal-body');
-
-    /* FIXME: Instead of separate sections for sync/unsync, just list all platers
-       with checkmark if synced, and toggle sync when clicked */
 
     $('<a>')
         .addClass('dropdown-item')
@@ -512,14 +506,20 @@ function player_updated(_, server, player) {
 
     server.players.forEach(other => {
         const $other = $('.dropdown-menu.sync .dropdown-item.'+other.html_id)
-        if (player == other)
-            $other.hide();
-        else if (player.is_synced_to(other))
+        if (player == other) {
+            log(player.is_synced, player);
+            $other
+		.text(player.name)
+		.addClass('active')
+		.toggle(player.is_synced != undefined);
+        } else if (player.is_synced_to(other))
             $other
             .addClass('active')
             .text(other.name)
             .show();
-        else
+        else if (other.is_slave)
+	    $other.hide();
+	else
             $other
             .removeClass('active')
             .text(other
