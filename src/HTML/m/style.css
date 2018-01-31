@@ -34,6 +34,12 @@ body {
     margin-bottom: 4rem;
 }
 
+.modal .modal-dialog { margin: 0px; max-width: 100%; }
+.modal .modal-content { border: none; border-radius: 0px; width: 100%; }
+.modal .modal-body { padding: 0px; }
+.modal .modal-body .list-group { overflow: scroll; }
+.modal .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; }
+
 /* responsive sizes */
 
 @media (max-width: 575px) {
@@ -69,13 +75,6 @@ body {
     .player .metadata { width: 30vw;
                         height: 30vw; }
 }
-
-/* override bootstrap defaults for more compact look */
-.modal .modal-dialog { margin: 0px; max-width: 100%; }
-.modal .modal-content { border: none; border-radius: 0px; width: 100%; }
-.modal .modal-body { padding: 0px; }
-.modal .modal-body .list-group { overflow: scroll; }
-.modal .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; }
 
 /* fill screen */
 
