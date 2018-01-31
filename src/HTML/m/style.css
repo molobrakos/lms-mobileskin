@@ -70,13 +70,12 @@ body {
                         height: 30vw; }
 }
 
-@media (max-width: 767px) {
-    /* override bootstrap defaults for more compact look */
-    .modal .modal-dialog { margin: 0px; }
-    .modal .modal-content { border: none; border-radius: 0px; width: 100%; }
-    .modal .modal-body { padding: 0px; }
-    .modal .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; }
-}
+/* override bootstrap defaults for more compact look */
+.modal .modal-dialog { margin: 0px; max-width: 100%; }
+.modal .modal-content { border: none; border-radius: 0px; width: 100%; }
+.modal .modal-body { padding: 0px; }
+.modal .modal-body .list-group { overflow: scroll; }
+.modal .modal-body .list-group-item { padding: 3px; border: none; border-radius: 0px; margin-bottom: 0px; }
 
 /* fill screen */
 
