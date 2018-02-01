@@ -88,15 +88,15 @@ function format_time(s) {
 }
 
 function rescaled($img, context, url) {
-    if (context == 'cover')
-	/* Use original/best resolution */
-	return $img.attr('src', url);
+    if (context == 'cover' || !url)
+        /* Use original/best resolution */
+        return $img.attr('src', url);
 
     /* Let the server handle image rescaling */
     const [w,h] = [128,128];
     const new_url = ''.concat(
         url.slice(0, url.lastIndexOf('.')),
-        '_', w, 'x', h,
+       '_', w, 'x', h,
         url.slice(url.lastIndexOf('.')))
     log('Rescaling ' + url + ' to ' +
         new_url + ' (' +
@@ -336,11 +336,11 @@ function browse_menu(menus) {
                );
 
     function browse_level(parent, ...params) {
-	/* add <start>=0, <itemsPerResponse>=255 before any tagged params */
-	params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 255);
+        /* add <start>=0, <itemsPerResponse>=255 before any tagged params */
+        params.splice(params.slice(-1)[0] instanceof Object ? -1 : params.length, 0, 0, 255);
         active_player.query(...params).then(res => {
-	    const title = parent.search_term || parent.name || parent.title || parent.filename;
-	    const context = params[0];
+            const title = parent.search_term || parent.name || parent.title || parent.filename;
+            const context = params[0];
             log('Browse level', title, 'parent', parent, 'parent type', parent.type, 'params', params);
             browse_menu(
                 menus.concat([{title: title,
@@ -494,19 +494,18 @@ function player_updated(_, server, player) {
     server.players.forEach(other => {
         const $other = $('.dropdown-menu.sync .dropdown-item.'+other.html_id)
         if (player == other) {
-            log(player.is_synced, player);
             $other
-		.text(player.name)
-		.addClass('active')
-		.toggle(player.is_synced != undefined);
+                .text(player.name)
+                .addClass('active')
+                .toggle(player.is_synced != undefined);
         } else if (player.is_synced_to(other))
             $other
             .addClass('active')
             .text(other.name)
             .show();
         else if (other.is_slave)
-	    $other.hide();
-	else
+            $other.hide();
+        else
             $other
             .removeClass('active')
             .text(other

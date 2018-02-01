@@ -34,7 +34,7 @@ body {
     margin-bottom: 4rem;
 }
 
-.modal .modal-dialog { margin: 0px; max-width: 100%; }
+.modal .modal-dialog { max-width: 100%; }
 .modal .modal-content { border: none; border-radius: 0px; width: 100%; }
 .modal .modal-body { padding: 0px; }
 .modal .modal-body .list-group { overflow: scroll; }
