@@ -91,10 +91,12 @@ $(window).resize(() => {
     log('Deleteing image dimensions context cache');
     window.img_dims = {};
 })
-function rescaled($img, context, url) {
-    /* Let the server handle image rescaling */
-    return $img.attr('src', url);
 
+/* Let the server handle image rescaling */
+function rescaled($img, context, url) {
+    /* Use original/best resolution */
+    return $img.attr('src', url);
+    
     const img_dims = window.img_dims = window.img_dims || {};
     if (!img_dims[context] && $img.width()) {
         log('Has dimenstions, rescaling and storing ' + url);
@@ -495,7 +497,7 @@ function player_updated(_, server, player) {
                     .find('img.cover')
                     .each((_, img) => rescaled(
                         $(img),
-                        'playlist',
+                        'browser',
                         track.artwork_url || '/music/' + track.id + '/cover.jpg', true))
                     .end()
                     .find('.track').text(track.title).end()
