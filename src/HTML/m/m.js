@@ -87,37 +87,22 @@ function format_time(s) {
         new Date(1000 * s).toISOString().slice(14, -5);
 }
 
-$(window).resize(() => {
-    log('Deleteing image dimensions context cache');
-    window.img_dims = {};
-})
-
-/* Let the server handle image rescaling */
 function rescaled($img, context, url) {
-    /* Use original/best resolution */
-    return $img.attr('src', url);
-    
-    const img_dims = window.img_dims = window.img_dims || {};
-    if (!img_dims[context] && $img.width()) {
-        log('Has dimenstions, rescaling and storing ' + url);
-        img_dims[context] = [$img.width(), $img.height()]
-    }
-    if (img_dims[context]) {
-        const [w, h] = img_dims[context];
-        log('Known context dimensions for ' + context +
-            ', rescaling ' + url);
-        const new_url = ''.concat(
-            url.slice(0, url.lastIndexOf('.')),
-            '_', w, 'x', h,
-            url.slice(url.lastIndexOf('.')))
-        log('Rescaling ' + url + ' to ' +
-            new_url + ' (' +
-            w + 'x' +
-            h + ')');
-        return $img.attr('src', new_url)
-    }
-    log('Not rescaling ' + url);
-    return $img.attr('src', url);
+    if (context == 'cover')
+	/* Use original/best resolution */
+	return $img.attr('src', url);
+
+    /* Let the server handle image rescaling */
+    const [w,h] = [128,128];
+    const new_url = ''.concat(
+        url.slice(0, url.lastIndexOf('.')),
+        '_', w, 'x', h,
+        url.slice(url.lastIndexOf('.')))
+    log('Rescaling ' + url + ' to ' +
+        new_url + ' (' +
+        w + 'x' +
+        h + ')');
+    return $img.attr('src', new_url)
 }
 
 /* ------------------------------------------------------------------------ */
