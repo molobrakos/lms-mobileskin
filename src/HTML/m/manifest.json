@@ -2,18 +2,8 @@
     "name": "Logitech Media Server",
     "short_name": "LMS",
     "icons": [
-        {
-            "src": "/favicon.ico",
-            "sizes": "128x128",
-            "type": "image/png"
-        },
-        {
-            "src": "/html/images/albums_192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/html/images/albums.png",
+         {
+            "src": "icon.png",
             "sizes": "512x512",
             "type": "image/png"
         }
