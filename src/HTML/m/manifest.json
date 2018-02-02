@@ -3,7 +3,7 @@
     "short_name": "LMS",
     "icons": [
          {
-            "src": "icon.png",
+            "src": "html/images/icon.png",
             "sizes": "512x512",
             "type": "image/png"
         }
