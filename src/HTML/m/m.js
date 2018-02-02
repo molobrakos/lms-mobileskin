@@ -464,7 +464,7 @@ function player_updated(_, server, player) {
                    player.is_stopped ? 'stopped' : '',
                    player.is_synced ? 'synced' : 'unsynced',
                    player.is_stream ? 'stream' : 'file']);
-    
+
     $elm = $('.playlist.' + player.html_id);
     if (player.playlist_timestamp &&
         player.playlist_timestamp != $elm.data(DATA_KEY_PLAYLIST_TIMESTAMP)) {
