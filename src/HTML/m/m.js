@@ -98,10 +98,11 @@ function rescaled($img, context, url) {
         url.slice(0, url.lastIndexOf('.')),
        '_', w, 'x', h,
         url.slice(url.lastIndexOf('.')))
-    log('Rescaling ' + url + ' to ' +
-        new_url + ' (' +
-        w + 'x' +
-        h + ')');
+    /*
+      log('Rescaling ' + url + ' to ' +
+      new_url + ' (' +
+      w + 'x' +
+      h + ')');*/
     return $img.attr('src', new_url)
 }
 
@@ -201,15 +202,17 @@ function server_ready(_, server) {
     
     active_player.query('can', 'podcasts', 'items', '?').then(res => {
 	res.result._can && active_player.query('podcasts', 'items', 0, 255, {want_url: 1}).then(res => {
-	    const pods = res.result.loop_loop.filter(pod => !localStorage.getItem(pod.url))
-	    console.log('Updating artwork for', pods.length, 'pods');
+	    const pods = res.result.loop_loop.filter(pod => !localStorage.getItem(pod.url.toLowerCase()))
+	    log('Prefetching podcast artwork for', pods.length, 'pods');
 	    function fetch(idx) {
 		const pod = pods[idx];
 		active_player.query('podcasts', 'items', 0, 1, {item_id: pod.id})
 		    .then(res => {
 			if (res.result.count) {
 			    const artwork_url = res.result.loop_loop[0].image;
-			    localStorage.setItem(pod.url, artwork_url);
+			    if (artwork_url)
+				localStorage.setItem(pod.url.toLowerCase(), artwork_url);
+			    log('Prefetched podcast artwork for', pod.url);
 			}})
 		    .always(res => {
 			if (idx + 1 < pods.length)
