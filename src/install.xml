@@ -3,7 +3,7 @@
   <module>Plugins::LMSMobileSkin::Plugin</module>
   <description>A mobile/responsive skin for LMS</description>
   <creator>Erik Eriksson</creator>
-  <version>0.0.41</version>
+  <version>0.0.42</version>
   <defaultState>enabled</defaultState>
   <homepageURL>http://forums.slimdevices.com/showthread.php?107988-Mobile-responsive-skin</homepageURL>
   <targetApplication>
