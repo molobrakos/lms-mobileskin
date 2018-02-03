@@ -158,19 +158,19 @@ function server_ready(_, server) {
     $.when(... shortcuts.map(
         item => active_player.query('can', item.cmd, 'items', '?')))
         .then((...res) => {
-            $('#toolbar')
-                .prepend(shortcuts.filter(
-                    (shortcut, idx) => res[idx].result._can).map(
-                        item =>
-                            from_template('#shortcut-template')
-                            .attr('title', item.title)
-                            .find('a')
-                            .attr('data-shortcut', item.cmd)
-                            .end()
-                            .find('.fa')
-                            .addClass(item.icon)
-                            .end()
-                    ));
+	    $('#toolbar')
+                .prepend(shortcuts
+			 .filter((shortcut, idx) => res[idx].result._can)
+			 .map(item =>
+                              from_template('#shortcut-template')
+                              .attr('title', item.title)
+                              .find('a')
+                              .attr('data-shortcut', item.cmd)
+                              .end()
+                              .find('.fa')
+                              .addClass(item.icon)
+                              .end()
+			     ));
         });
 
     const main_menu = {
@@ -189,7 +189,7 @@ function server_ready(_, server) {
         if (shortcut) {
             /* FIXME: reuse browse_level function below */
             /* FIXME: delay modal display until dynamic content finished loaded */
-            active_player.query(shortcut, 'items', 0, 255).then(
+            active_player.query(shortcut, 'items', 0, 255, {want_url: 1}).then(
                 res => {
                     browse_menu([{title: shortcuts.find(s => s.cmd == shortcut).title,
                                   items: res.result[Object.keys(res.result).find(key => /loop/.test(key))],
@@ -197,6 +197,27 @@ function server_ready(_, server) {
                 });
         } else
             browse_menu([main_menu]);
+    });
+    
+    active_player.query('can', 'podcasts', 'items', '?').then(res => {
+	res.result._can && active_player.query('podcasts', 'items', 0, 255, {want_url: 1}).then(res => {
+	    const pods = res.result.loop_loop.filter(pod => !localStorage.getItem(pod.url))
+	    console.log('Updating artwork for', pods.length, 'pods');
+	    function fetch(idx) {
+		const pod = pods[idx];
+		active_player.query('podcasts', 'items', 0, 1, {item_id: pod.id})
+		    .then(res => {
+			if (res.result.count) {
+			    const artwork_url = res.result.loop_loop[0].image;
+			    localStorage.setItem(pod.url, artwork_url);
+			}})
+		    .always(res => {
+			if (idx + 1 < pods.length)
+			    setTimeout(fetch, 0, idx + 1);
+		    });
+	    }
+	    fetch(0);
+	});
     });
 }
 
@@ -395,6 +416,7 @@ function browse_menu(menus) {
                         /fa-/.test(item.icon) ? '' :
                         item.icon ||
                         item.image ||
+			localStorage.getItem(item.url) ||
                         '/music/' + (item.coverid || item.id) + '/cover.jpg', true))
                 .end()
                 .find('.clickable')
