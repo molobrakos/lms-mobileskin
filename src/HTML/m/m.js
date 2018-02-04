@@ -97,11 +97,7 @@ function rescaled($img, context, url) {
         url.slice(0, url.lastIndexOf('.')),
        '_', w, 'x', h,
         url.slice(url.lastIndexOf('.')))
-    /*
-      log('Rescaling ' + url + ' to ' +
-      new_url + ' (' +
-      w + 'x' +
-      h + ')');*/
+
     return $img.attr('src', new_url)
 }
 
@@ -456,13 +452,6 @@ function player_updated(_, server, player) {
         .text(player.track_album || '');
     $elm.find('.track')
         .text(player.track_title || '');
-
-    /*
-      log('Cover dimensions (' +
-      $elm.find('img.cover').width() + 'x' +
-      $elm.find('img.cover').height() + '): ' +
-      player.track_artwork_url);
-    */
 
     $elm.find('img.cover')
         .each((_, img) => rescaled(
