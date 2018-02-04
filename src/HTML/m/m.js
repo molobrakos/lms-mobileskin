@@ -14,7 +14,6 @@
 /* FIXME: Navbar larger size esp. on larger screens */
 /* FIXME: Spinner when loading browser menu items. Also spinner when polling */
 /* FIXME: Handle timeout/404/etc when loading browser menu items */
-/* FIXME: Pre-load podcast icons in background. */
 /* FIXME: Why no icons for favorites? */
 /* FIXME: On screen/non-touch: hide playlist controls until hover,
           then display on top  */
@@ -159,10 +158,10 @@ function server_ready(_, server) {
     $.when(... shortcuts.map(
         item => active_player.query('can', item.cmd, 'items', '?')))
         .then((...res) => {
-	    $('#toolbar')
+            $('#toolbar')
                 .prepend(shortcuts
-			 .filter((shortcut, idx) => res[idx].result._can)
-			 .map(item =>
+                         .filter((shortcut, idx) => res[idx].result._can)
+                         .map(item =>
                               from_template('#shortcut-template')
                               .attr('title', item.title)
                               .find('a')
@@ -171,7 +170,7 @@ function server_ready(_, server) {
                               .find('.fa')
                               .addClass(item.icon)
                               .end()
-			     ));
+                             ));
         });
 
     const main_menu = {
@@ -199,28 +198,27 @@ function server_ready(_, server) {
         } else
             browse_menu([main_menu]);
     });
-    
+
+    /* prefetch and cache podcasts artwork in background */
     active_player.query('can', 'podcasts', 'items', '?').then(res => {
-	res.result._can && active_player.query('podcasts', 'items', 0, 255, {want_url: 1}).then(res => {
-	    const pods = res.result.loop_loop.filter(pod => !localStorage.getItem(pod.url.toLowerCase()))
-	    log('Prefetching podcast artwork for', pods.length, 'pods');
-	    function fetch(idx) {
-		const pod = pods[idx];
-		active_player.query('podcasts', 'items', 0, 1, {item_id: pod.id})
-		    .then(res => {
-			if (res.result.count) {
-			    const artwork_url = res.result.loop_loop[0].image;
-			    if (artwork_url)
-				localStorage.setItem(pod.url.toLowerCase(), artwork_url);
-			    log('Prefetched podcast artwork for', pod.url);
-			}})
-		    .always(res => {
-			if (idx + 1 < pods.length)
-			    setTimeout(fetch, 0, idx + 1);
-		    });
-	    }
-	    fetch(0);
-	});
+        res.result._can && active_player.query('podcasts', 'items', 0, 255, {want_url: 1}).then(res => {
+            const pods = res.result.loop_loop.filter(pod => !localStorage.getItem(pod.url.toLowerCase()))
+            log('Prefetching podcast artwork for', pods.length, 'pods');
+            function fetch() {
+                const pod = pods.pop();
+                active_player.query('podcasts', 'items', 0, 1, {item_id: pod.id})
+                    .then(res => {
+                        if (res.result.count) {
+                            const artwork_url = res.result.loop_loop[0].image;
+                            if (artwork_url) {
+                                localStorage.setItem(pod.url.toLowerCase(), artwork_url);
+                                log('Prefetched podcast artwork for', pod.url);
+                            }
+                        }})
+                    .always(() => pods.length && setTimeout(fetch));
+            }
+            fetch();
+        });
     });
 }
 
@@ -419,7 +417,7 @@ function browse_menu(menus) {
                         /fa-/.test(item.icon) ? '' :
                         item.icon ||
                         item.image ||
-			localStorage.getItem(item.url) ||
+                        localStorage.getItem(item.url) ||
                         '/music/' + (item.coverid || item.id) + '/cover.jpg', true))
                 .end()
                 .find('.clickable')
