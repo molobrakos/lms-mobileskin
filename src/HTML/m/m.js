@@ -91,11 +91,13 @@ function rescaled($img, context, url) {
         /* Use original/best resolution */
         return $img.attr('src', url);
 
-    /* Let the server handle image rescaling */
+    /* Let the server handle image rescaling
+       foo.png -> foo_128x128.png*/
+
     const [w,h] = [128,128];
     const new_url = ''.concat(
         url.slice(0, url.lastIndexOf('.')),
-       '_', w, 'x', h,
+        '_', w, 'x', h,
         url.slice(url.lastIndexOf('.')))
 
     return $img.attr('src', new_url)
@@ -176,7 +178,14 @@ function server_ready(_, server) {
             {title: 'Radio',    _cmd: 'radios',      icon: 'fa-bullhorn'},
             {title: 'Folder',   _cmd: 'musicfolder', icon: 'fa-folder'}]};
 
-    $('#browser').on('show.bs.modal', (ev) => {
+    $('.modal').on('show.bs.modal', ev => ga(
+        'send',
+        'screenview', {
+            screenName: ($(ev.relatedTarget).data('shortcut') ||
+                         $(ev.relatedTarget).data('target')).replace('#','')
+        }));
+
+    $('#browser').on('show.bs.modal', ev => {
         /* FIXME: make back button close modal
            https://gist.github.com/thedamon/9276193 */
         const modal = this;
