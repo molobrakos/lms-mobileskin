@@ -82,9 +82,9 @@ body {
            height: 100%;
            display: none; /* hide initially */ }
 
-.player { min-height: 100%;
-          height: 100%;
-          color: white; }
+#players .player { min-height: 100%;
+                   height: 100%;
+                   color: white; }
 
 /* cut off headers to fit width */
 h1, h2, h3, h4, h5 ,h6 { max-width: 100%;
