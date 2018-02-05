@@ -3,11 +3,11 @@
     <title lang="EN">LMS mobile skin</title>
   </details>
   <plugins>
-    <plugin name="LMSMobileSkin" version="0.0.44" minTarget="7.9.1" maxTarget="*">
+    <plugin name="LMSMobileSkin" version="0.0.45" minTarget="7.9.1" maxTarget="*">
       <title lang="EN">LMS mobile skin</title>
       <desc lang="EN">A mobile/responsive skin for LMS</desc>
       <url>
-        https://github.com/molobrakos/lms-mobileskin/releases/download/0.0.44/release-0.0.44.zip
+        https://github.com/molobrakos/lms-mobileskin/releases/download/0.0.45/release-0.0.45.zip
       </url>
       <link>http://forums.slimdevices.com/showthread.php?107988-Mobile-responsive-skin</link>
       <sha>f91f1119d5cf2d846085e1a0e4be8725d6339379</sha>
