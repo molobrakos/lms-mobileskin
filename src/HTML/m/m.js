@@ -544,6 +544,30 @@ $(() => {
         .on('player_created', player_created)
         .on('player_updated', player_updated)
         .one('server_ready', server_ready);
+
+    window.onerror = (msg, src, line, col, error) => {
+	ga('send', 'exception', {
+	    exDescription: msg + src + line + col + error ? error.message : ''
+	});
+    }
+
+    $('*').on('error', (ev) => {
+	ga('send', 'exception', {
+	    exDescription: ev
+	});
+    });
+
+    $(document).ajaxError((ev, xhr, settings, error) => {
+	ga('send', 'exception', {
+	    exDescription: [ev.type,
+			    error,
+			    settings.url,
+			    settings.data,
+			    xhr.statusText,
+			    error].join('; ')
+	});
+    });
+
     ga('send', 'screenview', {
         screenName: 'Home'
     });
