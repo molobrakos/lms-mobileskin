@@ -559,6 +559,7 @@ $(() => {
 
     $(document).ajaxError((ev, xhr, settings, error) => {
 	ga('send', 'exception', {
+	    exFatal: false,
 	    exDescription: [ev.type,
 			    error,
 			    settings.url,
