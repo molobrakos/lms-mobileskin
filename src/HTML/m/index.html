@@ -48,9 +48,9 @@
           integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0="
           crossorigin="anonymous" />
 
-    <link rel="stylesheet" href="[% webroot %]style.css" />
+    <link rel="stylesheet" href="[% webroot %]style.css?ver=0.0.44" />
 
-    <link rel="manifest" href="manifest.js" />  [%#  <!-- because .json extension not served by lms --> %]
+    <link rel="manifest" href="manifest.js?ver=0.0.44" />  [%#  <!-- because .json extension not served by lms --> %]
     <link rel="apple-touch-icon" href="[% webroot %]html/images/apple-touch-icon.png"/>
     <link rel="icon" href="[% webroot %]favicon.ico"/>
   </head>
@@ -450,8 +450,8 @@
 
   [% END %]
 
-  <script src="[% webroot %]lms.js"></script>
-  <script src="[% webroot %]swipe.js"></script>
-  <script async src="[% webroot %]m.js"></script>
+  <script src="[% webroot %]lms.js?ver=0.0.44"></script>
+  <script src="[% webroot %]swipe.js?ver=0.0.44"></script>
+  <script async src="[% webroot %]m.js?ver=0.0.44"></script>
 
 </html>
