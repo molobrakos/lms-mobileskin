@@ -99,11 +99,11 @@ function rescaled($img, context, url) {
 
     const [w,h] = [128,128];
     const new_url = ''.concat(
-       0 url.slice(0, url.lastIndexOf('.')),
+	url.slice(0, url.lastIndexOf('.')),
         '_', w, 'x', h,
-        url.slice(url.lastIndexOf('.')))
+        url.slice(url.lastIndexOf('.')));
 
-    return $img.attr('src', new_url)
+    return $img.attr('src', new_url);
 }
 
 /* ------------------------------------------------------------------------ */
