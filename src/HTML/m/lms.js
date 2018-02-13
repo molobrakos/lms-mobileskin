@@ -142,6 +142,10 @@ class Player {
             });
     }
 
+    can(what) {
+	return this.query('can', what, 'items', '?')
+    }
+
     power_on() {
         this._command('power', 1);
     }
