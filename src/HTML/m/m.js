@@ -10,6 +10,8 @@
 /* FIXME: Server rescaling of album art, request correct size for main view and browser/playlist view */
 /* FIXME: Merge playlist, browser view */
 /* FIXME: Global "mute all"-button */
+/* FIXME: Shuffle/repeat buttons */
+/* FIXME: Playlist editing */
 /* FIXME: Implement search across local lib + plugins */
 /* FIXME: Navbar larger size esp. on larger screens */
 /* FIXME: Spinner when loading browser menu items. Also spinner when polling */
@@ -30,7 +32,7 @@
 const DEBUG = /\/\?debug/.test(window.location.href);
 const MOBILE = /Mobi/.test(navigator.userAgent);
 
-const POLL_INTERVAL = DEBUG ? 3000 : 500; /* ms */
+const POLL_INTERVAL = DEBUG ? 3000 : 250; /* ms */
 
 /* LocalStorage */
 const STORAGE_KEY_ACTIVE_PLAYER = 'active_player';
@@ -78,12 +80,13 @@ function from_template(selector) {
 }
 
 function format_time(s) {
-    /* seconds -> 'mm:ss' or 'hh:mm:ss' */
-    return s < 0 ?
-        '-' + format_time(-s)
-        : s > 3600 ?
-        new Date(1000 * s).toISOString().slice(11, -5) :
-        new Date(1000 * s).toISOString().slice(14, -5);
+    /* seconds -> 'mm:ss' or 'hh:mm:ss'
+       ISO eg: 1970-01-01T00:00:00.000Z */
+    return (s < 0
+	    ? '-' + format_time(-s)
+            : s > 3600 ? /* More than one hour */
+            new Date(1000 * s).toISOString().slice(11, -5) :
+            new Date(1000 * s).toISOString().slice(14, -5));
 }
 
 function rescaled($img, context, url) {
@@ -96,7 +99,7 @@ function rescaled($img, context, url) {
 
     const [w,h] = [128,128];
     const new_url = ''.concat(
-        url.slice(0, url.lastIndexOf('.')),
+       0 url.slice(0, url.lastIndexOf('.')),
         '_', w, 'x', h,
         url.slice(url.lastIndexOf('.')))
 
@@ -154,7 +157,7 @@ function server_ready(_, server) {
     /* FIXME: Only display podcasts shortcuts if pocketcasts not available */
 
     $.when(... shortcuts.map(
-        item => active_player.query('can', item.cmd, 'items', '?')))
+        item => active_player.can(item.cmd)))
         .then((...res) => {
             $('#toolbar')
                 .prepend(shortcuts
@@ -178,13 +181,20 @@ function server_ready(_, server) {
             {title: 'Radio',    _cmd: 'radios',      icon: 'fa-bullhorn'},
             {title: 'Folder',   _cmd: 'musicfolder', icon: 'fa-folder'}]};
 
-    $('.modal').on('show.bs.modal', ev => ga(
-        'send',
-        'screenview', {
-            screenName: ($(ev.relatedTarget).data('shortcut') ||
-                         $(ev.relatedTarget).data('target')).replace('#','')
-        }));
-
+    /* Analytics */
+    $('.modal')
+	.on('show.bs.modal', ev => ga(
+            'send',
+            'screenview', {
+		screenName: ($(ev.relatedTarget).data('shortcut') ||
+                             $(ev.relatedTarget).data('target')).replace('#','')
+            }))
+	.on('hide.bs.modal', ev => ga(
+            'send',
+            'screenview', {
+		screenName: 'Home'
+            }));
+    
     $('#browser').on('show.bs.modal', ev => {
         /* FIXME: make back button close modal
            https://gist.github.com/thedamon/9276193 */
@@ -204,9 +214,10 @@ function server_ready(_, server) {
             browse_menu([main_menu]);
     });
 
-    /* prefetch and cache podcasts artwork in background */
-    active_player.query('can', 'podcasts', 'items', '?').then(res => {
+    /* Prefetch and cache podcasts artwork urls in background */
+    active_player.can('podcasts').then(res => {
         res.result._can && active_player.query('podcasts', 'items', 0, 255, {want_url: 1}).then(res => {
+	    /* Only prefetch if not already available locally */
             const pods = res.result.loop_loop.filter(pod => !localStorage.getItem(pod.url.toLowerCase()))
             log('Prefetching podcast artwork for', pods.length, 'pods');
             function fetch() {
@@ -232,6 +243,7 @@ function player_created(_, server, player) {
 
     log('New player', idx, player.name);
 
+    /* Navbar player item */
     from_template('#playerslist-template')
         .addClass(player.html_id)
         .appendTo('#playerslist.navbar-nav')
@@ -243,22 +255,26 @@ function player_created(_, server, player) {
             $('#volumes').slideUp();
         });
 
+    /* Player screen */
     from_template('#player-template')
         .addClass(player.html_id)
         .addClass(idx ? '' : 'active')
         .appendTo('.carousel-inner');
 
+    /* Carousel indicator */
     from_template('#carousel-indicator-template')
         .attr('data-slide-to', idx)
         .addClass(player.html_id)
         .addClass(idx ? '' : 'active')
         .appendTo('.carousel-indicators');
 
+    /* Player playlist */
     from_template('#playlist-template')
         .addClass(player.html_id)
         .addClass(idx ? '' : 'active')
         .appendTo('#playlist .modal-body');
 
+    /* Player volumes entry */
     from_template('#volumes template')
         .addClass(player.html_id)
         .appendTo('#volumes .modal-body');
@@ -309,6 +325,7 @@ function player_created(_, server, player) {
             player.volume_down();
     });
 
+    /* Duration */
     $elm.find('.progress.duration').click(e => {
         const $this = $(e.currentTarget);
         const x = e.pageX - $this.offset().left;
@@ -416,7 +433,7 @@ function browse_menu(menus) {
                 .addClass(/fa-/.test(item.icon) ? 'fa ' + item.icon : '')
                 .end()
                 .find('img.icon')
-                .each((_, img) => rescaled(
+                .each((_, img) => rescaled( /* FIXME: Extract to icon_for_item */
                     $(img),
                     'browser',
                         /fa-/.test(item.icon) ? '' :
