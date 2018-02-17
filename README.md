@@ -73,4 +73,5 @@ For discussions, errors and feature requests: http://forums.slimdevices.com/show
 ## FAQ
 
 Q: I selected the mobile skin as default skin and now I can not go back
+
 A: Visit http://<server>:9000/Default and change back to the default skin
