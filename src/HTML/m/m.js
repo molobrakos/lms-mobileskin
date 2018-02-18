@@ -178,7 +178,7 @@ function server_ready(_, server) {
         title: 'Home', items: [
             {title: 'Favorites', cmd: 'favorites',   icon: 'fa-star'},
             {title: 'Apps',     _cmd: 'apps',        icon: 'fa-rocket'},
-            {title: 'Radio',    _cmd: 'radios',      icon: 'fa-bullhorn'},
+            {title: 'Radio',    _cmd: 'radios',      icon: 'fa-podcast'},
             {title: 'Folder',   _cmd: 'musicfolder', icon: 'fa-folder'}]};
 
     /* Analytics */
