@@ -74,6 +74,7 @@ body {
 @media (orientation: landscape) {
     .player .metadata { width: 30vw;
                         height: 30vw; }
+    .carousel-control-prev, .carousel-control-next { display: ; }
 }
 
 /* fill screen */

@@ -23,7 +23,7 @@
     </script>
 
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#414141">
@@ -43,6 +43,7 @@
           integrity="sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20="
           crossorigin="anonymous" />
 
+    [%# <!-- FIXME: Upgrade to fa-5 https://fontawesome.com/how-to-use/upgrading-from-4 --> %]
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
           integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0="
@@ -180,10 +181,10 @@
         </template>
       </div> [%# <!-- carousel-inner --> %]
 
-      <a class="carousel-control-prev" href="#players" data-slide="prev">
+      <a class="carousel-control-prev d-none d-md-flex" href="#players" data-slide="prev">
         <span class="carousel-control-prev-icon"></span>
       </a>
-      <a class="carousel-control-next" href="#players" data-slide="next">
+      <a class="carousel-control-next d-none d-md-flex" href="#players" data-slide="next">
         <span class="carousel-control-next-icon"></span>
       </a>
     </div> [%# <!-- players carousel --> %]
