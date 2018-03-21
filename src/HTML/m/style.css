@@ -160,6 +160,9 @@ body.debug .player-id { display: inline; }
 
 .player button.pause { display: none; }
 
+.player button.toggle_playlist_shuffle:not(.active),
+.player button.toggle_playlist_repeat:not(.active) { opacity: 0.4; }
+
 .player.stopped button.play,
 .player.paused button.play,
 .player.playing button.pause { display: inline; }
