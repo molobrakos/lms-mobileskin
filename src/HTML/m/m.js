@@ -83,7 +83,7 @@ function format_time(s) {
     /* seconds -> 'mm:ss' or 'hh:mm:ss'
        ISO eg: 1970-01-01T00:00:00.000Z */
     return (s < 0
-	    ? '-' + format_time(-s)
+            ? '-' + format_time(-s)
             : s > 3600 ? /* More than one hour */
             new Date(1000 * s).toISOString().slice(11, -5) :
             new Date(1000 * s).toISOString().slice(14, -5));
@@ -99,7 +99,7 @@ function rescaled($img, context, url) {
 
     const [w,h] = [128,128];
     const new_url = ''.concat(
-	url.slice(0, url.lastIndexOf('.')),
+        url.slice(0, url.lastIndexOf('.')),
         '_', w, 'x', h,
         url.slice(url.lastIndexOf('.')));
 
@@ -183,18 +183,18 @@ function server_ready(_, server) {
 
     /* Analytics */
     $('.modal')
-	.on('show.bs.modal', ev => ga(
+        .on('show.bs.modal', ev => ga(
             'send',
             'screenview', {
-		screenName: ($(ev.relatedTarget).data('shortcut') ||
+                screenName: ($(ev.relatedTarget).data('shortcut') ||
                              $(ev.relatedTarget).data('target')).replace('#','')
             }))
-	.on('hide.bs.modal', ev => ga(
+        .on('hide.bs.modal', ev => ga(
             'send',
             'screenview', {
-		screenName: 'Home'
+                screenName: 'Home'
             }));
-    
+
     $('#browser').on('show.bs.modal', ev => {
         /* FIXME: make back button close modal
            https://gist.github.com/thedamon/9276193 */
@@ -217,7 +217,7 @@ function server_ready(_, server) {
     /* Prefetch and cache podcasts artwork urls in background */
     active_player.can('podcasts').then(res => {
         res.result._can && active_player.query('podcasts', 'items', 0, 255, {want_url: 1}).then(res => {
-	    /* Only prefetch if not already available locally */
+            /* Only prefetch if not already available locally */
             const pods = res.result.loop_loop.filter(pod => !localStorage.getItem(pod.url.toLowerCase()))
             log('Prefetching podcast artwork for', pods.length, 'pods');
             function fetch() {
@@ -306,9 +306,18 @@ function player_created(_, server, player) {
 
     const $elm = $('.player.' + player.html_id);
 
-    ['play', 'pause', 'stop', 'previous', 'next', 'volume_up', 'volume_down']
-        .forEach(action => $elm.find('button.'+action)
-                 .click(() => player[action]()));
+    ['play', 'pause', 'stop',
+     'previous', 'next', 'volume_up', 'volume_down',
+     'toggle_playlist_shuffle', 'toggle_playlist_repeat']
+        .forEach(action => {
+            log(action);
+            log($elm.find('button.'+action));
+            $elm.find('button.'+action)
+                .click(() => {
+                    log('click on ' + action);
+                    player[action]()
+                })
+        });
 
     $elm.find('.progress.volume').click(e => {
         /* FIXME: Also allow sliding the volume control */
@@ -494,12 +503,24 @@ function player_updated(_, server, player) {
     $elm.find('.volume .progress-bar')
         .width(player.volume + '%');
 
+    log('repeat', player.is_repeat);
+
+    $elm.find('button.toggle_playlist_repeat')
+        .removeClass('active')
+        .addClass(player.is_repeat ? 'active' : '')
+
+    $elm.find('button.toggle_playlist_shuffle')
+        .removeClass('active')
+        .addClass(player.is_shuffle ? 'active' : '')
+
     $elm.removeClass('on off playing paused stopped ' +
                      'stream file')
         .addClass([player.is_on ? 'on' : 'off',
                    player.is_playing ? 'playing' :
                    player.is_paused ? 'paused' :
                    player.is_stopped ? 'stopped' : '',
+                   player.is_shuffle ? 'shuffle' : '',
+                   player.is_repeat ? 'repeat' : '',
                    player.is_synced ? 'synced' : 'unsynced',
                    player.is_stream ? 'stream' : 'file']);
 
@@ -563,27 +584,27 @@ $(() => {
         .one('server_ready', server_ready);
 
     window.onerror = (msg, src, line, col, error) => {
-	ga('send', 'exception', {
-	    exDescription: msg + src + line + col + error ? error.message : ''
-	});
+        ga('send', 'exception', {
+            exDescription: msg + src + line + col + error ? error.message : ''
+        });
     }
 
     $('*').on('error', (ev) => {
-	ga('send', 'exception', {
-	    exDescription: ev
-	});
+        ga('send', 'exception', {
+            exDescription: ev
+        });
     });
 
     $(document).ajaxError((ev, xhr, settings, error) => {
-	ga('send', 'exception', {
-	    exFatal: false,
-	    exDescription: [ev.type,
-			    error,
-			    settings.url,
-			    settings.data,
-			    xhr.statusText,
-			    error].join('; ')
-	});
+        ga('send', 'exception', {
+            exFatal: false,
+            exDescription: [ev.type,
+                            error,
+                            settings.url,
+                            settings.data,
+                            xhr.statusText,
+                            error].join('; ')
+        });
     });
 
     ga('send', 'screenview', {
