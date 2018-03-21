@@ -143,7 +143,7 @@ class Player {
     }
 
     can(what) {
-	return this.query('can', what, 'items', '?')
+        return this.query('can', what, 'items', '?')
     }
 
     power_on() {
@@ -277,11 +277,11 @@ class Player {
     }
 
     get is_shuffle() {
-        return this._state.playlist_shuffle == 1;
+        return this._state['playlist shuffle'];
     }
 
     get is_repeat() {
-        return this._state.playlist_repeat == 1;
+        return this._state['playlist repeat'];
     }
 
     get is_stream() {
@@ -313,7 +313,7 @@ class Player {
     }
 
     pause() {
-        return this._command('pause', '1');
+        return this._command('pause', 1);
     }
 
     next() {
@@ -322,6 +322,14 @@ class Player {
 
     previous() {
         return this._command('playlist', 'index', '-1');
+    }
+
+    toggle_playlist_shuffle() {
+        return this._command('playlist', 'shuffle', this.is_shuffle ? 0 : 1);
+    }
+
+    toggle_playlist_repeat() {
+        return this._command('playlist', 'repeat', this.is_repeat ? 0 : 2);
     }
 
     get playlist_tracks() {
