@@ -10,7 +10,7 @@ Either:
 1. Open the LMS GUI
 2. Click on Settings
 3. Select the Plugins tab
-4. At bottom of the page add the repo URL: http://raw.githubusercontent.com/molobrakos/lms-mobileskin/master/public.xml
+4. At bottom of the page add the repo URL: https://raw.githubusercontent.com/molobrakos/lms-mobileskin/master/public.xml
 5. Install the plugin and enable as usual
 
 Or:
