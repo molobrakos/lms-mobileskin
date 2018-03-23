@@ -451,8 +451,23 @@ function browse_menu(menus) {
                         item.image ||
                         localStorage.getItem(item.url) ||
                         '/music/' + (item.coverid || item.id) + '/cover.jpg', true))
-                .end()
+                    .end()
                 .find('.clickable')
+                .click(() => {
+                    menu_item_clicked(menu.context, item);
+                })
+                .end()
+                .find('button.play')
+                .click(() => {
+                    menu_item_clicked(menu.context, item);
+                })
+                .end()
+                .find('button.add')
+                .click(() => {
+                    menu_item_clicked(menu.context, item);
+                })
+                .end()
+                .find('button.like')
                 .click(() => {
                     menu_item_clicked(menu.context, item);
                 })
