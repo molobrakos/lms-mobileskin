@@ -440,12 +440,13 @@ function browse_menu(menus) {
                 .end()
                 .find('span.icon')
                 .addClass(/fa-/.test(item.icon) ? 'fa ' + item.icon : '')
+                .addClass(item.type == 'folder' && !item.icon ? 'fa fa-folder' : '')
                 .end()
                 .find('img.icon')
                 .each((_, img) => rescaled( /* FIXME: Extract to icon_for_item */
                     $(img),
                     'browser',
-                        /fa-/.test(item.icon) ? '' :
+                        /fa-/.test(item.icon) || (item.type == 'folder' && !item.icon) ? '' :
                         item.icon ||
                         item.image ||
                         localStorage.getItem(item.url) ||
