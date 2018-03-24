@@ -127,7 +127,7 @@ class Player {
 
                 this._state = $.extend(
                     state,
-                    state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
+                    state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[state.playlist_cur_index] : {},
                     state.remoteMeta || {});
 
                 /* log('State', this._state); */
