@@ -404,11 +404,9 @@ function browse_menu(menus) {
     function menu_item_clicked(context, item) {
         log('Clicked', item, 'in context', context);
         if (item.id && item.isaudio) {
-            active_player._command(context, 'playlist', 'play', {item_id: item.id});
-            $('.modal.show').modal('hide');
+            /* No action, use button */
         } else if (item.url && item.type == 'audio') {
-            active_player.playlist_play(decodeURIComponent(item.url));
-            $('.modal.show').modal('hide');
+            /* No action, use button */
         } else if (item._cmd)
             browse_level(item, item._cmd, {want_url: 1})
         else if (item.cmd)
@@ -432,6 +430,7 @@ function browse_menu(menus) {
             item =>
                 from_template(item.type == 'search' ?
                               '#search-menu-item-template' : '#menu-item-template')
+                .addClass(item.type)
                 .find('.title')
                 .text(item.name || item.title || item.filename)
                 .end()
@@ -459,17 +458,29 @@ function browse_menu(menus) {
                 .end()
                 .find('button.play')
                 .click(() => {
-                    menu_item_clicked(menu.context, item);
+                    if (item.id && item.isaudio)
+                        active_player._command(context, 'playlist', 'play', {item_id: item.id});
+                    else if (item.url && item.type == 'audio')
+                        active_player.playlist_play(decodeURIComponent(item.url));
+                    $('.modal.show').modal('hide');
                 })
                 .end()
                 .find('button.add')
                 .click(() => {
-                    menu_item_clicked(menu.context, item);
+                    if (item.id && item.isaudio)
+                        active_player._command(context, 'playlist', 'add', {item_id: item.id});
+                    else if (item.url && item.type == 'audio')
+                        active_player.playlist_add(decodeURIComponent(item.url));
+                    /* FIXME: Modal not closed so more tracks can be added, however
+                       some visual cue/effect would be nice */
                 })
                 .end()
                 .find('button.like')
                 .click(() => {
-                    menu_item_clicked(menu.context, item);
+                    if (item.id && item.isaudio)
+                        active_player._command(context, 'favorites', 'add', {item_id: item.id});
+                    else if (item.url && item.type == 'audio')
+                        active_player.favorites_add(decodeURIComponent(item.url));
                 })
                 .end()
         ));
@@ -518,8 +529,6 @@ function player_updated(_, server, player) {
                format_time(player.track_remaining)].join(' | '));
     $elm.find('.volume .progress-bar')
         .width(player.volume + '%');
-
-    log('repeat', player.is_repeat);
 
     $elm.find('button.toggle_playlist_repeat')
         .removeClass('active')
