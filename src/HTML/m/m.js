@@ -94,7 +94,8 @@ function rescaled($img, context, url) {
         /* Use original/best resolution */
         return $img.attr('src', url);
 
-    /* Let the server handle image rescaling
+    /* Let the server handle image rescaling for
+       playliste etc
        foo.png -> foo_128x128.png*/
 
     const [w,h] = [128,128];
@@ -458,10 +459,10 @@ function browse_menu(menus) {
                 .end()
                 .find('button.play')
                 .click(() => {
-                    if (item.id && item.isaudio)
-                        active_player._command(context, 'playlist', 'play', {item_id: item.id});
-                    else if (item.url && item.type == 'audio')
+                    if (item.url)
                         active_player.playlist_play(decodeURIComponent(item.url));
+                    else if (item.id && item.isaudio)
+                        active_player._command(menu.context, 'playlist', 'play', {item_id: item.id})
                     $('.modal.show').modal('hide');
                 })
                 .end()
@@ -598,7 +599,10 @@ function player_updated(_, server, player) {
             .show();
     });
 
+    /* Enable party menu item if all players not already in group */
     $('.dropdown-item#party').toggle(player.group.length != server.players.length);
+
+    /* Enable unsync all menu item if any player is synced */
     $('.dropdown-item#no-party').toggle(server.players.some(p => p.is_synced));
 }
 
@@ -608,18 +612,21 @@ $(() => {
         .on('player_updated', player_updated)
         .one('server_ready', server_ready);
 
+    /* Send exceptions to GA */
     window.onerror = (msg, src, line, col, error) => {
         ga('send', 'exception', {
             exDescription: msg + src + line + col + error ? error.message : ''
         });
     }
 
+    /* Send exceptions to GA */
     $('*').on('error', (ev) => {
         ga('send', 'exception', {
             exDescription: ev
         });
     });
 
+    /* Send Ajax errors to GA */
     $(document).ajaxError((ev, xhr, settings, error) => {
         ga('send', 'exception', {
             exFatal: false,
