@@ -106,6 +106,8 @@ h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; 
 .media span.icon { font-size: 5rem; width: 5rem; height: 5rem; }
 .media span.icon:not(.fa) { display: none; }
 
+/* FIXNE: Add classes non-playable, playable */
+
 /* player */
 
 .player .metadata { position: relative;}
