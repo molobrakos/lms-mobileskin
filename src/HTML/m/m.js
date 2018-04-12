@@ -85,8 +85,8 @@ function format_time(s) {
     return (s < 0
             ? '-' + format_time(-s)
             : s > 3600 ? /* More than one hour */
-            new Date(1000 * s).toISOString().slice(11, -5) :
-            new Date(1000 * s).toISOString().slice(14, -5));
+            new Date(Math.floor(1000 * s)).toISOString().slice(11, -5) :
+            new Date(Math.floor(1000 * s)).toISOString().slice(14, -5));
 }
 
 function rescaled($img, context, url) {
@@ -519,6 +519,7 @@ function player_updated(_, server, player) {
     $elm.find('img.cover')
         .each((_, img) => rescaled(
             $(img), 'cover', player.track_artwork_url));
+    let w = 100 * player.track_position / player.track_duration;
     $elm.find('.duration .progress-bar')
         .width((player.track_duration > 0 ?
                 100 * player.track_position / player.track_duration : 0) + '%');

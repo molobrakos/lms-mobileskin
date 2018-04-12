@@ -80,6 +80,10 @@ class Server {
     _query(...params) {
         return this.query('', ...params);
     }
+
+    can(what) {
+        return this._players[0].can(what)
+    }
 }
 
 /* ------------------------------------------------------------------------ */
@@ -237,7 +241,7 @@ class Player {
     }
 
     get track_position() {
-        return Math.floor(this._state.time) || 0;
+        return this._state.time || 0;
     }
 
     set track_position(position) {
@@ -245,7 +249,7 @@ class Player {
     }
 
     get track_duration() {
-        return Math.floor(this._state.duration || 0);
+        return this._state.duration || 0;
     }
 
     get track_remaining() {
