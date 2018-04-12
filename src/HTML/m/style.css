@@ -165,21 +165,26 @@ body.debug .player-id { display: inline; }
 .player button.toggle_playlist_shuffle:not(.active),
 .player button.toggle_playlist_repeat:not(.active) { opacity: 0.4; }
 
+/* Display buttons used to toggle state */
 .player.stopped button.play,
 .player.paused button.play,
 .player.playing button.pause { display: inline; }
 
+/* Hide buttons already corresponding to current state */
 .player.playing button.play,
 .player.paused button.pause,
 .player.stopped button.pause { display: none; }
 
 .player.synced button.sync { display: inline; }
 .player.unsynced button.unsync { display: none; }
-
 .player.unsynced span.synced-icon { display: none; }
 
+/*
 .carousel-inner, .modal-content {
 }
+
+.list-group-item button { display: none; }
+*/
 
 #debug { position: absolute;
          bottom: 0px;
