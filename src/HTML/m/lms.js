@@ -241,7 +241,7 @@ class Player {
     }
 
     get track_position() {
-        return this._state.time || 0;
+        return Math.floor(this._state.time || 0);
     }
 
     set track_position(position) {
@@ -249,11 +249,15 @@ class Player {
     }
 
     get track_duration() {
-        return this._state.duration || 0;
+        return Math.floor(this._state.duration || 0);
     }
 
     get track_remaining() {
         return this.track_position - this.track_duration;
+    }
+
+    get track_ratio() {
+        return this._state.duration > 0 ? (this._state.time || 0) / this._state.duration : 0;
     }
 
     get is_on() {
