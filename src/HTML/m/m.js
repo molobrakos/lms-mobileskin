@@ -519,7 +519,6 @@ function player_updated(_, server, player) {
     $elm.find('img.cover')
         .each((_, img) => rescaled(
             $(img), 'cover', player.track_artwork_url));
-    let w = 100 * player.track_position / player.track_duration;
     $elm.find('.duration .progress-bar')
         .width(100 * player.track_ratio + '%');
     $elm.find('.progress-title')
