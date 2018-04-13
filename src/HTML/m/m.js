@@ -269,7 +269,7 @@ function player_created(_, server, player) {
         .addClass(idx ? '' : 'active')
         .appendTo('.carousel-indicators');
 
-    /* Player playlist */
+    /* Player playlist menu */
     from_template('#playlist-template')
         .addClass(player.html_id)
         .addClass(idx ? '' : 'active')
@@ -468,10 +468,10 @@ function browse_menu(menus) {
                 .end()
                 .find('button.add')
                 .click(() => {
-                    if (item.id && item.isaudio)
-                        active_player._command(context, 'playlist', 'add', {item_id: item.id});
-                    else if (item.url && item.type == 'audio')
+                    if (item.url)
                         active_player.playlist_add(decodeURIComponent(item.url));
+                    else if (item.id && item.isaudio)
+                        active_player._command(menu.context, 'playlist', 'add', {item_id: item.id});
                     /* FIXME: Modal not closed so more tracks can be added, however
                        some visual cue/effect would be nice */
                 })
@@ -549,7 +549,8 @@ function player_updated(_, server, player) {
                    player.is_synced ? 'synced' : 'unsynced',
                    player.is_stream ? 'stream' : 'file']);
 
-    $elm = $('.playlist.' + player.html_id);
+    $elm = $('.player-playlist.' + player.html_id);
+    console.assert($elm.length);
     if (player.playlist_timestamp &&
         player.playlist_timestamp != $elm.data(DATA_KEY_PLAYLIST_TIMESTAMP)) {
         log('Updating playlist', player.html_id);
