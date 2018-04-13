@@ -325,11 +325,15 @@ class Player {
     }
 
     next() {
-        return this._command('playlist', 'index', '+1');
+        return this.jump_to('+1');
     }
 
     previous() {
-        return this._command('playlist', 'index', '-1');
+        return this.jump_to('-1');
+    }
+
+    jump_to(index) {
+        return this._command('playlist', 'index', index);
     }
 
     toggle_playlist_shuffle() {

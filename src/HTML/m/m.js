@@ -549,6 +549,7 @@ function player_updated(_, server, player) {
                    player.is_synced ? 'synced' : 'unsynced',
                    player.is_stream ? 'stream' : 'file']);
 
+    /* FIXME: Support clear playlist */
     $elm = $('.player-playlist.' + player.html_id);
     console.assert($elm.length);
     if (player.playlist_timestamp &&
@@ -562,8 +563,33 @@ function player_updated(_, server, player) {
                 track =>
                     from_template('#playlist-item-template')
                     .click(() => {
-                        alert('track clicked');
+                        /* Nothing */
                     })
+                    .find('button.play')
+                    .click(() => {
+                        player.jump_to(track['playlist index']);
+                    })
+                    .end()
+                    .find('button.delete')
+                    .click(() => {
+                        /* FIXME: Implement */
+                        /* playlist deleteitem */
+                    })
+                    .end()
+                    .find('button.up')
+                    .click(() => {
+                        /* FIXME: Implement */
+                        /* playlist move */
+                        alert('play clicked');
+                    })
+                    .end()
+                    .find('button.down')
+                    .click(() => {
+                        /* FIXME: Implement */
+                        /* playlist move */
+                        alert('down clicked');
+                    })
+                    .end()
                     .find('img.cover')
                     .each((_, img) => rescaled(
                         $(img),
