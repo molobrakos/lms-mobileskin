@@ -95,10 +95,10 @@ h1, h2, h3, h4, h5 ,h6 { max-width: 100%;
 /* force empty headers to occupy vertical space anyway */
 h1:after, h2:after, h3:after, h4:after, h5:after, h6:after { content: '\0200b'; }
 
-/* playlist */
+/* playlist view */
 
-.playlist { display: none; }
-.playlist.active { display: block; }
+.player-playlist { display: none; }
+.player-playlist.active { display: block; }
 .media .cover { height: 5rem; width: 5rem; }
 .media .artist { min-height: 1rem; }
 
@@ -160,8 +160,10 @@ body.debug .player-id { display: inline; }
 
 .player .track { min-height: 1rem; }
 
+/* default to hidden unless state is paused */
 .player button.pause { display: none; }
 
+/* inactive states */
 .player button.toggle_playlist_shuffle:not(.active),
 .player button.toggle_playlist_repeat:not(.active) { opacity: 0.4; }
 
@@ -179,12 +181,9 @@ body.debug .player-id { display: inline; }
 .player.unsynced button.unsync { display: none; }
 .player.unsynced span.synced-icon { display: none; }
 
-/*
-.carousel-inner, .modal-content {
-}
 
-.list-group-item button { display: none; }
-*/
+#browser .list-group-item button { display: none; }
+#browser .list-group-item.playlist button { display: inline; }
 
 #debug { position: absolute;
          bottom: 0px;
