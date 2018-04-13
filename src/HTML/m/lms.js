@@ -341,11 +341,11 @@ class Player {
     }
 
     get playlist_tracks() {
-        return this._state['playlist_loop'] || [];
+        return this._state.playlist_loop || [];
     }
 
     get playlist_timestamp() {
-        return this._state['playlist_timestamp'];
+        return this._state.playlist_timestamp;
     }
 
     playlist_delete(idx) {
@@ -375,5 +375,4 @@ class Player {
     play_favorite(fav) {
         return this._command('favorites', 'playlist', 'play', {item_id: fav});
     }
-
 }
