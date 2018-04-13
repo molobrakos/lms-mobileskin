@@ -212,7 +212,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <ol class="playlist list-group">
+            <ol class="playerlist list-group">
               <template>
                 <li class="list-group-item player">
                   <div class="media">
@@ -251,7 +251,7 @@
           <div class="modal-body">
 
             <template id="playlist-template">
-              <ol class="playlist list-group"></ol>
+              <ol class="player-playlist list-group"></ol>
             </template>
 
             <template id="playlist-item-template">
@@ -299,7 +299,9 @@
                     <span class="title h5"></span>
                     <button type="button" class="btn play"><span class="fa fa-play"></span></button>
                     <button type="button" class="btn add"><span class="fa fa-plus"></span></button>
+                    [%# <!-- FIXME: implement "like" (add to spotty starred or to lms favorites or both? -->
                     <button type="button" class="btn like"><span class="fa fa-heart"></span></button>
+                    %]
                   </div>
                 </div>
               </li>
