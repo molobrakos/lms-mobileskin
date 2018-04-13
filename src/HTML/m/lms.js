@@ -325,14 +325,14 @@ class Player {
     }
 
     next() {
-        return this.jump_to('+1');
+        return this.playlist_jump_to('+1');
     }
 
     previous() {
-        return this.jump_to('-1');
+        return this.playlist_jump_to('-1');
     }
 
-    jump_to(index) {
+    playlist_jump_to(index) {
         return this._command('playlist', 'index', index);
     }
 
@@ -358,6 +358,14 @@ class Player {
 
     playlist_move(from, to) {
         return this._command('playlist', 'move', from, to);
+    }
+
+    playlist_move_up(track) {
+        return this.playlist_move(track, track - 1);
+    }
+
+    playlist_move_down(track) {
+        return this.playlist_move(track, track + 1);
     }
 
     playlist_save(name) {

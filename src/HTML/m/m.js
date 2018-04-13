@@ -567,27 +567,24 @@ function player_updated(_, server, player) {
                     })
                     .find('button.play')
                     .click(() => {
-                        player.jump_to(track['playlist index']);
+                        player.playlist_jump_to(track['playlist index']);
                     })
                     .end()
                     .find('button.delete')
                     .click(() => {
-                        /* FIXME: Implement */
-                        /* playlist deleteitem */
+                        player.playlist_delete(track['playlist index']);
                     })
                     .end()
                     .find('button.up')
                     .click(() => {
-                        /* FIXME: Implement */
-                        /* playlist move */
-                        alert('play clicked');
+                        /* FIXME: Move li element + animation */
+                        player.playlist_move_up(track['playlist index']);
                     })
                     .end()
                     .find('button.down')
                     .click(() => {
-                        /* FIXME: Implement */
-                        /* playlist move */
-                        alert('down clicked');
+                        /* FIXME: Move li element + animation */
+                        player.playlist_move_down(track['playlist index']);
                     })
                     .end()
                     .find('img.cover')
