@@ -22,6 +22,9 @@
 /* FIXME: Overflow: scroll for modal dialogs */
 /* FIXME: Option to save current sync setup, e.g. kitchen+bedroom etc (local storage only) */
 /* FIXME: Cache generated menus, e.g. spotify, or at least don't display until received */
+/* FIXME: Discover newly connected players, remove turnedoff players */
+/* FIXME: Turn player on/off */
+
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
@@ -56,7 +59,7 @@ DEBUG && $.getScript('debug.js').done(()=> {
 
 /* ------------------------------------------------------------------------ */
 /*                                                                          */
-/* Serviceworker (only works if served over https)                          */
+/* Serviceworker (only works if served over https, so not yet really used)  */
 /*                                                                          */
 /* ------------------------------------------------------------------------ */
 
@@ -491,7 +494,7 @@ function player_updated(_, server, player) {
     $elm.find('img.cover')
         .each((_, img) => rescaled(
             $(img), 'cover', player.track_artwork_url));
-    let w = 100 * player.track_position / player.track_duration;
+    const w = 100 * player.track_position / player.track_duration;
     $elm.find('.duration .progress-bar')
         .width((player.track_duration > 0 ?
                 100 * player.track_position / player.track_duration : 0) + '%');
