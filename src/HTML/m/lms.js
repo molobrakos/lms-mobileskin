@@ -131,7 +131,7 @@ class Player {
 
                 this._state = $.extend(
                     state,
-                    state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[0] : {},
+                    state.playlist_loop && state.playlist_loop.length ? state.playlist_loop[state.playlist_cur_index] : {},
                     state.remoteMeta || {});
 
                 /* log('State', this._state); */
@@ -241,7 +241,7 @@ class Player {
     }
 
     get track_position() {
-        return this._state.time || 0;
+        return Math.floor(this._state.time || 0);
     }
 
     set track_position(position) {
@@ -249,11 +249,15 @@ class Player {
     }
 
     get track_duration() {
-        return this._state.duration || 0;
+        return Math.floor(this._state.duration || 0);
     }
 
     get track_remaining() {
         return this.track_position - this.track_duration;
+    }
+
+    get track_ratio() {
+        return this._state.duration > 0 ? (this._state.time || 0) / this._state.duration : 0;
     }
 
     get is_on() {
@@ -321,11 +325,15 @@ class Player {
     }
 
     next() {
-        return this._command('playlist', 'index', '+1');
+        return this.playlist_jump_to('+1');
     }
 
     previous() {
-        return this._command('playlist', 'index', '-1');
+        return this.playlist_jump_to('-1');
+    }
+
+    playlist_jump_to(index) {
+        return this._command('playlist', 'index', index);
     }
 
     toggle_playlist_shuffle() {
@@ -337,11 +345,11 @@ class Player {
     }
 
     get playlist_tracks() {
-        return this._state['playlist_loop'] || [];
+        return this._state.playlist_loop || [];
     }
 
     get playlist_timestamp() {
-        return this._state['playlist_timestamp'];
+        return this._state.playlist_timestamp;
     }
 
     playlist_delete(idx) {
@@ -350,6 +358,14 @@ class Player {
 
     playlist_move(from, to) {
         return this._command('playlist', 'move', from, to);
+    }
+
+    playlist_move_up(track) {
+        return this.playlist_move(track, track - 1);
+    }
+
+    playlist_move_down(track) {
+        return this.playlist_move(track, track + 1);
     }
 
     playlist_save(name) {
@@ -371,5 +387,4 @@ class Player {
     play_favorite(fav) {
         return this._command('favorites', 'playlist', 'play', {item_id: fav});
     }
-
 }

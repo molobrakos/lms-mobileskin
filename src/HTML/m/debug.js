@@ -76,6 +76,7 @@ $(document).ajaxSuccess(function(ev, xhr, settings, data) {
         .text(t);
 });
 
+/* FIXME: Maybe use modernizr for feature detection: https://modernizr.com/docs */
 $(function() {
     let ratio = window.devicePixelRatio || 1;
     $('#screen_size').text(screen.width + '\u00D7' + screen.height)

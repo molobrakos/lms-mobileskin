@@ -88,8 +88,8 @@ function format_time(s) {
     return (s < 0
             ? '-' + format_time(-s)
             : s > 3600 ? /* More than one hour */
-            new Date(Math.floor(1000 * s)).toISOString().slice(11, -5) :
-            new Date(Math.floor(1000 * s)).toISOString().slice(14, -5));
+            new Date(1000 * s).toISOString().slice(11, -5) :
+            new Date(1000 * s).toISOString().slice(14, -5));
 }
 
 function rescaled($img, context, url) {
@@ -97,7 +97,8 @@ function rescaled($img, context, url) {
         /* Use original/best resolution */
         return $img.attr('src', url);
 
-    /* Let the server handle image rescaling
+    /* Let the server handle image rescaling for
+       playliste etc
        foo.png -> foo_128x128.png*/
 
     const [w,h] = [128,128];
@@ -271,7 +272,7 @@ function player_created(_, server, player) {
         .addClass(idx ? '' : 'active')
         .appendTo('.carousel-indicators');
 
-    /* Player playlist */
+    /* Player playlist menu */
     from_template('#playlist-template')
         .addClass(player.html_id)
         .addClass(idx ? '' : 'active')
@@ -407,11 +408,9 @@ function browse_menu(menus) {
     function menu_item_clicked(context, item) {
         log('Clicked', item, 'in context', context);
         if (item.id && item.isaudio) {
-            active_player._command(context, 'playlist', 'play', {item_id: item.id});
-            $('.modal.show').modal('hide');
+            /* No action, use button */
         } else if (item.url && item.type == 'audio') {
-            active_player.playlist_play(decodeURIComponent(item.url));
-            $('.modal.show').modal('hide');
+            /* No action, use button */
         } else if (item._cmd)
             browse_level(item, item._cmd, {want_url: 1})
         else if (item.cmd)
@@ -435,6 +434,7 @@ function browse_menu(menus) {
             item =>
                 from_template(item.type == 'search' ?
                               '#search-menu-item-template' : '#menu-item-template')
+                .addClass(item.type)
                 .find('.title')
                 .text(item.name || item.title || item.filename)
                 .end()
@@ -443,20 +443,48 @@ function browse_menu(menus) {
                 .end()
                 .find('span.icon')
                 .addClass(/fa-/.test(item.icon) ? 'fa ' + item.icon : '')
+                .addClass(item.type == 'folder' && !item.icon ? 'fa fa-folder' : '')
                 .end()
                 .find('img.icon')
                 .each((_, img) => rescaled( /* FIXME: Extract to icon_for_item */
                     $(img),
                     'browser',
-                        /fa-/.test(item.icon) ? '' :
+                        /fa-/.test(item.icon) || (item.type == 'folder' && !item.icon) ? '' :
                         item.icon ||
                         item.image ||
                         localStorage.getItem(item.url) ||
                         '/music/' + (item.coverid || item.id) + '/cover.jpg', true))
-                .end()
+                    .end()
                 .find('.clickable')
                 .click(() => {
                     menu_item_clicked(menu.context, item);
+                })
+                .end()
+                .find('button.play')
+                .click(() => {
+                    if (item.url)
+                        active_player.playlist_play(decodeURIComponent(item.url));
+                    else if (item.id && item.isaudio)
+                        active_player._command(menu.context, 'playlist', 'play', {item_id: item.id})
+                    $('.modal.show').modal('hide');
+                })
+                .end()
+                .find('button.add')
+                .click(() => {
+                    if (item.url)
+                        active_player.playlist_add(decodeURIComponent(item.url));
+                    else if (item.id && item.isaudio)
+                        active_player._command(menu.context, 'playlist', 'add', {item_id: item.id});
+                    /* FIXME: Modal not closed so more tracks can be added, however
+                       some visual cue/effect would be nice */
+                })
+                .end()
+                .find('button.like')
+                .click(() => {
+                    if (item.id && item.isaudio)
+                        active_player._command(context, 'favorites', 'add', {item_id: item.id});
+                    else if (item.url && item.type == 'audio')
+                        active_player.favorites_add(decodeURIComponent(item.url));
                 })
                 .end()
         ));
@@ -494,10 +522,8 @@ function player_updated(_, server, player) {
     $elm.find('img.cover')
         .each((_, img) => rescaled(
             $(img), 'cover', player.track_artwork_url));
-    const w = 100 * player.track_position / player.track_duration;
     $elm.find('.duration .progress-bar')
-        .width((player.track_duration > 0 ?
-                100 * player.track_position / player.track_duration : 0) + '%');
+        .width(100 * player.track_ratio + '%');
     $elm.find('.progress-title')
         .text(player.is_stream ?
               format_time(player.track_position) :
@@ -506,8 +532,6 @@ function player_updated(_, server, player) {
                format_time(player.track_remaining)].join(' | '));
     $elm.find('.volume .progress-bar')
         .width(player.volume + '%');
-
-    log('repeat', player.is_repeat);
 
     $elm.find('button.toggle_playlist_repeat')
         .removeClass('active')
@@ -528,7 +552,9 @@ function player_updated(_, server, player) {
                    player.is_synced ? 'synced' : 'unsynced',
                    player.is_stream ? 'stream' : 'file']);
 
-    $elm = $('.playlist.' + player.html_id);
+    /* FIXME: Support clear playlist */
+    $elm = $('.player-playlist.' + player.html_id);
+    console.assert($elm.length);
     if (player.playlist_timestamp &&
         player.playlist_timestamp != $elm.data(DATA_KEY_PLAYLIST_TIMESTAMP)) {
         log('Updating playlist', player.html_id);
@@ -540,8 +566,30 @@ function player_updated(_, server, player) {
                 track =>
                     from_template('#playlist-item-template')
                     .click(() => {
-                        alert('track clicked');
+                        /* Nothing */
                     })
+                    .find('button.play')
+                    .click(() => {
+                        player.playlist_jump_to(track['playlist index']);
+                    })
+                    .end()
+                    .find('button.delete')
+                    .click(() => {
+                        player.playlist_delete(track['playlist index']);
+                    })
+                    .end()
+                    .find('button.up')
+                    .click(() => {
+                        /* FIXME: Move li element + animation */
+                        player.playlist_move_up(track['playlist index']);
+                    })
+                    .end()
+                    .find('button.down')
+                    .click(() => {
+                        /* FIXME: Move li element + animation */
+                        player.playlist_move_down(track['playlist index']);
+                    })
+                    .end()
                     .find('img.cover')
                     .each((_, img) => rescaled(
                         $(img),
@@ -577,7 +625,10 @@ function player_updated(_, server, player) {
             .show();
     });
 
+    /* Enable party menu item if all players not already in group */
     $('.dropdown-item#party').toggle(player.group.length != server.players.length);
+
+    /* Enable unsync all menu item if any player is synced */
     $('.dropdown-item#no-party').toggle(server.players.some(p => p.is_synced));
 }
 
@@ -587,18 +638,21 @@ $(() => {
         .on('player_updated', player_updated)
         .one('server_ready', server_ready);
 
+    /* Send exceptions to GA */
     window.onerror = (msg, src, line, col, error) => {
         ga('send', 'exception', {
             exDescription: msg + src + line + col + error ? error.message : ''
         });
     }
 
+    /* Send exceptions to GA */
     $('*').on('error', (ev) => {
         ga('send', 'exception', {
             exDescription: ev
         });
     });
 
+    /* Send Ajax errors to GA */
     $(document).ajaxError((ev, xhr, settings, error) => {
         ga('send', 'exception', {
             exFatal: false,
