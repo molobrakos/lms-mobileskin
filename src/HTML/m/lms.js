@@ -158,6 +158,13 @@ class Player {
         this._command('power', 0);
     }
 
+    toggle_power() {
+        if (this.is_on)
+            this.power_off()
+        else
+            this.power_on()
+    }
+
     /* FIXME: clean up sync helper methods */
 
     get is_synced() {

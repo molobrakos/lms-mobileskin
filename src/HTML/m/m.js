@@ -312,7 +312,7 @@ function player_created(_, server, player) {
 
     ['play', 'pause', 'stop',
      'previous', 'next', 'volume_up', 'volume_down',
-     'toggle_playlist_shuffle', 'toggle_playlist_repeat']
+     'toggle_playlist_shuffle', 'toggle_playlist_repeat', 'toggle_power']
         .forEach(action => {
             log(action);
             log($elm.find('button.'+action));

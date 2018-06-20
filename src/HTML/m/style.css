@@ -181,6 +181,8 @@ body.debug .player-id { display: inline; }
 .player.unsynced button.unsync { display: none; }
 .player.unsynced span.synced-icon { display: none; }
 
+.player.on button.toggle_power { color: green; }
+.player.off button.toggle_power { color: red; }
 
 #browser .list-group-item button { display: none; }
 #browser .list-group-item.playlist button { display: inline; }
