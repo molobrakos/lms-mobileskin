@@ -184,8 +184,11 @@ body.debug .player-id { display: inline; }
 .player.on button.toggle_power { color: green; }
 .player.off button.toggle_power { color: red; }
 
-#browser .list-group-item button { display: none; }
-#browser .list-group-item.playlist button { display: inline; }
+/*
+#browser .list-group-item button.like,
+#browser .list-group-item button.play,
+#browser .list-group-item button.add { display: none; }
+#browser .list-group-item.playlist button { display: inline; } */
 
 #debug { position: absolute;
          bottom: 0px;
