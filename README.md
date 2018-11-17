@@ -1,5 +1,8 @@
 # Responsive / Mobile skin for Slimserver (Logitech media server)
 
+**N.B: Not actively developed/maintained.
+Deprecated in favor of the superior https://github.com/CDrummond/lms-material skin/plugin which are more actively developed/maintained.**
+
 ![ScreenShot](screenshots/screenshot_01.png)
 ![ScreenShot](screenshots/screenshot_02.png)
 
