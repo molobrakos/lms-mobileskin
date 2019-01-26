@@ -1,5 +1,7 @@
 # Responsive / Mobile skin for Slimserver (Logitech media server)
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 **N.B: Not actively developed/maintained.
 Deprecated in favor of the superior https://github.com/CDrummond/lms-material skin/plugin which are more actively developed/maintained.**
 
